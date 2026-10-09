@@ -176,7 +176,7 @@ class Auslegung:
             hinweise.append("Alle Gutachter weisen ohne Gegenbefund in dieselbe Richtung: gemeinsamer blinder Fleck möglich.")
 
         lauf = Lauf(dossier.norm.label, af, dossier, berichte, gestrichen, abw, kritik, ergebnis, hinweise=hinweise, modus=self.modus,
-                    modell=getattr(self.llm, "model", "unbekannt"), datum=dt.date.today().strftime("%d.%m.%Y"))
+                    modell=getattr(self.llm, "model", "unbekannt"), datum=dt.datetime.now(tz=dt.UTC).astimezone().strftime("%d.%m.%Y"))
         lauf.text = render_markdown(lauf)
         lauf.freigabe = await pruefe_text(lauf.text, dossier, self.sources.opencaselaw, grounding=self.grounding)
         lauf.text = render_markdown(lauf)
