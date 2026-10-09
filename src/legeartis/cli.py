@@ -15,7 +15,7 @@ from .sources.protocol import SourceError
 from .sources.recorder import ReplayCaller
 from .sources.registry import Sources, open_sources
 
-app = typer.Typer(help="Legeartis: Schweizer Rechtsrecherche für Einsteiger.", no_args_is_help=True)
+app = typer.Typer(help="Legeartis: Schweizer Rechtsrecherche für Studium und Praxis.", no_args_is_help=True)
 console = Console()
 
 
@@ -83,8 +83,11 @@ def auslegen(
     out: Path | None = typer.Option(None, help="Markdown-Datei für das Ergebnis"),
     fixtures: Path | None = typer.Option(None, help="Fixture-Verzeichnis statt Netz"),
     no_grounding: bool = typer.Option(False, help="attest_response ohne LLM-Richter (billiger)"),
+    modus: str = typer.Option("lernen", help="lernen (Studium: Methode sichtbar, Glossar, KI-Vermerk) oder praxis (knapp, Gutachtenstil)"),
 ):
     """Norm nach den vier Elementen auslegen, mit Freigabe."""
+    if modus not in ("lernen", "praxis"):
+        raise typer.BadParameter("modus muss 'lernen' oder 'praxis' sein")
     from .auslegung.llm import AnthropicLLM
     from .auslegung.pipeline import Auslegung
 
@@ -92,7 +95,7 @@ def auslegen(
         async with AsyncExitStack() as stack:
             s = await _sources(stack, fixtures)
             llm = AnthropicLLM(Settings.from_env())
-            lauf = await Auslegung(s, llm, grounding=not no_grounding).run(
+            lauf = await Auslegung(s, llm, grounding=not no_grounding, modus=modus).run(  # type: ignore[arg-type]
                 abbreviation, article, frage=frage, lesarten=list(lesart) or None
             )
             if out:

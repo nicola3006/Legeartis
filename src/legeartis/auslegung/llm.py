@@ -47,6 +47,7 @@ class AnthropicLLM:
         import anthropic
 
         self.settings = settings
+        self.model = settings.model
         self.client = anthropic.AsyncAnthropic()
 
     async def structured(self, system: str, user: str, schema: type[T]) -> T:

@@ -133,3 +133,39 @@ ohne die Methode zu verwässern.
 - Eigene Stellungnahmen als «m.E.» kennzeichnen. Weicht das Ergebnis von der
   Rechtsprechung im Dossier ab, ausweisen.
 """
+
+SCHLUSSREGELN_PRAXIS = """\
+Du formulierst den Schluss der Auslegung für Juristinnen und Juristen in der Praxis.
+- Gutachtenstil, knapp. Keine Erklärung von Grundbegriffen; das Feld «einfache_erklaerung»
+  enthält stattdessen die praktische Konsequenz in zwei bis drei Sätzen, «fachbegriffe»
+  bleibt leer.
+- Einstufung: «ueberzeugend» (Kipptest bestanden, keine begründete Beanstandung),
+  «vertretbar_aber_offen» (Kipptest nicht bestanden oder eine Beanstandung trifft zu),
+  «offen».
+- Den Schritt beim Namen nennen (Auslegung extensiv/restriktiv, Analogie, teleologische
+  Reduktion, Regel modo legislatoris) und die Begründungslast bei Verlassen des Wortlauts
+  ausdrücklich abarbeiten.
+- Jede Aussage über Rechtsprechung oder Materialien nur mit Beleg-ID aus dem Dossier.
+  Zitierstrings werden beim Rendern aus dem Dossier eingesetzt, nie selbst geschrieben.
+- Weicht das Ergebnis von der Rechtsprechung im Dossier ab, ausweisen und als «m.E.»
+  kennzeichnen. Was das Dossier nicht abdeckt (kantonale Praxis, Lehre ausserhalb des
+  Open-Access-Bereichs, neuere Entscheide), unter «abgleich_mit_rechtsprechung» als
+  Rechercheauftrag benennen.
+"""
+
+def ki_vermerk(frage: str, modell: str, datum: str) -> str:
+    """KI-Kennzeichnung nach dem Merkblatt der RW-Fakultät Bern (Angaben nach MLA).
+
+    Verlangt sind: Beschreibung des Prompts, Name des KI-Tools, Modell/Version,
+    Unternehmen, Erstellungsdatum, URL. KI-Erzeugnisse sind keine wissenschaftlichen
+    Quellen; alle vom Tool zitierten Quellen sind selbst zu prüfen.
+    """
+    prompt = " ".join(frage.split())
+    return (
+        "KI-Erzeugnisse sind keine wissenschaftlichen Quellen. Die Verwendung ist zu kennzeichnen; "
+        "die Vorgaben von Fakultät, Departement und Lehrstuhl gehen vor. Jede hier zitierte Quelle "
+        "ist vor der Verwendung selbst am Original zu prüfen.\n\n"
+        "Fussnoten-Vorschlag (Angaben nach MLA):\n"
+        f"«Auslegung: {prompt}», Legeartis mit Claude, {modell}, Anthropic, {datum}, "
+        "https://github.com/nicola3006/Legeartis."
+    )

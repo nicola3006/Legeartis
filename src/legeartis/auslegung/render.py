@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from . import methodik
+
 if TYPE_CHECKING:
     from .pipeline import Lauf
 
@@ -38,6 +40,10 @@ def render_markdown(lauf: Lauf) -> str:
         L.append(f"> Freigabe: NICHT GEPRÜFT ({fg.hinweis}). Fundstellen vor Verwendung selbst prüfen.")
     else:
         L.append("> Freigabe: NICHT FREIGEGEBEN. Beanstandete Stellen unten unter «Prüfung».")
+    L.append(
+        "> Prüfumfang: geprüft sind die eigenen Fundstellen, Zitate und Normverweise dieses Textes. "
+        "Nicht geprüft ist, ob einschlägige Quellen fehlen."
+    )
     L.append("")
     L.append("## 1. Auslegungsfrage und Lesarten")
     L.append(lauf.frage.frage)
@@ -91,12 +97,16 @@ def render_markdown(lauf: Lauf) -> str:
     L.append("## 6. Abgleich mit der Rechtsprechung im Dossier")
     L.append(e.abgleich_mit_rechtsprechung)
     L.append("")
-    L.append("## 7. In einfachen Worten")
-    L.append(e.einfache_erklaerung)
-    if e.fachbegriffe:
-        L.append("")
-        for fb in e.fachbegriffe:
-            L.append(f"- **{fb.begriff}**: {fb.erklaerung}")
+    if lauf.modus == "lernen":
+        L.append("## 7. In einfachen Worten")
+        L.append(e.einfache_erklaerung)
+        if e.fachbegriffe:
+            L.append("")
+            for fb in e.fachbegriffe:
+                L.append(f"- **{fb.begriff}**: {fb.erklaerung}")
+    else:
+        L.append("## 7. Praktische Konsequenz")
+        L.append(e.einfache_erklaerung)
     L.append("")
     L.append("## 8. Fundstellen")
     verwendet = set(e.verwendete_beleg_ids) | {x for b in lauf.berichte for bf in b.befunde for x in bf.beleg_ids}
@@ -125,4 +135,8 @@ def render_markdown(lauf: Lauf) -> str:
         L.append("Warnungen des Dossiers:")
         for w in d.warnungen:
             L.append(f"- {w}")
+    if lauf.modus == "lernen":
+        L.append("")
+        L.append("## 10. KI-Vermerk für die Arbeit")
+        L.append(methodik.ki_vermerk(lauf.frage.frage, lauf.modell, lauf.datum))
     return "\n".join(L)

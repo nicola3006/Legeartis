@@ -1,6 +1,7 @@
 # Legeartis
 
-Schweizer Rechtsrecherche für Einsteiger: Das Tool holt zu einer Norm den
+Schweizer Rechtsrecherche für Studierende der Rechtswissenschaft und
+Jurist:innen in der Praxis: Das Tool holt zu einer Norm den
 Gesetzestext in drei Sprachen, die Fassungen, Botschaftsstellen, Leitentscheide
 mit Erwägungen und Kommentierungen aus **Opencaselaw**, **Fedlex** und
 **Onlinekommentar**, legt die Norm nach der Methodik der Gesetzesauslegung
@@ -10,6 +11,19 @@ nachgeprüft ist.
 Stand: Version 0.1, Gerüst mit Quellenschicht, Auslegungs-Pipeline und
 Tests gegen aufgezeichnete Serverantworten. Die Live-Verbindung zu den
 MCP-Servern ist noch nicht getestet (siehe ARCHITECTURE.md, «Risiken»).
+
+## Zwei Modi
+
+| | `--modus lernen` (Standard) | `--modus praxis` |
+|---|---|---|
+| Für | Studierende | Jurist:innen in der Praxis |
+| Methode | Alle Schritte sichtbar, Befunde je Element | Dieselbe Prüfung, knapper Schluss im Gutachtenstil |
+| Schluss | Einfache Erklärung und Glossar | Praktische Konsequenz, offene Rechercheaufträge |
+| Zusatz | KI-Vermerk nach den Vorgaben der Fakultät (Unibe) | Hinweis zum Prüfumfang |
+
+Beide Modi laufen durch dieselben Gates. Der Prüfumfang ist in beiden Modi
+derselbe: geprüft werden die eigenen Fundstellen, Zitate und Normverweise des
+Textes, nicht die Vollständigkeit der Recherche.
 
 ## Was das Tool anders macht als ein Chat
 
@@ -40,8 +54,8 @@ uv run legeartis norm ZGB 2
 # Quellen-Dossier ohne Sprachmodell (JSON)
 uv run legeartis dossier ZGB 2 --json
 
-# Auslegung einer Norm mit Frage und Lesarten
-uv run legeartis auslegen OR 333 \
+# Auslegung einer Norm mit Frage und Lesarten (Praxismodus)
+uv run legeartis auslegen OR 333 --modus praxis \
   --frage "Erfasst Art. 333 Abs. 3 OR auch den Erwerb eines Betriebs aus der Konkursmasse?" \
   --lesart "Ja, jeder Betriebsübergang ist erfasst." \
   --lesart "Nein, der Erwerb aus der Konkursmasse ist ausgenommen." \

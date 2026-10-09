@@ -9,8 +9,10 @@ Gutachter mit den Befunden der anderen, Gate, 4 Abwägung, 5 Kritik,
 from __future__ import annotations
 
 import asyncio
+import datetime as dt
 import json
 from dataclasses import dataclass, field
+from typing import Literal
 
 from ..sources.models import Dossier
 from ..sources.registry import Sources
@@ -20,6 +22,8 @@ from .gate import Freigabe, Gestrichen, filtere_berichte, pruefe_text
 from .llm import LLM
 from .render import render_markdown
 from .schema import Abwaegung, Auslegungsfrage, ElementBericht, Ergebnis, Kritik, Lesart
+
+Modus = Literal["lernen", "praxis"]
 
 
 @dataclass
@@ -35,6 +39,9 @@ class Lauf:
     text: str = ""
     freigabe: Freigabe | None = None
     hinweise: list[str] = field(default_factory=list)
+    modus: Modus = "lernen"
+    modell: str = "unbekannt"
+    datum: str = ""
 
 
 def _normtext_block(d: Dossier) -> str:
@@ -83,10 +90,11 @@ def _frage_block(f: Auslegungsfrage) -> str:
 
 
 class Auslegung:
-    def __init__(self, sources: Sources, llm: LLM, *, grounding: bool = True):
+    def __init__(self, sources: Sources, llm: LLM, *, grounding: bool = True, modus: Modus = "lernen"):
         self.sources = sources
         self.llm = llm
         self.grounding = grounding
+        self.modus: Modus = modus
 
     async def frage_formulieren(self, dossier: Dossier, frage: str | None, lesarten: list[str] | None) -> Auslegungsfrage:
         if frage and lesarten and len(lesarten) >= 2:
@@ -133,7 +141,8 @@ class Auslegung:
         return await self.llm.structured(system, user, Kritik)
 
     async def schluss(self, frage: Auslegungsfrage, dossier: Dossier, berichte: list[ElementBericht], abw: Abwaegung, kritik: Kritik) -> Ergebnis:
-        system = methodik.GRUNDREGELN + "\n" + methodik.SCHLUSSREGELN
+        regeln = methodik.SCHLUSSREGELN if self.modus == "lernen" else methodik.SCHLUSSREGELN_PRAXIS
+        system = methodik.GRUNDREGELN + "\n" + regeln
         user = (_frage_block(frage) + "\n\n" + _dossier_block(dossier)
                 + "\n\nAbwägung:\n" + json.dumps(abw.model_dump(), ensure_ascii=False, indent=1)
                 + "\n\nKritik:\n" + json.dumps(kritik.model_dump(), ensure_ascii=False, indent=1)
@@ -166,7 +175,8 @@ class Auslegung:
         if all(b.richtung == drei[0].richtung and not b.gegenbefund.strip() for b in berichte):
             hinweise.append("Alle Gutachter weisen ohne Gegenbefund in dieselbe Richtung: gemeinsamer blinder Fleck möglich.")
 
-        lauf = Lauf(dossier.norm.label, af, dossier, berichte, gestrichen, abw, kritik, ergebnis, hinweise=hinweise)
+        lauf = Lauf(dossier.norm.label, af, dossier, berichte, gestrichen, abw, kritik, ergebnis, hinweise=hinweise, modus=self.modus,
+                    modell=getattr(self.llm, "model", "unbekannt"), datum=dt.date.today().strftime("%d.%m.%Y"))
         lauf.text = render_markdown(lauf)
         lauf.freigabe = await pruefe_text(lauf.text, dossier, self.sources.opencaselaw, grounding=self.grounding)
         lauf.text = render_markdown(lauf)

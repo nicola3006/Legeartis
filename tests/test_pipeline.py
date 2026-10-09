@@ -78,3 +78,19 @@ async def test_pipeline_end_to_end(sources):
     assert "Gestrichene Befunde" in lauf.text
     assert "BGE 140 III 481, E. 2 [verwendet]" in lauf.text
     assert "Rechtsmissbrauch" in lauf.text
+    assert "## 7. In einfachen Worten" in lauf.text
+    assert "## 10. KI-Vermerk" in lauf.text
+    assert "Legeartis mit Claude, unbekannt, Anthropic" in lauf.text
+    assert lauf.frage.frage in lauf.text
+    assert "Prüfumfang" in lauf.text
+
+
+async def test_pipeline_praxis_modus(sources):
+    llm = FakeLLM()
+    lauf = await Auslegung(sources, llm, modus="praxis").run("ZGB", "2")
+    schluss_system = [c for c in llm.calls if c[0] == "Ergebnis"]
+    assert len(schluss_system) == 1
+    assert "## 7. Praktische Konsequenz" in lauf.text
+    assert "In einfachen Worten" not in lauf.text
+    assert "KI-Vermerk" not in lauf.text
+    assert "Prüfumfang" in lauf.text

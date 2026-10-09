@@ -1,7 +1,7 @@
 [project]
 name = "legeartis"
 version = "0.1.0"
-description = "Schweizer Rechtsrecherche für Einsteiger: Normtext, Materialien, Rechtsprechung und Lehre aus Opencaselaw, Fedlex und Onlinekommentar, methodisch ausgelegt und vor der Ausgabe verifiziert."
+description = "Schweizer Rechtsrecherche für Studium und Praxis: Normtext, Materialien, Rechtsprechung und Lehre aus Opencaselaw, Fedlex und Onlinekommentar, methodisch ausgelegt und vor der Ausgabe verifiziert."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }

@@ -6,15 +6,25 @@ klein ist. Die Punkte unter «Offene Fragen» brauchen deine Antwort.
 
 ## 1. Ziel, wie ich es verstanden habe
 
-Ein Werkzeug für Einsteigerinnen und Einsteiger, das zu einer Schweizer
-Rechtsnorm auf Knopfdruck die Datenbanken durchsucht, die Norm methodisch
-auslegt, sie erklärt und dabei nichts behauptet, was nicht belegt ist.
+Ein Werkzeug für Studierende der Rechtswissenschaft und für Jurist:innen in
+der Praxis, das zu einer Schweizer Rechtsnorm auf Knopfdruck die Datenbanken
+durchsucht, die Norm methodisch auslegt und dabei nichts behauptet, was nicht
+belegt ist.
+
+**Die beiden Zielgruppen ziehen in verschiedene Richtungen.** Studierende
+sollen die Methode sehen und das Denken nicht auslagern; die Fakultät
+verlangt die Kennzeichnung von KI-Nutzung, und KI-Erzeugnisse gelten nicht
+als wissenschaftliche Quellen. Praktiker:innen brauchen Tempo, zitierfertige
+Fundstellen und vor allem Vollständigkeit. Deshalb zwei Modi mit derselben
+Prüfung und unterschiedlichem Schluss (`lernen`, `praxis`). Was keiner der
+Modi leisten kann: bescheinigen, dass keine einschlägige Quelle fehlt. Das
+steht in jeder Ausgabe als «Prüfumfang».
 
 ## 2. Was ich an der Idee hinterfrage
 
-**«Rechtsfragen direkt beantworten» ist für Einsteiger das falsche Versprechen.**
-Wer die Methode noch nicht kennt, kann eine selbstbewusste Falschantwort nicht
-erkennen. Deshalb liefert das Tool keine Antwort, sondern eine Prüfung:
+**«Rechtsfragen direkt beantworten» ist das falsche Versprechen.**
+Studierende können eine selbstbewusste Falschantwort noch nicht erkennen,
+Praktiker:innen haften für sie. Deshalb liefert das Tool keine Antwort, sondern eine Prüfung:
 je Element Richtung und Stärke, dann eine Einstufung (überzeugend, vertretbar
 aber offen, offen). «Offen» ist ein vollwertiges Ergebnis.
 
@@ -58,7 +68,7 @@ Kritik ist der erste Sparversuch, den ich vorschlage.
 | Modellanbindung | Anthropic SDK direkt, strukturierte Ausgaben (`output_config.format`) | Claude Agent SDK: bringt Dateisystem-Werkzeuge und Subagents mit, aber weniger Kontrolle über jeden Schritt und jede Ausgabe. MCP-Connector (serverseitig): Beta, keine Möglichkeit, Serverantworten vor dem Modell zu prüfen (z.B. den `_hint` der Botschaftssuche). |
 | Ablauf | Code-gesteuerte Pipeline mit sieben Modellschritten | Freier Agent mit Werkzeugen: schneller gebaut, aber nicht überprüfbar, siehe oben. |
 | Zitate | Ausschliesslich aus `cite` und `get_erwaegung`; Modell nennt nur Beleg-IDs aus dem Dossier | Modell zitiert frei und wird nachträglich geprüft: Prüfung ist dann die einzige Verteidigung. Mit Beleg-IDs ist Erfinden strukturell unmöglich, die Prüfung ist die zweite Linie. |
-| Freigabe | Lokales Zitat-Gate und `attest_response`; ohne Freigabe wird der Text als «nicht freigegeben» markiert, nicht verworfen | Stillschweigend senden: unvertretbar für Einsteiger. |
+| Freigabe | Lokales Zitat-Gate und `attest_response`; ohne Freigabe wird der Text als «nicht freigegeben» markiert, nicht verworfen | Stillschweigend senden: unvertretbar, weil Studierende den Fehler nicht erkennen und Praktiker:innen dafür haften. |
 | Tests | Aufgezeichnete echte Serverantworten | Mocks aus dem Kopf: hätten die Markdown-Antworten von `find_leading_cases` und die Volltext-Falle der Botschaftssuche nicht gezeigt. |
 | Oberfläche | Zuerst Kommandozeile | Web-UI zuerst: bindet Aufwand, bevor der Kern stimmt. |
 
@@ -108,8 +118,10 @@ Beleg-ID-Gate und `attest_response` ersetzt; ein separater Prüf-Aufruf mit
 
 ## 6. Offene Fragen an dich
 
-1. Wer genau ist «Einsteiger»: Studierende im ersten Jahr, oder Laien ohne
-   juristische Ausbildung? Davon hängt ab, wie viel Methode sichtbar sein soll.
+1. Beantwortet: Zielgruppe sind Studierende und Jurist:innen in der Praxis.
+   Umgesetzt als zwei Modi. Offen bleibt, ob der Lernmodus einen
+   sokratischen Schritt braucht, der die Lesarten zuerst von der Studentin
+   verlangt, bevor das Tool seine zeigt.
 2. Hast du die URL des Fedlex-MCP-Konnektors? Ohne sie läuft das Dossier
    nur über den Opencaselaw-Spiegel.
 3. Sollen Sachverhalte (mögliche Personendaten) an die Claude API gehen? Für
