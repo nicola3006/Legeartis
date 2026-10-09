@@ -139,10 +139,11 @@ Beleg-ID-Gate und `attest_response` ersetzt; ein separater Prüf-Aufruf mit
 
 ## 6. Offene Fragen an dich
 
-1. Beantwortet: Werkzeug zur effizienten Lösung von Rechtsfragen, keine
+1. Entschieden: Werkzeug zur effizienten Lösung von Rechtsfragen, keine
    Lernapp. Umgesetzt als `frage` (Normalfall) mit Triage zu `auslegen`
-   (Streitfall). Offen: Soll `frage` bei «Auslegungsbedarf» die vertiefte
-   Auslegung gleich selbst anstossen (Kosten), oder nur vorschlagen (heute)?
+   (Streitfall). `frage` schlägt die vertiefte Auslegung bei
+   «Auslegungsbedarf» nur vor und startet sie nicht selbst; der Entscheid
+   über die zusätzlichen Modellaufrufe bleibt bei der Anwenderin.
 2. Hast du die URL des Fedlex-MCP-Konnektors? Ohne sie läuft das Dossier
    nur über den Opencaselaw-Spiegel.
 3. Sollen Sachverhalte (mögliche Personendaten) an die Claude API gehen? Für
