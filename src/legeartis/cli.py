@@ -65,11 +65,11 @@ def dossier(
                 return
             console.rule(f"Dossier {d.norm.label}")
             for bid, desc in d.beleg_index().items():
-                console.print(f"- {bid}: {desc}")
+                console.print(f"- {bid}: {desc}", markup=False)
             if d.warnungen:
                 console.print("[yellow]Warnungen:")
                 for w in d.warnungen:
-                    console.print(f"  - {w}")
+                    console.print(f"  - {w}", markup=False)
 
     asyncio.run(run())
 
