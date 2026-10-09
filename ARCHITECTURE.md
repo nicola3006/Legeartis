@@ -6,19 +6,20 @@ klein ist. Die Punkte unter «Offene Fragen» brauchen deine Antwort.
 
 ## 1. Ziel, wie ich es verstanden habe
 
-Ein Werkzeug für Studierende der Rechtswissenschaft und für Jurist:innen in
-der Praxis, das zu einer Schweizer Rechtsnorm auf Knopfdruck die Datenbanken
-durchsucht, die Norm methodisch auslegt und dabei nichts behauptet, was nicht
+Ein Werkzeug zur effizienten Lösung von Schweizer Rechtsfragen für
+Jurist:innen und Studierende, keine Lernapp. Es durchsucht auf Knopfdruck die
+Datenbanken, antwortet im Gutachtenstil und behauptet nichts, was nicht
 belegt ist.
 
-**Die beiden Zielgruppen ziehen in verschiedene Richtungen.** Studierende
-sollen die Methode sehen und das Denken nicht auslagern; die Fakultät
-verlangt die Kennzeichnung von KI-Nutzung, und KI-Erzeugnisse gelten nicht
-als wissenschaftliche Quellen. Praktiker:innen brauchen Tempo, zitierfertige
-Fundstellen und vor allem Vollständigkeit. Deshalb zwei Modi mit derselben
-Prüfung und unterschiedlichem Schluss (`lernen`, `praxis`). Was keiner der
-Modi leisten kann: bescheinigen, dass keine einschlägige Quelle fehlt. Das
-steht in jeder Ausgabe als «Prüfumfang».
+**Effizienz und Verifikation ziehen in verschiedene Richtungen.** Der
+Normalweg (`frage`) braucht drei Modellaufrufe: Rechercheplan, Auswahl der
+Treffer, Antwort. Die vertiefte Auslegung einer Norm (`auslegen`) braucht
+sieben und ist dem Streitfall vorbehalten. Die Triage macht `frage` selbst:
+Unter «Auslegungsbedarf» nennt es die Normen, bei denen die Antwort von einer
+unklaren Reichweite abhängt, mit dem passenden `auslegen`-Aufruf. Was kein
+Weg leisten kann: bescheinigen, dass keine einschlägige Quelle fehlt. Das
+steht in jeder Ausgabe als «Prüfumfang». Der Lernmodus von `auslegen`
+(Glossar, KI-Vermerk) bleibt als Option für studentische Arbeiten bestehen.
 
 ## 2. Was ich an der Idee hinterfrage
 
@@ -72,7 +73,27 @@ Kritik ist der erste Sparversuch, den ich vorschlage.
 | Tests | Aufgezeichnete echte Serverantworten | Mocks aus dem Kopf: hätten die Markdown-Antworten von `find_leading_cases` und die Volltext-Falle der Botschaftssuche nicht gezeigt. |
 | Oberfläche | Zuerst Kommandozeile | Web-UI zuerst: bindet Aufwand, bevor der Kern stimmt. |
 
-## 4. Datenfluss einer Auslegung
+## 4. Datenfluss
+
+### Rechtsfrage (`frage`, Normalfall)
+
+```
+Rechtsfrage (+ Sachverhalt, Kanton)
+  ├─ Modell 1  Rechercheplan: abstrakte Frage, Suchanfragen, Gericht, Prüfpunkte
+  ├─ Code      search_laws je Anfrage (Bund und Kantone) ─ search_decisions je Anfrage
+  ├─ Modell 2  Normauswahl: Prüfpunkte mit Normreferenzen, relevante Entscheide, verworfene Treffer
+  ├─ Code      Fallakte: get_law je Norm ─ Entscheide mit Zitierstring aus der Suche
+  │            find_leading_cases + cite zur Hauptnorm ─ get_erwaegung für Treffer mit Pinpoint
+  ├─ Modell 3  Antwort: Kurzantwort, Prüfung (Obersatz mit Beleg-IDs, Subsumtion ohne),
+  │            Sicherheit, Auslegungsbedarf, offene Recherche
+  └─ Gates     Beleg-IDs gegen die Fallakte, Zitate im Text, attest_response
+```
+
+`search_decisions` liefert strukturierte Treffer mit Zitierstring und
+Pinpoint. Die Markdown-Liste von `find_leading_cases` dient nur als
+Kandidatenliste; jeder Kandidat geht durch `cite`.
+
+### Auslegung einer Norm (`auslegen`, Streitfall)
 
 ```
 Norm (z.B. ZGB 2), Frage, Lesarten
@@ -118,25 +139,25 @@ Beleg-ID-Gate und `attest_response` ersetzt; ein separater Prüf-Aufruf mit
 
 ## 6. Offene Fragen an dich
 
-1. Beantwortet: Zielgruppe sind Studierende und Jurist:innen in der Praxis.
-   Umgesetzt als zwei Modi. Offen bleibt, ob der Lernmodus einen
-   sokratischen Schritt braucht, der die Lesarten zuerst von der Studentin
-   verlangt, bevor das Tool seine zeigt.
+1. Beantwortet: Werkzeug zur effizienten Lösung von Rechtsfragen, keine
+   Lernapp. Umgesetzt als `frage` (Normalfall) mit Triage zu `auslegen`
+   (Streitfall). Offen: Soll `frage` bei «Auslegungsbedarf» die vertiefte
+   Auslegung gleich selbst anstossen (Kosten), oder nur vorschlagen (heute)?
 2. Hast du die URL des Fedlex-MCP-Konnektors? Ohne sie läuft das Dossier
    nur über den Opencaselaw-Spiegel.
 3. Sollen Sachverhalte (mögliche Personendaten) an die Claude API gehen? Für
    Falllösungen ja, für ein öffentliches Tool braucht es eine Datenschutz-
    Entscheidung. Das bettercallclaude-Plugin zeigt mit Ollama einen lokalen Weg.
-4. Reicht die Kommandozeile für die erste Erprobung mit echten Studierenden,
-   oder brauchst du früh eine Web-Oberfläche?
+4. Reicht die Kommandozeile für die erste Erprobung, oder brauchst du früh
+   eine Web-Oberfläche?
 5. Akzeptierst du die Kosten von Opus für alle sieben Schritte, oder soll ich
    den gemischten Betrieb (Sonnet für Gutachter) als Erstes messen?
 
 ## 7. Nächste Schritte, in dieser Reihenfolge
 
-1. Live-Test des MCP-Clients gegen Opencaselaw bei dir; Fixtures mit dem
-   `RecordingCaller` erweitern (OR 333 als zweite Norm, weil dort Botschaft
-   und Erwägungen reichhaltig sind).
+1. Live-Test des MCP-Clients gegen Opencaselaw bei dir; dann `frage` mit
+   Schlüssel an der aufgezeichneten Praxisfrage (Betriebserwerb im Konkurs),
+   Prompts anhand der echten Modellausgabe nachschärfen.
 2. Erster Lauf mit API-Schlüssel; Schemata und Prompts anhand der Ausgabe
    nachschärfen.
 3. `check_claim_support` je tragender Fundstelle als Stufe 3.

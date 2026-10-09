@@ -1,21 +1,300 @@
 [
- {"tool": "get_law", "args": {"abbreviation": "ZGB", "article": "2", "language": "de"}, "file": "opencaselaw__get_law__zgb2_de.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "get_law", "args": {"abbreviation": "ZGB", "article": "2", "language": "fr"}, "file": "opencaselaw__get_law__zgb2_fr.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "get_law", "args": {"abbreviation": "ZGB", "article": "2", "language": "it"}, "file": "opencaselaw__get_law__zgb2_it.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "find_leading_cases", "args": {"law_code": "ZGB", "article": "2", "limit": 5}, "file": "opencaselaw__find_leading_cases__zgb2.md", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "cite", "args": {"reference": "BGE 140 III 481"}, "file": "opencaselaw__cite__140_III_481.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "cite", "args": {"reference": "BGE 140 III 481", "pinpoint": "2.3"}, "file": "opencaselaw__cite__140_III_481_e23.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "cite", "args": {"reference": "BGE 129 III 493"}, "file": "opencaselaw__cite__129_III_493.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "cite", "args": {"reference": "BGE 138 III 401"}, "file": "opencaselaw__cite__138_III_401.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "cite", "args": {"reference": "BGE 125 III 257"}, "file": "opencaselaw__cite__125_III_257.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "cite", "args": {"reference": "BGE 143 III 666"}, "file": "opencaselaw__cite__143_III_666.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "get_erwaegung", "args": {"decision_id": "bge_BGE_140_III_481", "e_number": "2"}, "file": "opencaselaw__get_erwaegung__140_III_481_e2.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "get_erwaegung", "args": {"decision_id": "bge_BGE_140_III_481", "e_number": "2.3"}, "file": "opencaselaw__get_erwaegung__140_III_481_e23.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "get_erwaegung", "args": {"decision_id": "bge_BGE_143_III_666", "e_number": "3"}, "file": "opencaselaw__get_erwaegung__143_III_666_e3.json", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "get_article_purpose", "args": {"sr_number": "210", "article": "2", "max_paragraphs": 3}, "file": "opencaselaw__get_article_purpose__210_2.json", "source": "opencaselaw", "recorded": "2026-10-09", "note": "Echte Antwort, auf zwei Quellen gekürzt"},
- {"tool": "get_commentary", "args": {"abbreviation": "ZGB", "article": "2"}, "file": "opencaselaw__get_commentary__zgb2.md", "source": "opencaselaw", "recorded": "2026-10-09"},
- {"tool": "attest_response", "args": {"draft_text": "Art. 2 Abs. 2 ZGB hält fest: «Der offenbare Missbrauch eines Rechtes findet keinen Rechtsschutz.» Nach BGE 140 III 481, E. 2.3 ist eine Betreibung nur in Ausnahmefällen wegen Rechtsmissbrauchs nichtig. Dazu BGE 999 III 1, E. 1.", "audit_grounding": false}, "file": "opencaselaw__attest_response__probe.json", "source": "opencaselaw", "recorded": "2026-10-09", "note": "Entwurf mit einer absichtlich erfundenen Fundstelle"},
- {"tool": "get_article", "args": {"id": "ch-fedlex--210--2", "preferences": {"language": "de"}}, "file": "fedlex__get_article__210_2.json", "source": "fedlex", "recorded": "2026-10-09"},
- {"tool": "get_legislation_versions", "args": {"legislationId": "ch-fedlex--210", "language": "de"}, "file": "fedlex__get_legislation_versions__210.json", "source": "fedlex", "recorded": "2026-10-09"},
- {"tool": "search_commentaries", "args": {"search": "Art. 2 ZGB", "language": "de"}, "file": "onlinekommentar__search_commentaries__art2zgb.json", "source": "onlinekommentar", "recorded": "2026-10-09", "note": "Auf 6 Treffer gekürzt; zeigt, dass die Volltextsuche vor allem Erwähnungen liefert"}
+ {
+  "tool": "get_law",
+  "args": {
+   "abbreviation": "ZGB",
+   "article": "2",
+   "language": "de"
+  },
+  "file": "opencaselaw__get_law__zgb2_de.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "get_law",
+  "args": {
+   "abbreviation": "ZGB",
+   "article": "2",
+   "language": "fr"
+  },
+  "file": "opencaselaw__get_law__zgb2_fr.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "get_law",
+  "args": {
+   "abbreviation": "ZGB",
+   "article": "2",
+   "language": "it"
+  },
+  "file": "opencaselaw__get_law__zgb2_it.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "find_leading_cases",
+  "args": {
+   "law_code": "ZGB",
+   "article": "2",
+   "limit": 5
+  },
+  "file": "opencaselaw__find_leading_cases__zgb2.md",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 140 III 481"
+  },
+  "file": "opencaselaw__cite__140_III_481.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 140 III 481",
+   "pinpoint": "2.3"
+  },
+  "file": "opencaselaw__cite__140_III_481_e23.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 129 III 493"
+  },
+  "file": "opencaselaw__cite__129_III_493.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 138 III 401"
+  },
+  "file": "opencaselaw__cite__138_III_401.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 125 III 257"
+  },
+  "file": "opencaselaw__cite__125_III_257.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 143 III 666"
+  },
+  "file": "opencaselaw__cite__143_III_666.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "get_erwaegung",
+  "args": {
+   "decision_id": "bge_BGE_140_III_481",
+   "e_number": "2"
+  },
+  "file": "opencaselaw__get_erwaegung__140_III_481_e2.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "get_erwaegung",
+  "args": {
+   "decision_id": "bge_BGE_140_III_481",
+   "e_number": "2.3"
+  },
+  "file": "opencaselaw__get_erwaegung__140_III_481_e23.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "get_erwaegung",
+  "args": {
+   "decision_id": "bge_BGE_143_III_666",
+   "e_number": "3"
+  },
+  "file": "opencaselaw__get_erwaegung__143_III_666_e3.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "get_article_purpose",
+  "args": {
+   "sr_number": "210",
+   "article": "2",
+   "max_paragraphs": 3
+  },
+  "file": "opencaselaw__get_article_purpose__210_2.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09",
+  "note": "Echte Antwort, auf zwei Quellen gekürzt"
+ },
+ {
+  "tool": "get_commentary",
+  "args": {
+   "abbreviation": "ZGB",
+   "article": "2"
+  },
+  "file": "opencaselaw__get_commentary__zgb2.md",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "attest_response",
+  "args": {
+   "draft_text": "Art. 2 Abs. 2 ZGB hält fest: «Der offenbare Missbrauch eines Rechtes findet keinen Rechtsschutz.» Nach BGE 140 III 481, E. 2.3 ist eine Betreibung nur in Ausnahmefällen wegen Rechtsmissbrauchs nichtig. Dazu BGE 999 III 1, E. 1.",
+   "audit_grounding": false
+  },
+  "file": "opencaselaw__attest_response__probe.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09",
+  "note": "Entwurf mit einer absichtlich erfundenen Fundstelle"
+ },
+ {
+  "tool": "get_article",
+  "args": {
+   "id": "ch-fedlex--210--2",
+   "preferences": {
+    "language": "de"
+   }
+  },
+  "file": "fedlex__get_article__210_2.json",
+  "source": "fedlex",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "get_legislation_versions",
+  "args": {
+   "legislationId": "ch-fedlex--210",
+   "language": "de"
+  },
+  "file": "fedlex__get_legislation_versions__210.json",
+  "source": "fedlex",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "search_commentaries",
+  "args": {
+   "search": "Art. 2 ZGB",
+   "language": "de"
+  },
+  "file": "onlinekommentar__search_commentaries__art2zgb.json",
+  "source": "onlinekommentar",
+  "recorded": "2026-10-09",
+  "note": "Auf 6 Treffer gekürzt; zeigt, dass die Volltextsuche vor allem Erwähnungen liefert"
+ },
+ {
+  "tool": "search_laws",
+  "args": {
+   "query": "Betriebsübergang Arbeitsverhältnis Erwerber",
+   "jurisdiction": "federal",
+   "limit": 8
+  },
+  "file": "opencaselaw__search_laws__betriebsuebergang.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09",
+  "note": "Auf 5 Treffer gekürzt"
+ },
+ {
+  "tool": "search_decisions",
+  "args": {
+   "query": "\"Art. 333 Abs. 3 OR\" Konkurs Solidarhaftung Erwerber",
+   "court": "bge",
+   "limit": 8
+  },
+  "file": "opencaselaw__search_decisions__333_konkurs.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09",
+  "note": "Auf 4 Treffer gekürzt; der vierte ist ein Fehltreffer, wie im Original"
+ },
+ {
+  "tool": "get_law",
+  "args": {
+   "abbreviation": "OR",
+   "article": "333",
+   "language": "de"
+  },
+  "file": "opencaselaw__get_law__or333_de.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "get_law",
+  "args": {
+   "abbreviation": "OR",
+   "article": "333b",
+   "language": "de"
+  },
+  "file": "opencaselaw__get_law__or333b_de.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "find_leading_cases",
+  "args": {
+   "law_code": "OR",
+   "article": "333",
+   "limit": 3
+  },
+  "file": "opencaselaw__find_leading_cases__or333.md",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 129 III 335"
+  },
+  "file": "opencaselaw__cite__129_III_335.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 137 III 487"
+  },
+  "file": "opencaselaw__cite__137_III_487.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 123 III 466"
+  },
+  "file": "opencaselaw__cite__123_III_466.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "cite",
+  "args": {
+   "reference": "BGE 127 V 183"
+  },
+  "file": "opencaselaw__cite__127_V_183.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ },
+ {
+  "tool": "get_erwaegung",
+  "args": {
+   "decision_id": "bge_BGE_129_III_335",
+   "e_number": "5.2"
+  },
+  "file": "opencaselaw__get_erwaegung__129_III_335_e52.json",
+  "source": "opencaselaw",
+  "recorded": "2026-10-09"
+ }
 ]

@@ -9,13 +9,13 @@ from ..config import Settings
 from .fedlex import Fedlex
 from .mcp_client import McpToolCaller
 from .onlinekommentar import Onlinekommentar
-from .opencaselaw import Opencaselaw
+from .opencaselaw import OpencaselawSuche
 from .protocol import ToolCaller
 
 
 @dataclass
 class Sources:
-    opencaselaw: Opencaselaw
+    opencaselaw: OpencaselawSuche
     fedlex: Fedlex | None
     onlinekommentar: Onlinekommentar | None
     hinweise: list[str]
@@ -36,7 +36,7 @@ class Sources:
         if onlinekommentar is None:
             hinweise.append("Onlinekommentar-MCP nicht konfiguriert: Lehre nur aus Opencaselaw.")
         return cls(
-            opencaselaw=Opencaselaw(opencaselaw),
+            opencaselaw=OpencaselawSuche(opencaselaw),
             fedlex=Fedlex(fedlex) if fedlex else None,
             onlinekommentar=Onlinekommentar(onlinekommentar) if onlinekommentar else None,
             hinweise=hinweise,

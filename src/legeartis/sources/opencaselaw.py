@@ -12,10 +12,12 @@ import re
 from typing import Any
 
 from .models import (
+    Entscheidtreffer,
     Erwaegung,
     Kommentarstelle,
     Leitentscheid,
     Materialienstelle,
+    Normtreffer,
     Sprachfassung,
     Zitat,
 )
@@ -203,3 +205,70 @@ class Opencaselaw:
         if not isinstance(data, dict):
             raise SourceError("attest_response: unbekanntes Antwortformat")
         return data
+
+
+class OpencaselawSuche(Opencaselaw):
+    """Erweiterung um die Sachfragen-Suchen (search_laws, search_decisions)."""
+
+    async def search_laws(
+        self, query: str, *, jurisdiction: str = "all", canton: str | None = None, limit: int = 8
+    ) -> list[Normtreffer]:
+        args: dict[str, Any] = {"query": query, "jurisdiction": jurisdiction, "limit": limit}
+        if canton:
+            args["canton"] = canton
+        data = await self.caller.call("search_laws", args)
+        if not isinstance(data, dict):
+            raise SourceError("search_laws: unbekanntes Antwortformat")
+        out: list[Normtreffer] = []
+        for h in data.get("hits", []):
+            out.append(
+                Normtreffer(
+                    level=h.get("level", "?"),
+                    canton=h.get("canton"),
+                    sr_number=str(h.get("sr_number", "")),
+                    abbreviation=h.get("abbreviation") or "",
+                    article=str(h.get("article_num", "")),
+                    reference=h.get("reference") or f"Art. {h.get('article_num')} {h.get('abbreviation')}",
+                    title=h.get("title"),
+                    heading=h.get("heading"),
+                    snippet=h.get("snippet_text"),
+                    source_url=h.get("source_url"),
+                )
+            )
+        return out
+
+    async def search_decisions(
+        self, query: str, *, court: str | None = None, limit: int = 8, canton: str | None = None
+    ) -> list[Entscheidtreffer]:
+        args: dict[str, Any] = {"query": query, "limit": limit}
+        if court:
+            args["court"] = court
+        if canton:
+            args["canton"] = canton
+        data = await self.caller.call("search_decisions", args)
+        if not isinstance(data, dict):
+            raise SourceError("search_decisions: unbekanntes Antwortformat")
+        out: list[Entscheidtreffer] = []
+        for r in data.get("results", []):
+            pin = r.get("pinpoint") or {}
+            out.append(
+                Entscheidtreffer(
+                    decision_id=r.get("canonical_decision_id") or r.get("decision_id", ""),
+                    court=r.get("court"),
+                    docket_number=r.get("docket_number"),
+                    decision_date=r.get("decision_date"),
+                    language=r.get("language"),
+                    regeste=r.get("regeste"),
+                    relevance_score=r.get("relevance_score"),
+                    citation_count=r.get("citation_count"),
+                    statutes=list(r.get("statutes") or []),
+                    citation_string_de=r.get("citation_string_de"),
+                    citation_string_fr=r.get("citation_string_fr"),
+                    citation_string_it=r.get("citation_string_it"),
+                    canonical_url=r.get("canonical_url"),
+                    pinpoint_e_number=pin.get("e_number"),
+                    pinpoint_sentence=pin.get("matched_sentence"),
+                    pinpoint_confidence=pin.get("confidence"),
+                )
+            )
+        return out

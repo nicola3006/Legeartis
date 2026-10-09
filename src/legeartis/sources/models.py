@@ -185,3 +185,60 @@ class Dossier(BaseModel):
                     s for s in (erw.citation_string_de, erw.citation_string_fr, erw.citation_string_it) if s
                 )
         return out
+
+
+class Normtreffer(BaseModel):
+    """Treffer von search_laws: ein Artikel, der zur Sachfrage passen könnte."""
+
+    level: str
+    canton: str | None = None
+    sr_number: str
+    abbreviation: str
+    article: str
+    reference: str
+    title: str | None = None
+    heading: str | None = None
+    snippet: str | None = None
+    source_url: str | None = None
+
+
+class Entscheidtreffer(BaseModel):
+    """Treffer von search_decisions: strukturiert, mit Zitierstring und Pinpoint."""
+
+    decision_id: str
+    court: str | None = None
+    docket_number: str | None = None
+    decision_date: str | None = None
+    language: str | None = None
+    regeste: str | None = None
+    relevance_score: float | None = None
+    citation_count: int | None = None
+    statutes: list[str] = Field(default_factory=list)
+    citation_string_de: str | None = None
+    citation_string_fr: str | None = None
+    citation_string_it: str | None = None
+    canonical_url: str | None = None
+    pinpoint_e_number: str | None = None
+    pinpoint_sentence: str | None = None
+    pinpoint_confidence: str | None = None
+
+    def als_leitentscheid(self) -> Leitentscheid:
+        zitat = Zitat(
+            decision_id=self.decision_id,
+            exists=bool(self.citation_string_de),
+            citation_string_de=self.citation_string_de,
+            citation_string_fr=self.citation_string_fr,
+            citation_string_it=self.citation_string_it,
+            canonical_url=self.canonical_url,
+            decision_date=self.decision_date,
+        )
+        return Leitentscheid(
+            decision_id=self.decision_id,
+            label=self.citation_string_de or self.docket_number or self.decision_id,
+            url=self.canonical_url,
+            date=self.decision_date,
+            court=self.court,
+            regeste=self.regeste,
+            citation_count=self.citation_count,
+            zitat=zitat,
+        )

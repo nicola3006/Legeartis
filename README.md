@@ -1,29 +1,35 @@
 # Legeartis
 
-Schweizer Rechtsrecherche für Studierende der Rechtswissenschaft und
-Jurist:innen in der Praxis: Das Tool holt zu einer Norm den
-Gesetzestext in drei Sprachen, die Fassungen, Botschaftsstellen, Leitentscheide
-mit Erwägungen und Kommentierungen aus **Opencaselaw**, **Fedlex** und
-**Onlinekommentar**, legt die Norm nach der Methodik der Gesetzesauslegung
-(Art. 1 ZGB) aus und gibt das Ergebnis erst frei, wenn jede Fundstelle
-nachgeprüft ist.
+Werkzeug zur effizienten Lösung von Schweizer Rechtsfragen für Jurist:innen
+und Studierende der Rechtswissenschaft. Es findet zu einer Rechtsfrage die
+einschlägigen Normen und die Rechtsprechung in **Opencaselaw**, **Fedlex** und
+**Onlinekommentar**, antwortet im Gutachtenstil und gibt die Antwort erst
+frei, wenn jede Fundstelle nachgeprüft ist. Wo die Antwort an der Reichweite
+einer umstrittenen Norm hängt, bietet es die vertiefte Auslegung nach den vier
+Elementen (Art. 1 ZGB) an.
+
+## Zwei Wege
+
+| | `legeartis frage` | `legeartis auslegen` |
+|---|---|---|
+| Wofür | Rechtsfrage lösen (Normalfall) | Reichweite einer einzelnen Norm klären (Streitfall) |
+| Ablauf | Rechercheplan, Normen- und Entscheidsuche, Auswahl, Antwort | Dossier, vier getrennte Gutachter, Abwägung, Kritik, Schluss |
+| Modellaufrufe | 3 | 7 |
+| Ergebnis | Kurzantwort, Prüfung im Gutachtenstil, Sicherheit, Auslegungsbedarf, offene Recherche | Element, Richtung, Stärke, Grund; Einstufung; Schritt beim Namen |
+
+`frage` meldet unter «Auslegungsbedarf», bei welchen Normen die Antwort von
+einer unklaren oder umstrittenen Reichweite abhängt, und nennt den passenden
+`auslegen`-Aufruf. So bleibt die teure Methode dem Streitfall vorbehalten.
 
 Stand: Version 0.1, Gerüst mit Quellenschicht, Auslegungs-Pipeline und
 Tests gegen aufgezeichnete Serverantworten. Die Live-Verbindung zu den
 MCP-Servern ist noch nicht getestet (siehe ARCHITECTURE.md, «Risiken»).
 
-## Zwei Modi
-
-| | `--modus lernen` (Standard) | `--modus praxis` |
-|---|---|---|
-| Für | Studierende | Jurist:innen in der Praxis |
-| Methode | Alle Schritte sichtbar, Befunde je Element | Dieselbe Prüfung, knapper Schluss im Gutachtenstil |
-| Schluss | Einfache Erklärung und Glossar | Praktische Konsequenz, offene Rechercheaufträge |
-| Zusatz | KI-Vermerk nach den Vorgaben der Fakultät (Unibe) | Hinweis zum Prüfumfang |
-
-Beide Modi laufen durch dieselben Gates. Der Prüfumfang ist in beiden Modi
-derselbe: geprüft werden die eigenen Fundstellen, Zitate und Normverweise des
-Textes, nicht die Vollständigkeit der Recherche.
+`auslegen` kennt `--modus praxis` (Standard) und `--modus lernen`
+(Methode mit Glossar und KI-Vermerk nach dem Merkblatt der RW-Fakultät Bern,
+für studentische Arbeiten). Der Prüfumfang ist überall derselbe: geprüft
+werden die eigenen Fundstellen, Zitate und Normverweise des Textes, nicht die
+Vollständigkeit der Recherche.
 
 ## Was das Tool anders macht als ein Chat
 
@@ -48,14 +54,18 @@ export LEGEARTIS_ONLINEKOMMENTAR_URL=... # optional
 ## Benutzung
 
 ```bash
+# Rechtsfrage lösen
+uv run legeartis frage "Haftet die Erwerberin eines Betriebs aus der Konkursmasse für vor der Übernahme fällige Löhne?" \
+  --sachverhalt-datei fall.txt --out antwort.md
+
 # Normtext in drei Sprachen
 uv run legeartis norm ZGB 2
 
 # Quellen-Dossier ohne Sprachmodell (JSON)
 uv run legeartis dossier ZGB 2 --json
 
-# Auslegung einer Norm mit Frage und Lesarten (Praxismodus)
-uv run legeartis auslegen OR 333 --modus praxis \
+# Vertiefte Auslegung einer Norm mit Frage und Lesarten
+uv run legeartis auslegen OR 333 \
   --frage "Erfasst Art. 333 Abs. 3 OR auch den Erwerb eines Betriebs aus der Konkursmasse?" \
   --lesart "Ja, jeder Betriebsübergang ist erfasst." \
   --lesart "Nein, der Erwerb aus der Konkursmasse ist ausgenommen." \
@@ -75,7 +85,9 @@ uv run pytest
 ```
 
 Die Tests laufen ohne Netz gegen `tests/fixtures`: echte Antworten der drei
-Server vom 9. Oktober 2026, aufgezeichnet für Art. 2 ZGB. Darunter eine
+Server vom 9. Oktober 2026, aufgezeichnet für Art. 2 ZGB (Auslegung) und für
+die Praxisfrage zur Haftung der Betriebserwerberin im Konkurs (Art. 333 und
+333b OR, BGE 129 III 335). Darunter eine
 `attest_response`-Antwort auf einen Entwurf mit einer absichtlich erfundenen
 Fundstelle, die der Server korrekt zurückgewiesen hat.
 
@@ -93,7 +105,12 @@ src/legeartis/
     fedlex.py            Adapter: get_article, get_legislation_versions
     onlinekommentar.py   Adapter: search_commentaries, get_commentary
     registry.py          Verbindet Konfiguration und Adapter
-  auslegung/             Methodik und Pipeline
+  frage/                 Rechtsfrage lösen (Normalfall, 3 Modellaufrufe)
+    schema.py            Rechercheplan, Normauswahl, Antwort
+    akte.py              Fallakte: Normen im Wortlaut, Entscheide, Erwägungen
+    pipeline.py          Plan, Suche, Auswahl, Antwort, Gates
+    render.py            Markdown-Ausgabe
+  auslegung/             Vertiefte Auslegung einer Norm (Streitfall, 7 Modellaufrufe)
     methodik.py          Vier Elemente, Hilfskriterien, Gewichtung, Lückenprüfung
     schema.py            Strukturierte Ausgaben der Gutachter, Abwägung, Kritik, Ergebnis
     dossier.py           Baut das Quellen-Dossier (deterministisch, ohne Sprachmodell)

@@ -10,12 +10,19 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Protocol
 
-from ..sources.models import Dossier
 from ..sources.opencaselaw import Opencaselaw
 from ..sources.protocol import SourceError
 from .schema import Befund, ElementBericht
+
+
+class Belegquelle(Protocol):
+    """Dossier (Auslegung) oder Fallakte (Rechtsfrage): beide kennen ihre Belege."""
+
+    def beleg_index(self) -> dict[str, str]: ...  # pragma: no cover
+    def zitierstrings(self) -> set[str]: ...  # pragma: no cover
+
 
 _CASE_PATTERNS = [
     re.compile(r"\b(?:BGE|ATF|DTF)\s+\d{1,3}\s+[IVX]+[a-z]?\s+\d{1,4}(?:,\s*(?:E\.|consid\.)\s*[\d.a-z/]+)?"),
@@ -31,7 +38,7 @@ class Gestrichen:
 
 
 def filtere_berichte(
-    berichte: list[ElementBericht], dossier: Dossier
+    berichte: list[ElementBericht], dossier: Belegquelle
 ) -> tuple[list[ElementBericht], list[Gestrichen]]:
     """Streicht Befunde ohne gültigen Beleg. Gibt bereinigte Berichte und die Streichliste zurück."""
     bekannt = set(dossier.beleg_index())
@@ -52,7 +59,7 @@ def filtere_berichte(
     return out, gestrichen
 
 
-def fremde_zitate(text: str, dossier: Dossier) -> list[str]:
+def fremde_zitate(text: str, dossier: Belegquelle) -> list[str]:
     """Zitierstrings im Text, die nicht aus dem Dossier stammen."""
     erlaubt = dossier.zitierstrings()
     stems = {s.split(",")[0].strip() for s in erlaubt}
@@ -79,7 +86,7 @@ class Freigabe:
 
 
 async def pruefe_text(
-    text: str, dossier: Dossier, oc: Opencaselaw | None, *, grounding: bool = True
+    text: str, dossier: Belegquelle, oc: Opencaselaw | None, *, grounding: bool = True
 ) -> Freigabe:
     fremd = fremde_zitate(text, dossier)
     if oc is None:

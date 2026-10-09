@@ -83,7 +83,7 @@ def auslegen(
     out: Path | None = typer.Option(None, help="Markdown-Datei für das Ergebnis"),
     fixtures: Path | None = typer.Option(None, help="Fixture-Verzeichnis statt Netz"),
     no_grounding: bool = typer.Option(False, help="attest_response ohne LLM-Richter (billiger)"),
-    modus: str = typer.Option("lernen", help="lernen (Studium: Methode sichtbar, Glossar, KI-Vermerk) oder praxis (knapp, Gutachtenstil)"),
+    modus: str = typer.Option("praxis", help="praxis (Standard: knapp, Gutachtenstil) oder lernen (Methode sichtbar, Glossar, KI-Vermerk)"),
 ):
     """Norm nach den vier Elementen auslegen, mit Freigabe."""
     if modus not in ("lernen", "praxis"):
@@ -103,6 +103,38 @@ def auslegen(
                 console.print(f"geschrieben: {out}")
             else:
                 print(lauf.text)
+
+    asyncio.run(run())
+
+
+@app.command()
+def frage(
+    rechtsfrage: str,
+    sachverhalt: str | None = typer.Option(None, help="Sachverhalt als Text"),
+    sachverhalt_datei: Path | None = typer.Option(None, help="Sachverhalt aus Datei"),
+    kanton: str | None = typer.Option(None, help="Kantonscode, wenn kantonales Recht berührt ist"),
+    out: Path | None = typer.Option(None, help="Markdown-Datei für das Ergebnis"),
+    fixtures: Path | None = typer.Option(None, help="Fixture-Verzeichnis statt Netz"),
+    no_grounding: bool = typer.Option(False, help="attest_response ohne LLM-Richter (billiger)"),
+):
+    """Rechtsfrage lösen: Normen finden, Rechtsprechung, Antwort im Gutachtenstil, Prüfung."""
+    from .auslegung.llm import AnthropicLLM
+    from .frage.pipeline import Rechtsfrage
+
+    sv = sachverhalt
+    if sachverhalt_datei:
+        sv = sachverhalt_datei.read_text("utf-8")
+
+    async def run() -> None:
+        async with AsyncExitStack() as stack:
+            s = await _sources(stack, fixtures)
+            llm = AnthropicLLM(Settings.from_env())
+            fall = await Rechtsfrage(s, llm, grounding=not no_grounding).run(rechtsfrage, sv, kanton=kanton)
+            if out:
+                out.write_text(fall.text, "utf-8")
+                console.print(f"geschrieben: {out}")
+            else:
+                print(fall.text)
 
     asyncio.run(run())
 
