@@ -1,0 +1,39 @@
+[project]
+name = "legeartis"
+version = "0.1.0"
+description = "Schweizer Rechtsrecherche für Einsteiger: Normtext, Materialien, Rechtsprechung und Lehre aus Opencaselaw, Fedlex und Onlinekommentar, methodisch ausgelegt und vor der Ausgabe verifiziert."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+    "anthropic[mcp]>=0.70",
+    "mcp>=1.10",
+    "pydantic>=2.7",
+    "typer>=0.12",
+    "rich>=13.7",
+]
+
+[project.scripts]
+legeartis = "legeartis.cli:app"
+
+[dependency-groups]
+dev = ["pytest>=8.2", "pytest-asyncio>=0.23", "ruff>=0.5"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/legeartis"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+extend-select = ["I", "B", "UP"]
+ignore = ["B008"]  # typer.Option in Signaturen ist das übliche Idiom
