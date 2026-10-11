@@ -1,23 +1,7 @@
-<!doctype html>
-<html lang="de-CH">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
-<title>RAB Werkbank</title>
-<!--
-  RAB Werkbank · klickbarer Prototyp mit fiktiven Fällen.
-  Eigenständige Seite: keine Serverkomponente, keine Datenbank, keine Verbindung zu Claude.
-  Öffnen: Datei im Browser öffnen (Doppelklick) oder von einem beliebigen Webserver ausliefern.
-  Einzige externe Abhängigkeit: Schriften von fonts.googleapis.com. Ohne Internet greifen Systemschriften.
-  Echte Angaben: nur die zitierten Urteile und Normen. Alle Fälle, Personen und Firmen sind erfunden.
--->
-<style>img{max-width:100%}[hidden]{display:none!important}</style>
-</head>
-<body>
+<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light dark"><title>RAB Werkbank</title><!-- RAB Werkbank, Prototyp v5: Akten als Ordner (Exxas-Modell), Word-Rundlauf, PDF, Gebührenrechnung. Standalone: Datei im Browser öffnen. --><style>img{max-width:100%}[hidden]{display:none!important}</style></head><body>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: schmale Rail links, Arbeitsfläche auf warmem Weiss mit Haarlinien, Quellenpanel rechts. Tabellarische Prüfung, suchzentriertes Wissen, Dokument im Zentrum. */
+/* Layout: schmale Rail links, Arbeitsfläche auf warmem Weiss mit Haarlinien, Quellenpanel rechts. Akte als Ordner mit Registern (Exxas-Modell), Dokumente mit Word-Rundlauf, Leistungen mit Gebührenrechnung, tabellarische Prüfung, suchzentriertes Wissen, Dokument im Zentrum. */
 :root{
   --bg:#f7f6f3; --panel:#ffffff; --panel2:#f0eee9; --line:#e5e2db; --line2:#d6d2c9; --fg:#161615; --muted:#6f6e68; --faint:#a3a29b;
   --accent:#1f5a3c; --accent-soft:#e4efe8; --hl:#fff1a8; --hl-fg:#2a2300;
@@ -158,7 +142,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .item .d{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap;padding-top:2px}
 .item .t{font-size:13.5px}
 .item .m{grid-column:2;font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.item .r{grid-row:1/3;display:flex;gap:6px;align-items:center}
+.item .r{grid-row:1/3;grid-column:3;display:flex;gap:6px;align-items:center}
 
 /* Wissen (Suche) */
 .ksearch{display:flex;align-items:center;gap:10px;border:1px solid var(--line2);background:var(--panel);border-radius:14px;padding:12px 16px;font-size:16px}
@@ -325,6 +309,114 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .mcard .next{font-size:12.5px;display:flex;gap:6px;align-items:baseline}
 .mcard .next b{font-weight:500}
 
+
+/* v5: Akten als Ordner (Exxas-Modell), Register, Dokumente mit Word-Rundlauf, Leistungen, Fristen */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.kpi:hover{border-color:var(--line2)}
+.kpi b{font-family:var(--serif);font-size:30px;font-weight:400;line-height:1}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi.warn b{color:var(--warn)}.kpi.crit b{color:var(--crit)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.filters .chip{cursor:pointer}
+.filters .chip.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.filters input{margin-left:auto;border:1px solid var(--line2);border-radius:999px;background:var(--panel);padding:6px 12px;min-width:220px}
+.akten{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.akten .ah2{display:grid;grid-template-columns:28px 120px minmax(220px,1.6fr) 110px 130px minmax(170px,1fr) 150px 80px 70px;gap:12px;padding:9px 16px;border-bottom:1px solid var(--line);font-size:11.5px;color:var(--muted);font-weight:500;align-items:center}
+.akte-row{display:grid;grid-template-columns:28px 120px minmax(220px,1.6fr) 110px 130px minmax(170px,1fr) 150px 80px 70px;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);align-items:center;cursor:pointer;font-size:13px}
+.akte-row:last-child{border-bottom:0}
+.akte-row:hover{background:var(--panel2)}
+.akte-row .fo{width:22px;height:18px;border-radius:3px;background:var(--panel2);border:1px solid var(--line2);position:relative}
+.akte-row .fo:before{content:"";position:absolute;left:-1px;top:-5px;width:9px;height:5px;border:1px solid var(--line2);border-bottom:0;border-radius:2px 2px 0 0;background:var(--panel2)}
+.akte-row .fo.E{background:var(--warn-soft);border-color:var(--warn)}.akte-row .fo.E:before{background:var(--warn-soft);border-color:var(--warn)}
+.akte-row .fo.P{background:var(--info-soft);border-color:var(--info)}.akte-row .fo.P:before{background:var(--info-soft);border-color:var(--info)}
+.akte-row .fo.Z{background:var(--ok-soft);border-color:var(--ok)}.akte-row .fo.Z:before{background:var(--ok-soft);border-color:var(--ok)}
+.akte-row .fo.G{background:var(--crit-soft);border-color:var(--crit)}.akte-row .fo.G:before{background:var(--crit-soft);border-color:var(--crit)}
+.akte-row .ti{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.akte-row .sub{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.akte-row .nx{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.akte-row .nx b{color:var(--fg);font-weight:500}
+.akte-row .num{font-family:var(--mono);font-size:12px}
+.frist{font-size:12.5px;display:flex;flex-direction:column;gap:1px}
+.frist b{font-weight:500}
+.frist.warn b{color:var(--warn)}.frist.crit b{color:var(--crit)}
+.frist small{color:var(--muted);font-size:11px}
+
+/* Akte: Kopf und Register */
+.akte-hd{display:flex;flex-direction:column;gap:14px}
+.akte-hd .meta{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);align-items:center}
+.akte-hd .meta b{color:var(--fg);font-weight:500}
+.regs{display:flex;gap:2px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.regs button{padding:9px 14px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;gap:7px;align-items:center}
+.regs button:hover{color:var(--fg)}
+.regs button.active{color:var(--fg);border-bottom-color:var(--fg)}
+.regs button .c{font-family:var(--mono);font-size:10.5px;color:var(--faint);background:var(--panel2);border-radius:999px;padding:0 6px}
+.regs button .dot{width:6px;height:6px;border-radius:50%;background:var(--warn)}
+.sechd{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.sechd .grow{flex:1;min-width:240px;display:flex;flex-direction:column;gap:4px}
+.sechd p{color:var(--muted);max-width:72ch;font-size:13px}
+.sechd .actions{display:flex;gap:8px;flex-wrap:wrap}
+.steps{display:flex;flex-direction:column}
+.step{display:grid;grid-template-columns:22px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start;font-size:13.5px}
+.step:last-child{border-bottom:0}
+.step .n{width:20px;height:20px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.step.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.step.done .t{color:var(--muted);text-decoration:line-through}
+.step .m{grid-column:2;font-size:12px;color:var(--muted)}
+
+/* Dokumente */
+.docs{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.docs .dh{display:grid;grid-template-columns:34px minmax(220px,1.5fr) 60px 130px 110px 150px 1fr;gap:12px;padding:9px 16px;border-bottom:1px solid var(--line);font-size:11.5px;color:var(--muted);font-weight:500}
+.doc-row{display:grid;grid-template-columns:34px minmax(220px,1.5fr) 60px 130px 110px 150px 1fr;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);align-items:center;font-size:13px}
+.doc-row:last-child{border-bottom:0}
+.doc-row:hover{background:var(--panel2)}
+.doc-row.out{background:var(--accent-soft)}
+.doc-row .nm{font-weight:500;display:flex;flex-direction:column;gap:1px;min-width:0}
+.doc-row .nm small{font-weight:400;font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc-row .acts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.ficon{width:26px;height:32px;border-radius:3px;border:1px solid var(--line2);display:grid;place-items:end center;font-family:var(--mono);font-size:8.5px;font-weight:600;padding-bottom:3px;color:var(--muted);background:var(--panel);position:relative}
+.ficon:before{content:"";position:absolute;right:-1px;top:-1px;width:8px;height:8px;background:var(--bg);border-left:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.ficon.docx{color:#2b579a;border-color:#2b579a55}.ficon.pdf{color:var(--crit);border-color:#b3261e55}.ficon.xlsx{color:#217346;border-color:#21734655}.ficon.msg{color:var(--info)}
+.versions{display:flex;flex-direction:column;gap:0;font-size:12.5px;padding:8px 16px 12px 62px;background:var(--bg);border-bottom:1px solid var(--line)}
+.versions div{display:grid;grid-template-columns:40px 110px 1fr auto;gap:12px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.versions div:last-child{border-bottom:0}
+.versions .mono{color:var(--muted)}
+.drop{border:1.5px dashed var(--line2);border-radius:var(--r);padding:16px 18px;display:flex;gap:14px;align-items:center;color:var(--muted);font-size:13px;cursor:pointer;background:var(--panel)}
+.drop:hover{border-color:var(--fg);color:var(--fg)}
+.drop b{color:var(--fg);font-weight:500}
+.wordpane{border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;background:var(--panel)}
+.wordpane .wtop{display:flex;align-items:center;gap:10px;padding:8px 14px;background:#2b579a;color:#fff;font-size:12.5px}
+.wordpane .wtop .w{width:18px;height:18px;border-radius:3px;background:#fff;color:#2b579a;display:grid;place-items:center;font-weight:700;font-size:11px;font-family:var(--font)}
+.wordpane .wtop .st{margin-left:auto;font-size:11.5px;opacity:.85}
+.wordpane .ribbon{display:flex;gap:14px;padding:6px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);background:var(--panel2)}
+.wordpane textarea{width:100%;min-height:320px;border:0;resize:vertical;padding:36px 48px;font-family:var(--serif);font-size:15.5px;line-height:1.6;background:var(--panel);color:var(--fg);display:block}
+.wordpane .wfoot{display:flex;gap:8px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);flex-wrap:wrap}
+.wordpane .wfoot .sync{display:flex;gap:6px;align-items:center}
+.wordpane .wfoot .sync i{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+.wordpane .wfoot .sync.busy i{background:var(--warn);animation:pulse 1s infinite}
+
+/* Leistungen & Rechnung */
+.lz{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.lz .lh3,.lz .lrow{display:grid;grid-template-columns:100px 90px 1fr 170px 70px 90px;gap:12px;padding:9px 16px;border-bottom:1px solid var(--line);align-items:center;font-size:13px}
+.lz .lh3{font-size:11.5px;color:var(--muted);font-weight:500}
+.lz .lrow:last-child{border-bottom:0}
+.lz .lrow.ki{background:var(--accent-soft)}
+.lz .lfoot{display:flex;gap:18px;padding:12px 16px;border-top:1px solid var(--line);background:var(--bg);font-size:13px;align-items:center;flex-wrap:wrap}
+.lz .lfoot b{font-family:var(--serif);font-size:22px;font-weight:400}
+.lform{display:grid;grid-template-columns:130px 1fr 170px 80px auto;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+.lform input,.lform select{border:1px solid var(--line2);border-radius:var(--rs);background:var(--panel);padding:7px 10px;min-width:0}
+.inv table{width:100%;border-collapse:collapse;font-family:var(--font);font-size:13px;margin:14px 0}
+.inv th{text-align:left;font-weight:500;color:var(--muted);font-size:11.5px;border-bottom:1px solid var(--line);padding:6px 0}
+.inv td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.inv td.r,.inv th.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.inv tr.tot td{border-bottom:0;border-top:2px solid var(--fg);font-weight:600;padding-top:10px}
+.beteiligte{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.bet{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:4px;font-size:13px}
+.bet .role{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.bet b{font-weight:500;font-size:14px}
+.bet .m{color:var(--muted);font-size:12px}
+@media (max-width:1100px){.akten .ah2,.akte-row{grid-template-columns:28px 110px minmax(180px,1.4fr) 1fr 110px}.akten .ah2>*:nth-child(n+6),.akte-row>*:nth-child(n+6){display:none}.docs .dh,.doc-row{grid-template-columns:34px minmax(180px,1.5fr) 110px 1fr}.docs .dh>*:nth-child(3),.docs .dh>*:nth-child(4),.docs .dh>*:nth-child(5),.doc-row>*:nth-child(3),.doc-row>*:nth-child(4),.doc-row>*:nth-child(5){display:none}.lz .lh3,.lz .lrow{grid-template-columns:90px 1fr 70px 90px}.lz .lh3>*:nth-child(2),.lz .lh3>*:nth-child(4),.lz .lrow>*:nth-child(2),.lz .lrow>*:nth-child(4){display:none}.lform{grid-template-columns:1fr 1fr}}
+
 @media (max-width:1200px){.shell{grid-template-columns:72px minmax(0,1fr)}.aside{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}.search{min-width:0}}
 @media (max-width:900px){.doclayout,.klayout,.vgrid{grid-template-columns:1fr}.outline{position:static}.fform{grid-template-columns:1fr}.docsheet{padding:28px 22px}}
 @media (max-width:720px){
@@ -427,21 +519,84 @@ const ANT={P1:'Die Mahnungen sind erst ab März 2024 belegt. Die telefonische Ma
 const ANTSRC={P1:['Akte 7','Art. 730c OR'],P2:['BVGer B-3664/2025, E. 7'],P3:['Art. 728b, 729b, 699 Abs. 2 OR','Art. 17 RAG'],P4:['Akte 22, Beilage 3'],P5:['Art. 15 Abs. 3 RAG']};
 const VERF=[['Mit Verfügung vom 4. April 2026 entzog die RAB ','R. Vogt','A._______',' die Zulassung als Revisionsexperte für die Dauer von zwölf Monaten. '],['Herr ','Vogt','A._______',' war seit 2021 Revisionsstelle der ','Bergfink AG','B._______ AG',' mit Sitz in ','Thun','(...)','. '],['Für die Geschäftsjahre 2022 bis 2024 erstattete er keinen Revisionsbericht. Die erste nachweisbare Mahnung datiert vom ','12. März 2024','(...) 2024','. ']];
 
+// ---------- Akten (Exxas-Modell: die Akte ist der Ordner, alles liegt darin) ----------
+const HEUTE='2026-10-11';
+const ART={E:['Verfahren','Enforcement nach Art. 17 f. RAG',3],P:['Überprüfung','Art. 16 RAG, Comment Forms',3],Z:['Zulassung','Gesuche und Erneuerungen',2],G:['Rechtsdienst','BGÖ, Publikation, Auskünfte',3]};
+const AKTEN=[
+  {id:'E-2026-07',typ:'E',titel:'Unterlassene Revisionen · R. Vogt',verantw:'L. Frei',phase:'Verfügung · Entwurf',tag:240,status:'offen',
+    beteiligte:[['Partei','R. Vogt','Revisionsexperte, RAB-Nr. 102 338 · Thun'],['Rechtsvertretung','Advokatur Aare, M. Lüthi','Vollmacht Akte 20'],['Geprüfte Gesellschaft','Bergfink AG','Thun · Dritte, Geheimnisträgerin'],['Fallführung','L. Frei','Enforcement'],['Zweitperson','D. Gasser','Rechtsdienst']],
+    docs:[
+      {id:'d1',nr:'Akte 1',name:'Anonymer Hinweis',ext:'pdf',v:1,ge:'2026-02-14',von:'Eingang',k:3,text:'Hinweis eines Dritten: Die Revisionsstelle der Bergfink AG habe seit drei Jahren keinen Bericht erstattet.'},
+      {id:'d7',nr:'Akte 7',name:'E-Mail Mahnung an VR Bergfink AG',ext:'msg',v:1,ge:'2026-03-03',von:'Edition Partei',k:3,text:'Sehr geehrter Herr Präsident, die Jahresrechnung 2022 liegt uns nach wie vor nicht vor …'},
+      {id:'d18',nr:'Akte 18',name:'Verfahrenseröffnung und Aufforderung zur Stellungnahme',ext:'docx',v:3,ge:'2026-04-02',von:'L. Frei',k:3,pdf:true,text:'Sehr geehrter Herr Vogt\n\nDie Eidgenössische Revisionsaufsichtsbehörde eröffnet gegen Sie ein Verfahren nach Art. 17 RAG. Wir fordern Sie auf, bis zum 20. Mai 2026 Stellung zu nehmen …',hist:[['v1','2026-03-28','L. Frei','Entwurf aus Vorlage «Eröffnung»'],['v2','2026-04-01','D. Gasser','Rechtsgrundlagen ergänzt'],['v3','2026-04-02','L. Frei','Frist angepasst, unterzeichnet, PDF erzeugt']]},
+      {id:'d22',nr:'Akte 22',name:'Stellungnahme der Partei mit Beilagen 1–3',ext:'pdf',v:1,ge:'2026-05-20',von:'Eingang',k:3,text:'Ich habe den Verwaltungsrat im September 2023 telefonisch an die ausstehende Jahresrechnung erinnert …'},
+      {id:'d30',nr:'Akte 30',name:'Verfügung E-2026-07 · Entwurf',ext:'docx',v:4,ge:'2026-10-09',von:'L. Frei',k:3,text:'VERFÜGUNG\n\nbetreffend Massnahme nach Art. 17 RAG in Sachen A._______\n\nSachverhalt\nA. Geschäftsjahr 2022 der Bergfink AG endete am 31. Dezember 2022 …\n\nErwägungen\n1. Die RAB ist zuständig (Art. 28 Abs. 1 RAG) …',hist:[['v1','2026-09-30','L. Frei','Gerüst aus Muster V-2023-014'],['v2','2026-10-02','L. Frei','Sachverhalt aus Chronologie übernommen'],['v3','2026-10-07','D. Gasser','Anmerkungen Zweitperson'],['v4','2026-10-09','L. Frei','E. 3 Vorbringen eingearbeitet']]},
+      {id:'d31',nr:'Akte 31',name:'Aktennotiz Telefonat Rechtsvertretung',ext:'docx',v:1,ge:'2026-10-08',von:'L. Frei',k:3,text:'Aktennotiz\n\nTelefonat mit M. Lüthi, 8. Oktober 2026, 14:10. Frage nach Verfahrensstand; Hinweis auf Zwölfmonatsziel …'},
+    ],
+    leistungen:[['2026-02-16','L. Frei','Vorabklärung, Registerabgleich','Vorabklärung',1.5],['2026-03-27','L. Frei','Eröffnungsverfügung entwerfen','Eröffnung',2.4],['2026-04-01','D. Gasser','Mitlesen Eröffnung','Eröffnung',0.6],['2026-05-22','L. Frei','Stellungnahme lesen, Chronologie','Stellungnahme',3.1],['2026-09-30','L. Frei','Verfügung: Gerüst und Sachverhalt','Verfügung',4.2],['2026-10-07','D. Gasser','Zweitlesung Entwurf','Verfügung',1.8],['2026-10-09','L. Frei','Vorbringen einarbeiten','Verfügung',3.2]],
+    fristen:[{d:'2026-05-20',t:'Stellungnahme der Partei',typ:'Partei',done:true},{d:'2026-10-31',t:'Entwurf an Zweitperson (intern)',typ:'intern'},{d:'2026-11-30',t:'Verfügung an Geschäftsleitung',typ:'intern'},{d:'2027-02-14',t:'Zwölfmonatsziel seit Hinweis',typ:'Ziel'}]},
+  {id:'P-2026-11',typ:'P',titel:'Überprüfung Prüfpartner Mittelland AG',verantw:'L. Frei',phase:'File Review',tag:null,status:'offen',
+    beteiligte:[['Beaufsichtigtes Unternehmen','Prüfpartner Mittelland AG','sbRU, Bern'],['Leitender Revisor','T. Steiner','Mandat Nordlicht Holding AG'],['Geprüfte Gesellschaft','Nordlicht Holding AG','kotiert · Dritte, Revisionsgeheimnis'],['Überprüfungsleitung','L. Frei',''],['Teammitglied','P. Annen','Firm Review']],
+    docs:[
+      {id:'p1',nr:'ÜP 1',name:'Ankündigung der Überprüfung',ext:'docx',v:2,ge:'2026-06-12',von:'L. Frei',k:2,pdf:true,text:'Sehr geehrte Damen und Herren\n\nDie RAB führt gemäss Art. 16 RAG eine Überprüfung Ihres Unternehmens durch …'},
+      {id:'p2',nr:'ÜP 2',name:'Arbeitspapiere Mandat Nordlicht GJ 2025 (1 842 Dateien)',ext:'zip',v:1,ge:'2026-08-20',von:'Upload Unternehmen',k:3,text:'Archiv der Arbeitspapiere. Nur auf Bundesinfrastruktur lesbar.'},
+      {id:'p3',nr:'ÜP 3',name:'Comment Forms File Review',ext:'docx',v:1,ge:'2026-10-05',von:'L. Frei',k:3,text:'Comment Form · File Review\n\nFeststellung F1 …'},
+      {id:'p4',nr:'ÜP 4',name:'Zeitaufschrieb Überprüfung',ext:'xlsx',v:6,ge:'2026-10-10',von:'P. Annen',k:1,text:'Phase;Stunden\nVorbereitung;38\nFile Review;142 …'},
+    ],
+    leistungen:[['2026-06-10','L. Frei','Vorbereitung, Planung','Vorbereitung',38],['2026-09-15','L. Frei','File Review Nordlicht','File Review',142],['2026-09-29','P. Annen','Firm Review','Firm Review',61],['2026-10-05','L. Frei','Comment Forms und Stellungnahmen','Comment Forms',54],['2026-10-08','L. Frei','Klassifikation','Klassifikation',9],['2026-10-10','P. Annen','Bericht (laufend)','Bericht',47]],
+    fristen:[{d:'2026-11-04',t:'Stellungnahme Unternehmen zu Comment Forms (30 Tage)',typ:'Partei'},{d:'2026-12-15',t:'Berichtsentwurf intern',typ:'intern'},{d:'2027-01-31',t:'Schlussbericht und Gebührenverfügung',typ:'intern'}]},
+  {id:'Z-2026-KW41',typ:'Z',titel:'Gesuche KW 41 · 6 Dossiers',verantw:'N. Baumgartner',phase:'Tabellarische Prüfung',tag:null,status:'offen',
+    beteiligte:[['Gesuchstellende','M. Keller, S. Baumann, A. Okafor, J. Rossi, C. Dubois','natürliche Personen'],['Gesuchstellerin','Treuhand Aarebogen AG','Erneuerung Art. 6 RAG'],['Sachbearbeitung','N. Baumgartner','Zulassung']],
+    docs:[
+      {id:'z1',nr:'0417',name:'Dossier M. Keller (9 Beilagen)',ext:'pdf',v:1,ge:'2026-10-06',von:'Eingang Extranet',k:2,text:'Gesuch um Zulassung als Revisionsexperte …'},
+      {id:'z2',nr:'0433',name:'Dossier A. Okafor (6 Beilagen)',ext:'pdf',v:1,ge:'2026-10-07',von:'Eingang Extranet',k:2,text:'Gesuch um Zulassung als Revisionsexpertin, Ausbildung Nigeria / ACCA …'},
+      {id:'z3',nr:'NF-0417',name:'Nachforderung M. Keller',ext:'docx',v:1,ge:'2026-10-10',von:'Assistent (Entwurf)',k:2,text:'Sehr geehrter Herr Keller\n\nIhre Praxisbestätigung 2022–2023 (Beilage 7) ist nicht unterzeichnet. Wir bitten Sie, bis zum 10. November 2026 …'},
+    ],
+    leistungen:[['2026-10-08','N. Baumgartner','Dossiers prüfen, Spalten lesen','Prüfung',2.5],['2026-10-10','N. Baumgartner','Nachforderungen','Prüfung',0.8]],
+    fristen:[{d:'2026-11-10',t:'Nachforderungsfrist 0417, 0421, 0442 (30 Tage)',typ:'Partei'},{d:'2027-02-28',t:'Police Treuhand Aarebogen AG läuft aus (Art. 10a RAV)',typ:'Partei'}]},
+  {id:'G-2026-04',typ:'G',titel:'Zugangsgesuch BGÖ · Überprüfungsbericht',verantw:'D. Gasser',phase:'Rechtslage',tag:null,status:'offen',
+    beteiligte:[['Gesuchstellerin','Geprüfte Gesellschaft (ehem. Mandantin)','vertreten durch Kanzlei'],['Betroffene Dritte','frühere Revisionsstelle','Konsultation Art. 11 BGÖ prüfen'],['Bearbeitung','D. Gasser','Rechtsdienst']],
+    docs:[
+      {id:'g1',nr:'G 1',name:'Zugangsgesuch nach BGÖ',ext:'pdf',v:1,ge:'2026-09-22',von:'Eingang',k:3,text:'Gesuch um Zugang zum Überprüfungsbericht betreffend unsere frühere Revisionsstelle …'},
+      {id:'g2',nr:'G 2',name:'Verfügung Zugangsgesuch · Entwurf',ext:'docx',v:1,ge:'2026-10-09',von:'Assistent (Entwurf)',k:3,text:'VERFÜGUNG betreffend Zugang zu amtlichen Dokumenten\n\n1. Die RAB informiert über Verfahren nur bei überwiegendem Interesse (Art. 19 Abs. 2 RAG) …'},
+    ],
+    leistungen:[['2026-09-24','D. Gasser','Gesuch lesen, Rechtslage','Prüfung',1.2]],
+    fristen:[{d:'2026-10-12',t:'Stellungnahme zum Gesuch (20 Tage, Art. 12 BGÖ)',typ:'gesetzlich'}]},
+  {id:'E-2025-19',typ:'E',titel:'Unabhängigkeit · Prüfgesellschaft',verantw:'D. Gasser',phase:'Verfügung in Zirkulation',tag:338,status:'offen',
+    beteiligte:[['Partei','Revisionsunternehmen (sbRU)',''],['Fallführung','D. Gasser','']],
+    docs:[{id:'x1',nr:'Akte 44',name:'Verfügung E-2025-19 · Zirkulationsfassung',ext:'docx',v:9,ge:'2026-10-10',von:'D. Gasser',k:3,pdf:true,text:'VERFÜGUNG …'}],
+    leistungen:[['2026-10-10','D. Gasser','Zirkulation Geschäftsleitung','Verfügung',0.5]],
+    fristen:[{d:'2026-10-14',t:'Unterschrift Geschäftsleitung',typ:'intern'},{d:'2026-11-07',t:'Zwölfmonatsziel',typ:'Ziel'}]},
+  {id:'E-2026-02',typ:'E',titel:'Berichtsmängel · Revisionsstelle Jura',verantw:'L. Frei',phase:'Abgeschlossen · Verweis',tag:null,status:'abgeschlossen',
+    beteiligte:[['Partei','Revisionsstelle Jura Sàrl','']],
+    docs:[{id:'y1',nr:'Akte 19',name:'Verfügung E-2026-02 · rechtskräftig',ext:'pdf',v:1,ge:'2026-07-30',von:'L. Frei',k:3,text:'VERFÜGUNG … Verweis.'},{id:'y2',nr:'Akte 20',name:'Gebührenrechnung E-2026-02',ext:'pdf',v:1,ge:'2026-07-30',von:'System',k:2,text:'Gebührenrechnung 2 750 Fr.'}],
+    leistungen:[['2026-06-02','L. Frei','Verfahren gesamt','Verfügung',11]],
+    fristen:[{d:'2026-08-31',t:'Rechtsmittelfrist abgelaufen, rechtskräftig',typ:'gesetzlich',done:true}]},
+];
+const VORLAGEN={E:['Nachforderung von Unterlagen','Aktennotiz','Verfügung aus Muster','Schreiben an Rechtsvertretung'],P:['Comment Form','Aktennotiz','Ankündigung Überprüfung','Gebührenverfügung'],Z:['Nachforderung','Zulassungsverfügung natürliche Person','Erneuerungsverfügung Unternehmen','Aktennotiz'],G:['Verfügung Zugangsgesuch','Konsultation Dritte (Art. 11 BGÖ)','Aktennotiz']};
+
 // ---------- Zustand ----------
-const S={view:'heute',klasse:0,log:[],gate:{},panel:'assist',source:null,
+const S={view:'akten',akte:null,reg:'uebersicht',klasse:0,log:[],gate:{},source:null,
+  a:{filter:'alle',q:'',open:null,vers:null,word:null,busy:false,inv:null},
   z:{extra:[],pending:null,sel:null},
   p:{read:false,status:{},sel:null},
   w:{q:'',typ:'alle',quelle:'alle',sel:null},
   f:{tab:'sachverhalt',chrono:CHRONO0.map(x=>({...x})),kiAdded:false,vorbringen:VORBRINGEN.map(x=>({...x})),massnahme:null,androhungBegr:false,zweit:false,section:'sv',muster:null},
   r:{show:false}};
 const RAIL=[
-  ['heute','Heute','<path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9 21v-6h6v6"/>'],
-  ['zulassung','Zulassung','<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/>'],
-  ['pruefung','Prüfung','<path d="M4 4h16v16H4z"/><path d="m8 12 3 3 5-6"/>'],
-  ['enforcement','Verfahren','<path d="M6 3h9l5 5v13H6z"/><path d="M14 3v6h6M9 13h6M9 17h6"/>'],
+  ['akten','Akten','<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 11h18"/>'],
+  ['fristen','Fristen','<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'],
+  ['leistungen','Leistungen','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'],
   ['wissen','Wissen','<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>'],
-  ['recht','Rechtsdienst','<path d="M12 3v18M5 7h14M7 7l-3 7a3 3 0 0 0 6 0zM17 7l-3 7a3 3 0 0 0 6 0z"/>'],
 ];
+const akte=()=>AKTEN.find(a=>a.id===S.akte);
+const days=d=>Math.round((new Date(d)-new Date(HEUTE))/86400000);
+const fmtD=d=>{const [y,m,t]=d.split('-');return `${t}.${m}.${y}`};
+const chf=n=>n.toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2}).replace(/,/g,"'");
+const sumH=a=>a.leistungen.reduce((s,l)=>s+l[4],0);
+const tarif=a=>a.typ==='P'?{art:'Tagessatz',satz:1500,norm:'Art. 39 RAV',per:8}:{art:'Stundensatz',satz:250,norm:'Art. 40 RAV',per:1};
+const gebuehr=a=>{const t=tarif(a),h=sumH(a);return t.per===8?Math.round(h/8*t.satz):Math.round(h*t.satz)};
+const nextFrist=a=>a.fristen.filter(f=>!f.done).sort((x,y)=>x.d.localeCompare(y.d))[0];
 const $=s=>document.querySelector(s);
 const el=h=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstElementChild};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -462,7 +617,7 @@ function renderAside(){
     p.querySelector('#openDoc').addEventListener('click',()=>toast('Dokument wird im Aktensystem geöffnet (Demo)'));
     b.appendChild(p);
   }
-  if(S.view==='enforcement')b.appendChild(ready());
+  if(S.akte==='E-2026-07'&&['uebersicht','sachverhalt','vorbringen','verfuegung'].includes(S.reg))b.appendChild(ready());
   if(!A.msgs.length){b.appendChild(el('<p class="muted" style="font-size:13px">Vorschläge erscheinen hier, jeder mit nummerierten Quellen. Was keine Quelle hat, wird nicht übernommen. ⌘K öffnet Suche und Befehle.</p>'));return}
   A.msgs.forEach((m,mi)=>{
     const d=el(`<div class="amsg ${m.o.user?'user':''}"><div class="who">${m.o.user?'Du':'Assistent'}${m.o.tag?`<span class="chip ${m.o.tagc||'ai'}">${m.o.tag}</span>`:''}</div><div>${m.html}</div></div>`);
@@ -500,33 +655,143 @@ function render(){
   RAIL.forEach(([id,n,svg])=>{const b=el(`<button class="${S.view===id?'active':''}" title="${n}"><svg viewBox="0 0 24 24">${svg}</svg><span>${n}</span></button>`);b.addEventListener('click',()=>go(id));r.appendChild(b)});
   r.appendChild(el('<div class="sp"></div>'));
   const m=$('#main');m.innerHTML='';
-  ({heute,zulassung,pruefung,enforcement,wissen,recht})[S.view](m);
-  m.querySelectorAll('.ref,.hit').forEach(n=>{if(!n.hasAttribute('tabindex'))n.setAttribute('tabindex','0')});
+  ({akten,akte:akteView,fristen,leistungen,wissen})[S.view](m);
+  m.querySelectorAll('.ref,.hit,.akte-row').forEach(n=>{if(!n.hasAttribute('tabindex'))n.setAttribute('tabindex','0')});
   renderAside();
 }
-function go(v,sub){S.view=v;S.source=null;if(sub&&v==='enforcement')S.f.tab=sub;aiClear();render()}
-// Tastatur: Zellen und Quellenmarken mit Enter oder Leertaste auslösen
-document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.cell,.ref,.hit')){e.preventDefault();e.target.click()}});
-function head(m,crumbs,title,text,k,actions){
-  setKlasse(k);$('#crumbs').innerHTML=crumbs.map((c,i)=>i===crumbs.length-1?`<b>${c}</b>`:`<span>${c}</span><span>/</span>`).join('');
+function go(v,sub){S.view=v;S.akte=null;S.source=null;if(v==='wissen'&&sub==='wizard'){render();musterWizard();return}aiClear();render()}
+function openAkte(id,reg){const a=AKTEN.find(x=>x.id===id);if(!a)return;S.view='akte';S.akte=id;S.reg=reg||'uebersicht';S.source=null;S.a.word=null;S.a.vers=null;S.a.inv=null;if(a.typ==='E')S.f.tab=['sachverhalt','vorbringen','verfuegung'].includes(S.reg)?S.reg:S.f.tab;aiClear();render()}
+function setReg(r){S.reg=r;S.a.word=null;S.a.inv=null;if(['sachverhalt','vorbringen','verfuegung'].includes(r))S.f.tab=r;render()}
+// Tastatur: Zellen, Quellenmarken und Aktenzeilen mit Enter oder Leertaste auslösen
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.cell,.ref,.hit,.akte-row')){e.preventDefault();e.target.click()}});
+function crumbs(c){$('#crumbs').innerHTML=c.map((x,i)=>i===c.length-1?`<b>${x}</b>`:`<span>${x}</span><span>/</span>`).join('')}
+// Innerhalb einer Akte wird aus dem Seitenkopf ein Registerkopf; ausserhalb bleibt er die grosse Überschrift.
+function head(m,cr,title,text,k,actions){
+  setKlasse(k);
+  if(S.akte){m.appendChild(el(`<div class="sechd"><div class="grow"><h2>${title}</h2>${text?`<p>${text}</p>`:''}</div>${actions?`<div class="actions">${actions}</div>`:''}</div>`));return}
+  crumbs(cr);
   m.appendChild(el(`<div class="hd"><div class="grow"><h1>${title}</h1>${text?`<p>${text}</p>`:''}</div>${actions?`<div class="actions">${actions}</div>`:''}</div>`));
 }
+const REGS={E:[['uebersicht','Übersicht'],['dokumente','Dokumente'],['sachverhalt','Sachverhalt'],['vorbringen','Vorbringen'],['verfuegung','Verfügung'],['publikation','Publikation'],['beteiligte','Beteiligte'],['leistungen','Leistungen & Gebühren'],['fristen','Fristen']],
+  P:[['uebersicht','Übersicht'],['dokumente','Dokumente'],['review','File Review'],['beteiligte','Beteiligte'],['leistungen','Leistungen & Gebühren'],['fristen','Fristen']],
+  Z:[['uebersicht','Übersicht'],['dokumente','Dokumente'],['pruefung','Tabellarische Prüfung'],['beteiligte','Beteiligte'],['leistungen','Leistungen & Gebühren'],['fristen','Fristen']],
+  G:[['uebersicht','Übersicht'],['dokumente','Dokumente'],['rechtslage','Rechtslage'],['beteiligte','Beteiligte'],['leistungen','Leistungen & Gebühren'],['fristen','Fristen']]};
 
-// --- Heute
-function heute(m){
-  head(m,['Werkbank','Heute'],'Guten Morgen, Lea.','',0);
-  m.appendChild(el('<div class="eyebrow">Deine Akten</div>'));
-  const c=el('<div class="cards"></div>');
-  [['E-2026-07','Unterlassene Revisionen · R. Vogt','Entwurf · Tag 240/365',66,'warn','enforcement','Stellungnahme in Chronologie einarbeiten'],['P-2026-11','Überprüfung Prüfpartner Mittelland AG','File Review · 6 Hinweise',40,'','pruefung','Hinweise am Original verifizieren'],['E-2025-19','Unabhängigkeit · Prüfgesellschaft','Verfügung in Zirkulation · Tag 338',93,'crit','enforcement','Unterschrift Geschäftsleitung einholen'],['Erneuerungen 2027','112 Unternehmen bis 31.03.2027','Tabellarische Prüfung läuft',28,'','zulassung','3 Nachforderungen freigeben']].forEach(x=>{const n=el(`<div class="mcard ${x[4]}"><div class="mono muted">${x[0]}</div><div class="ti">${x[1]}</div><div class="meta">${x[2]}</div><div class="next"><span class="muted">Nächster Schritt</span><b>${x[6]}</b></div><div class="prog"><i style="width:${x[3]}%"></i></div></div>`);n.addEventListener('click',()=>go(x[5]));c.appendChild(n)});
-  m.appendChild(c);
+// --- Startseite: Akten wie eine Mandatsliste
+function akten(m){
+  setKlasse(1);crumbs(['Werkbank','Akten']);
+  const open=AKTEN.filter(a=>a.status==='offen');
+  const dueSoon=AKTEN.flatMap(a=>a.fristen.filter(f=>!f.done&&days(f.d)<=7).map(f=>({...f,a})));
+  const out=AKTEN.flatMap(a=>a.docs.filter(d=>d.out));
+  const offenH=open.reduce((s,a)=>s+sumH(a),0);
+  m.appendChild(el(`<div class="hd"><div class="grow"><h1>Guten Morgen, Lea.</h1><p>Jede Akte ist ein Ordner: Dokumente, Sachverhalt, Fristen, Leistungen und die Verfügung liegen darin. Die Werkzeuge arbeiten innerhalb der Akte, nie daneben.</p></div><div class="actions"><button class="btn" id="inbox">Posteingang <span class="chip crit">14</span></button><button class="btn dark" id="newA">Neue Akte</button></div></div>`));
+  const k=el(`<div class="kpis"><div class="kpi ${dueSoon.length?'warn':''}" data-go="fristen"><b>${dueSoon.length}</b><span>Fristen in den nächsten 7 Tagen</span></div><div class="kpi"><b>${open.length}</b><span>offene Akten</span></div><div class="kpi" data-go="leistungen"><b>${offenH.toFixed(1).replace('.0','')} h</b><span>erfasst, noch nicht in Rechnung</span></div><div class="kpi ${out.length?'warn':''}"><b>${out.length}</b><span>Dokumente in Word ausgecheckt</span></div></div>`);
+  k.querySelectorAll('[data-go]').forEach(x=>x.addEventListener('click',()=>go(x.dataset.go)));
+  m.appendChild(k);
+  const fl=el(`<div class="filters">${[['alle','Alle'],['E','Verfahren'],['P','Überprüfung'],['Z','Zulassung'],['G','Rechtsdienst'],['abg','Abgeschlossen']].map(x=>`<button class="chip ${S.a.filter===x[0]?'on':''}" data-f="${x[0]}">${x[1]}</button>`).join('')}<input id="aq" value="${esc(S.a.q)}" placeholder="Akte, Partei, Nummer …" aria-label="Akten durchsuchen"></div>`);
+  fl.querySelectorAll('[data-f]').forEach(b=>b.addEventListener('click',()=>{S.a.filter=b.dataset.f;render()}));
+  fl.querySelector('#aq').addEventListener('input',e=>{S.a.q=e.target.value;drawList()});
+  m.appendChild(fl);
+  const box=el('<div class="akten"><div class="ah2"><span></span><span>Nr.</span><span>Akte</span><span>Art</span><span>Verantwortlich</span><span>Nächster Schritt</span><span>Nächste Frist</span><span>Stunden</span><span>Dok.</span></div><div id="alist"></div></div>');
+  m.appendChild(box);
+  function drawList(){
+    const l=box.querySelector('#alist');l.innerHTML='';const q=S.a.q.toLowerCase();
+    const rows=AKTEN.filter(a=>S.a.filter==='alle'?a.status==='offen':S.a.filter==='abg'?a.status==='abgeschlossen':a.typ===S.a.filter&&a.status==='offen').filter(a=>!q||(a.id+' '+a.titel+' '+a.beteiligte.map(b=>b[1]).join(' ')).toLowerCase().includes(q));
+    if(!rows.length){l.appendChild(el('<div class="muted" style="padding:18px 16px;font-size:13px">Keine Akte entspricht dem Filter.</div>'));return}
+    rows.forEach(a=>{const nf=nextFrist(a);const dd=nf?days(nf.d):null;const nx=nextStep(a);
+      const r=el(`<div class="akte-row"><span class="fo ${a.typ}"></span><span class="mono num">${a.id}</span><div style="min-width:0"><div class="ti">${esc(a.titel)}</div><div class="sub">${esc(a.phase)}${a.tag?` · Tag ${a.tag}/365`:''}</div></div><span><span class="chip quiet">${ART[a.typ][0]}</span></span><span class="sub" style="color:var(--fg)">${esc(a.verantw)}</span><div class="nx">${nx?`<b>${esc(nx[0])}</b><br>${esc(nx[1])}`:'<span class="muted">–</span>'}</div><div class="frist ${dd!==null&&dd<=3?'crit':dd!==null&&dd<=14?'warn':''}">${nf?`<b>${dd<0?'überfällig':dd===0?'heute':'in '+dd+' Tagen'}</b><small>${fmtD(nf.d)} · ${esc(nf.t)}</small>`:'<span class="muted">–</span>'}</div><span class="num">${sumH(a).toFixed(1).replace('.0','')} h</span><span class="num">${a.docs.length}${a.docs.some(d=>d.out)?' <span class="chip ai" title="in Word ausgecheckt">W</span>':''}</span></div>`);
+      r.addEventListener('click',()=>openAkte(a.id,nx?nx[2]:'uebersicht'));l.appendChild(r)});
+  }
+  drawList();
   const g=el('<div class="grid2"></div>');
-  const inbox=el('<div class="block"><div class="bh"><h3>Posteingang</h3><span class="chip quiet">14 Meldungen</span></div><div class="list"></div></div>');
-  [['Heute','Handelsregisteramt BE: Verdacht auf Unabhängigkeitsverletzung (Willensvollstrecker)','Unabhängigkeit','crit'],['Heute','Whistleblowing: Revisionsstelle seit drei Jahren ohne Bericht','Unterlassene Revision','crit'],['Gestern','Staatsanwaltschaft ZH: Strafverfahren gegen leitenden Revisor (Art. 24 Abs. 4 RAG)','Leumund','crit'],['Gestern','Meldung sbRU: Leiterin Qualitätssicherung ausgetreten','Organisation','warn'],['08.10.','Medien: Restatement einer kotierten Gesellschaft','Prüfungsqualität','warn']].forEach(x=>inbox.querySelector('.list').appendChild(el(`<div class="item"><div class="d">${x[0]}</div><div class="t">${x[1]}</div><div class="r"><span class="chip ${x[3]}">${x[2]}</span></div><div class="m">Zuordnung zu Register und früheren Vorkommnissen vorgeschlagen</div></div>`)));
+  const inbox=el('<div class="block"><div class="bh"><h3>Posteingang</h3><span class="chip quiet">14 Meldungen · Zuordnung vorgeschlagen</span></div><div class="list"></div></div>');
+  [['Heute','Handelsregisteramt BE: Verdacht auf Unabhängigkeitsverletzung (Willensvollstrecker)','Neue Akte E','crit'],['Heute','Whistleblowing: Revisionsstelle seit drei Jahren ohne Bericht','Neue Akte E','crit'],['Gestern','Advokatur Aare: Fristerstreckungsgesuch','E-2026-07','warn'],['Gestern','Staatsanwaltschaft ZH: Strafverfahren gegen leitenden Revisor (Art. 24 Abs. 4 RAG)','Register · Leumund','crit'],['08.10.','Prüfpartner Mittelland AG: Nachreichung Arbeitspapiere','P-2026-11','']].forEach(x=>{const n=el(`<div class="item" style="cursor:pointer"><div class="d">${x[0]}</div><div class="t">${x[1]}</div><div class="r"><span class="chip ${x[3]}">${x[2]}</span></div><div class="m">Ablegen in Akte, Klasse vorgeschlagen, Frist erkannt</div></div>`);n.addEventListener('click',()=>{if(/^[EPZG]-/.test(x[2]))openAkte(x[2],'dokumente');else toast('Zuordnung: '+x[2]+' (Demo)')});inbox.querySelector('.list').appendChild(n)});
   g.appendChild(inbox);
   const u=el('<div class="block"><div class="bh"><h3>Neue Urteile</h3><span class="chip quiet">Opencaselaw, täglich</span></div><div class="list"></div></div>');
-  URTEILE.filter(x=>x.jahr===2026).forEach(x=>{const n=el(`<div class="item" style="cursor:pointer"><div class="d">${x.cite.slice(-16)}</div><div class="t">${x.cite.split(' vom')[0]} · ${x.typ}</div><div class="r"><span class="chip ${x.gericht.startsWith('bestätigt')?'ok':'warn'}">${x.gericht}</span></div><div class="m">${x.lehre}${x.typ==='Unterlassene Revision'?' · <b>betrifft Muster V-2023-014</b>':''}</div></div>`);n.addEventListener('click',()=>{S.w.sel=x.id;go('wissen')});u.querySelector('.list').appendChild(n)});
+  URTEILE.filter(x=>x.jahr===2026).forEach(x=>{const n=el(`<div class="item" style="cursor:pointer"><div class="d">${x.cite.slice(-16)}</div><div class="t">${x.cite.split(' vom')[0]} · ${x.typ}</div><div class="r"><span class="chip ${x.gericht.startsWith('bestätigt')?'ok':'warn'}">${x.gericht}</span></div><div class="m">${x.lehre}${x.typ==='Unterlassene Revision'?' · <b>betrifft Muster V-2023-014 und Akte E-2026-07</b>':''}</div></div>`);n.addEventListener('click',()=>{S.w.sel=x.id;go('wissen')});u.querySelector('.list').appendChild(n)});
   g.appendChild(u);m.appendChild(g);
-  aiMsg('Ein Urteil von Mai 2026 ändert das Sanktionsraster für unterlassene Revisionen und überholt das Muster V-2023-014. Ich habe es zur Überarbeitung markiert. Dein Fall E-2026-07 ist betroffen.',[{t:'BVGer B-3664/2025 vom 13. Mai 2026',p:'E. 9.3.3',k:'k0',pass:URTEILE[1].pass}],{tag:'Monitor'});
+  m.querySelector('#inbox').addEventListener('click',()=>inbox.scrollIntoView({behavior:'smooth'}));
+  m.querySelector('#newA').addEventListener('click',newAkte);
+  aiMsg('Ein Urteil von Mai 2026 ändert das Sanktionsraster für unterlassene Revisionen und überholt das Muster V-2023-014. Betroffen ist deine Akte E-2026-07; dort ist die Androhungsfrage in E. 4.2 neu zu begründen. Das Fristerstreckungsgesuch von gestern habe ich der Akte E-2026-07 zugeordnet, aber noch nicht abgelegt.',[{t:'BVGer B-3664/2025 vom 13. Mai 2026',p:'E. 9.3.3',k:'k0',pass:URTEILE[1].pass}],{tag:'Monitor'});
+}
+function nextStep(a){
+  if(a.status!=='offen')return null;
+  if(a.typ==='E'&&a.id==='E-2026-07'){const c=checks();if(!S.f.kiAdded)return['Stellungnahme in Chronologie einarbeiten','Register Sachverhalt','sachverhalt'];if(!c[1].ok)return['Vorbringen beantworten','Register Vorbringen','vorbringen'];if(!c.every(x=>x.ok))return['Verfügung fertigstellen','Register Verfügung','verfuegung'];return['Zur Unterschrift weiterleiten','Register Verfügung','verfuegung']}
+  if(a.typ==='E')return['Unterschrift Geschäftsleitung einholen','Zirkulation läuft','dokumente'];
+  if(a.typ==='P')return[S.p.read?'Hinweise am Original verifizieren':'Arbeitspapiere lesen','Register File Review','review'];
+  if(a.typ==='Z')return['3 Nachforderungen freigeben','Register Tabellarische Prüfung','pruefung'];
+  if(a.typ==='G')return['Rechtslage prüfen, Entwurf lesen','Register Rechtslage','rechtslage'];
+  return null;
+}
+function newAkte(){
+  const o=el(`<div class="overlay" role="dialog" aria-modal="true"><div class="modal"><h2>Neue Akte</h2><p class="muted">Die Art bestimmt Register, Vorlagen, Tarif und die vorgeschlagenen Fristen.</p><div class="form2"><label for="nTyp">Art</label><select id="nTyp">${Object.entries(ART).map(([k,v])=>`<option value="${k}">${v[0]} · ${v[1]}</option>`).join('')}</select><label for="nTi">Bezeichnung</label><input id="nTi" placeholder="z.B. Unabhängigkeit · Willensvollstrecker" style="border:1px solid var(--line2);border-radius:var(--rs);background:var(--panel);padding:7px 10px"><label for="nV">Verantwortlich</label><select id="nV"><option>L. Frei</option><option>D. Gasser</option><option>N. Baumgartner</option></select></div><div class="row"><button class="btn dark" id="nGo">Akte anlegen</button><button class="btn" id="nX">Abbrechen</button></div></div></div>`);
+  o.querySelector('#nX').addEventListener('click',()=>o.remove());o.addEventListener('click',e=>{if(e.target===o)o.remove()});
+  o.querySelector('#nGo').addEventListener('click',()=>{const typ=o.querySelector('#nTyp').value,ti=o.querySelector('#nTi').value.trim()||'Neue Akte';const n=AKTEN.filter(a=>a.typ===typ).length+8;const id=`${typ}-2026-${String(n).padStart(2,'0')}`;
+    const fr=typ==='E'?[{d:'2027-10-11',t:'Zwölfmonatsziel',typ:'Ziel'}]:typ==='Z'?[{d:'2026-11-10',t:'Nachforderungsfrist (30 Tage)',typ:'Partei'}]:typ==='G'?[{d:'2026-10-31',t:'Stellungnahme zum Gesuch (20 Tage, Art. 12 BGÖ)',typ:'gesetzlich'}]:[{d:'2027-01-31',t:'Berichtsentwurf',typ:'intern'}];
+    AKTEN.unshift({id,typ,titel:ti,verantw:o.querySelector('#nV').value,phase:typ==='E'?'Vorabklärung':typ==='P'?'Vorbereitung':'Eingang',tag:typ==='E'?1:null,status:'offen',beteiligte:[['Verantwortlich',o.querySelector('#nV').value,'']],docs:[],leistungen:[],fristen:fr});
+    log('Akte angelegt '+id);o.remove();openAkte(id);toast('Akte '+id+' angelegt');aiMsg(`Akte ${id} angelegt. Register und Vorlagen für «${ART[typ][0]}» stehen bereit; ${fr.length} Frist vorgeschlagen (${fr[0].t}). Dokumente aus dem Posteingang kannst du jetzt hier ablegen.`,[],{tag:'Akte'})});
+  $('#overlayRoot').appendChild(o);o.querySelector('#nTi').focus();
+}
+
+// --- Akte: Kopf, Register, Inhalte
+function akteView(m){
+  const a=akte();if(!a){go('akten');return}
+  crumbs(['Akten',a.id,REGS[a.typ].find(r=>r[0]===S.reg)?.[1]||'']);setKlasse(ART[a.typ][2]);
+  const nf=nextFrist(a);const out=a.docs.filter(d=>d.out).length;
+  const hd=el(`<div class="akte-hd"><div class="hd"><div class="grow"><div class="row"><span class="mono muted">${a.id}</span><span class="chip quiet">${ART[a.typ][0]}</span>${a.status==='abgeschlossen'?'<span class="chip ok">abgeschlossen</span>':''}</div><h1>${esc(a.titel)}</h1><div class="meta"><span>Verantwortlich <b>${esc(a.verantw)}</b></span><span>Phase <b>${esc(a.phase)}</b></span>${a.tag?`<span>Zwölfmonatsziel <b>Tag ${a.tag} · noch ${365-a.tag} Tage</b></span>`:''}${nf?`<span>Nächste Frist <b>${fmtD(nf.d)}</b> · ${esc(nf.t)}</span>`:''}<span>Gebühr bisher <b>${chf(gebuehr(a))} Fr.</b> (${tarif(a).norm})</span></div></div><div class="actions"><button class="btn" id="back">← Akten</button><button class="btn" id="newDoc">Neues Dokument</button><button class="btn dark" id="zeit">Zeit erfassen</button></div></div>
+    <div class="regs">${REGS[a.typ].map(r=>`<button class="${S.reg===r[0]?'active':''}" data-r="${r[0]}">${r[1]}${r[0]==='dokumente'?`<span class="c">${a.docs.length}</span>${out?'<span class="dot" title="ausgecheckt"></span>':''}`:r[0]==='fristen'?`<span class="c">${a.fristen.filter(f=>!f.done).length}</span>`:r[0]==='leistungen'?`<span class="c">${sumH(a).toFixed(1).replace('.0','')} h</span>`:''}</button>`).join('')}</div></div>`);
+  hd.querySelectorAll('[data-r]').forEach(b=>b.addEventListener('click',()=>setReg(b.dataset.r)));
+  hd.querySelector('#back').addEventListener('click',()=>go('akten'));
+  hd.querySelector('#newDoc').addEventListener('click',()=>{setReg('dokumente');setTimeout(()=>document.getElementById('vorlage')?.focus(),50)});
+  hd.querySelector('#zeit').addEventListener('click',()=>{setReg('leistungen');setTimeout(()=>document.getElementById('lT')?.focus(),50)});
+  m.appendChild(hd);
+  const R={uebersicht:regUebersicht,dokumente:regDokumente,beteiligte:regBeteiligte,leistungen:regLeistungen,fristen:regFristen,publikation:regPublikation,rechtslage:regRechtslage,
+    sachverhalt:enforcement,vorbringen:enforcement,verfuegung:enforcement,review:pruefung,pruefung:zulassung};
+  (R[S.reg]||regUebersicht)(m,a);
+}
+function regUebersicht(m,a){
+  if(a.typ==='E'&&a.tag)m.appendChild(el(`<div class="casebar"><div class="ph">${a.id==='E-2026-07'?'<span class="done">Vorabklärung</span><span class="done">Eröffnung 02.04.</span><span class="done">Stellungnahme 20.05.</span><span class="now">Verfügung · Entwurf</span><span>Rechtsmittel 30 Tage</span>':'<span class="done">Vorabklärung</span><span class="done">Eröffnung</span><span class="done">Stellungnahme</span><span class="done">Verfügung</span><span class="now">Zirkulation</span><span>Rechtsmittel</span>'}</div><div class="days"><div class="l"><span>Zwölfmonatsziel</span><b>Tag ${a.tag} · noch ${365-a.tag} Tage</b></div><div class="bar"><i style="width:${Math.round(a.tag/365*100)}%${a.tag>300?';background:var(--crit)':''}"></i></div></div></div>`));
+  if(a.typ==='P')m.appendChild(el(`<div class="casebar"><div class="ph"><span class="done">Ankündigung</span><span class="done">Vorbereitung</span><span class="now">File Review</span><span>Firm Review</span><span>Comment Forms</span><span>Bericht</span></div><div class="days"><div class="l"><span>Aufwand</span><b>${sumH(a)} h · ${Math.round(sumH(a)/8*10)/10} Tage</b></div><div class="bar"><i style="width:${Math.min(100,Math.round(sumH(a)/480*100))}%;background:var(--info)"></i></div></div></div>`));
+  const g=el('<div class="grid2"></div>');
+  const steps=el('<div class="block"><div class="bh"><h3>Nächste Schritte</h3><span class="chip ai">vorgeschlagen</span></div><div class="steps"></div></div>');
+  const ST=a.id==='E-2026-07'?[[S.f.kiAdded,'Stellungnahme in Chronologie einarbeiten','Register Sachverhalt · Akte 22','sachverhalt'],[checks()[1].ok,'Fünf Vorbringen beantworten','Register Vorbringen','vorbringen'],[!!S.f.massnahme,'Massnahme wählen, Androhungsfrage begründen','Register Verfügung · B-3664/2025','verfuegung'],[S.f.zweit,'Zweitperson D. Gasser liest','Frist intern 31.10.2026','verfuegung'],[false,'Verfügung als Word finalisieren, PDF erzeugen, zur Unterschrift','Register Dokumente','dokumente']]
+    :a.typ==='P'?[[true,'Ankündigung und Unterlagenanforderung','ÜP 1','dokumente'],[S.p.read,'Arbeitspapiere lesen (File-Review-Leser)','Register File Review','review'],[Object.values(S.p.status).some(x=>x==='ver'),'Hinweise am Original verifizieren, Comment Forms','Register File Review','review'],[false,'Stellungnahme Unternehmen (30 Tage)','Frist 04.11.2026','fristen'],[false,'Bericht, Klassifikation, Gebührenverfügung','Register Leistungen & Gebühren','leistungen']]
+    :a.typ==='Z'?[[true,'Dossiers eingelesen, Spalten gefüllt','6 Dossiers','pruefung'],[false,'Drei Nachforderungen freigeben','0417, 0421, 0442','pruefung'],[false,'Leumund manuell beurteilen','nicht durch KI','pruefung'],[false,'Zwei Verfügungen vorbereiten','0440, 0088','dokumente']]
+    :a.typ==='G'?[[true,'Gesuch erfasst, Frist berechnet','Art. 12 BGÖ · 20 Tage','fristen'],[false,'Rechtslage prüfen, Entwurf lesen','Register Rechtslage','rechtslage'],[false,'Konsultation Dritte prüfen (Art. 11 BGÖ)','Betroffene frühere Revisionsstelle','beteiligte'],[false,'Verfügung unterzeichnen, PDF, Versand','Register Dokumente','dokumente']]
+    :[[true,'Verfügung in Zirkulation','Akte 44 v9','dokumente'],[false,'Unterschrift Geschäftsleitung','Frist 14.10.2026','fristen']];
+  ST.forEach((s,i)=>{const n=el(`<div class="step ${s[0]?'done':''}"><span class="n">${s[0]?'✓':i+1}</span><div class="t">${esc(s[1])}</div><button class="btn sm">Öffnen</button><div class="m">${esc(s[2])}</div></div>`);n.querySelector('button').addEventListener('click',()=>setReg(s[3]));steps.querySelector('.steps').appendChild(n)});
+  g.appendChild(steps);
+  const dl=el('<div class="block"><div class="bh"><h3>Zuletzt bearbeitete Dokumente</h3><button class="btn sm" id="allD">Alle</button></div><div class="list"></div></div>');
+  [...a.docs].sort((x,y)=>y.ge.localeCompare(x.ge)).slice(0,4).forEach(d=>{const n=el(`<div class="item" style="cursor:pointer"><div class="d">${fmtD(d.ge)}</div><div class="t">${esc(d.name)}</div><div class="r">${d.out?'<span class="chip ai">in Word</span>':''}<span class="chip quiet">${d.ext} · v${d.v}</span></div><div class="m">${esc(d.nr)} · ${esc(d.von)} · Klasse ${d.k}</div></div>`);n.addEventListener('click',()=>{S.a.open=d.id;setReg('dokumente')});dl.querySelector('.list').appendChild(n)});
+  if(!a.docs.length)dl.querySelector('.list').appendChild(el('<p class="muted" style="font-size:13px">Noch keine Dokumente. Lege Post aus dem Eingang ab oder erzeuge ein Dokument aus einer Vorlage.</p>'));
+  dl.querySelector('#allD').addEventListener('click',()=>setReg('dokumente'));
+  g.appendChild(dl);m.appendChild(g);
+  const g2=el('<div class="grid2"></div>');
+  const fr=el('<div class="block"><div class="bh"><h3>Fristen</h3><button class="btn sm" id="allF">Alle</button></div><div class="list"></div></div>');
+  a.fristen.filter(f=>!f.done).sort((x,y)=>x.d.localeCompare(y.d)).slice(0,3).forEach(f=>{const dd=days(f.d);fr.querySelector('.list').appendChild(el(`<div class="item"><div class="d">${fmtD(f.d)}</div><div class="t">${esc(f.t)}</div><div class="r"><span class="chip ${dd<=3?'crit':dd<=14?'warn':'quiet'}">${dd<0?'überfällig':dd===0?'heute':'in '+dd+' Tagen'}</span></div><div class="m">${esc(f.typ)}</div></div>`))});
+  fr.querySelector('#allF').addEventListener('click',()=>setReg('fristen'));g2.appendChild(fr);
+  const be=el('<div class="block"><div class="bh"><h3>Beteiligte</h3><button class="btn sm" id="allB">Alle</button></div><dl class="kv"></dl></div>');
+  a.beteiligte.slice(0,4).forEach(b=>be.querySelector('dl').insertAdjacentHTML('beforeend',`<dt>${esc(b[0])}</dt><dd>${esc(b[1])}</dd>`));
+  be.querySelector('#allB').addEventListener('click',()=>setReg('beteiligte'));g2.appendChild(be);
+  m.appendChild(g2);
+  if(a.id==='E-2026-07')aiMsg('Diese Akte ist vom Urteil B-3664/2025 betroffen: Das Muster V-2023-014, aus dem der Entwurf (Akte 30) stammt, ist überholt. Ich schlage vor, zuerst die Stellungnahme (Akte 22) in die Chronologie einzuarbeiten, dann die Androhungsfrage neu zu begründen.',[{t:'BVGer B-3664/2025 vom 13. Mai 2026',p:'E. 9.3.3',k:'k0',pass:URTEILE[1].pass},{t:'Akte 22, Stellungnahme',p:'Beilagen 1–3',k:'k3'}],{tag:'Akte'});
+  else if(a.typ==='P')aiMsg('Die Arbeitspapiere (ÜP 2) liegen auf Bundesinfrastruktur. Der File-Review-Leser ist bereit; er erzeugt Hinweise mit Fundstelle, keine Feststellungen. Der Zeitaufschrieb (ÜP 4) ist mit den Leistungen dieser Akte verknüpft und speist später die Gebührenverfügung.',[{t:'Art. 16 Abs. 2 RAG; Art. 39 RAV',k:'k0'},{t:'BGer 9C_99/2024 vom 25. September 2024',p:'E. 6.4',k:'k0',pass:URTEILE[8].pass}],{tag:'Akte'});
+  else if(a.typ==='G')aiMsg('Für das Zugangsgesuch läuft die zwanzigtägige Frist nach Art. 12 BGÖ morgen ab. Ein Entwurf (G 2) liegt im Register Dokumente; die Rechtslage ist im Register Rechtslage aufbereitet.',[{t:'Art. 12 BGÖ; Art. 19 Abs. 2 RAG',k:'k0'}],{tag:'Akte'});
+}
+function regBeteiligte(m,a){
+  head(m,[],'Beteiligte','Parteien, Dritte und Zuständige dieser Akte. Dritte mit Geheimnissen sind gekennzeichnet; ihre Daten verlassen die Bundesinfrastruktur nicht.',ART[a.typ][2],'<button class="btn" id="addB">Beteiligte hinzufügen</button>');
+  const g=el('<div class="beteiligte"></div>');
+  a.beteiligte.forEach(b=>g.appendChild(el(`<div class="bet"><span class="role">${esc(b[0])}</span><b>${esc(b[1])}</b><span class="m">${esc(b[2]||'')}</span>${/Dritte/.test(b[2]||'')?'<span class="chip crit" style="align-self:flex-start;margin-top:4px">Klasse 3 · Geheimnisträger</span>':''}</div>`)));
+  m.appendChild(g);
+  m.querySelector('#addB').addEventListener('click',()=>toast('Beteiligte aus Register oder Handelsregister übernehmen (Demo)'));
+}
+function regFristen(m,a){
+  head(m,[],'Fristen','Gesetzliche Fristen, Parteifristen und interne Termine. Das Zwölfmonatsziel läuft als eigene Uhr mit.',1,'<button class="btn" id="ics">In Kalender übernehmen</button>');
+  const b=el('<div class="block"><div class="list"></div><div class="fform" style="grid-template-columns:140px 1fr 160px auto"><input type="date" id="fD" aria-label="Datum"><input id="fT" placeholder="Frist oder Termin" aria-label="Frist"><select id="fTyp" style="border:1px solid var(--line2);border-radius:var(--rs);background:var(--panel);padding:7px 10px"><option>Partei</option><option>gesetzlich</option><option>intern</option><option>Ziel</option></select><button class="btn sm" id="fAdd">Hinzufügen</button></div></div>');
+  [...a.fristen].sort((x,y)=>x.d.localeCompare(y.d)).forEach(f=>{const dd=days(f.d);const n=el(`<div class="item"><div class="d">${fmtD(f.d)}</div><div class="t" style="${f.done?'text-decoration:line-through;color:var(--muted)':''}">${esc(f.t)}</div><div class="r">${f.done?'<span class="chip ok">erledigt</span>':`<span class="chip ${dd<=3?'crit':dd<=14?'warn':'quiet'}">${dd<0?'überfällig':dd===0?'heute':'in '+dd+' Tagen'}</span><button class="btn sm" data-done>Erledigt</button>`}</div><div class="m">${esc(f.typ)}${f.typ==='Partei'?' · Fristenlauf nach Art. 20 ff. VwVG':''}</div></div>`);n.querySelector('[data-done]')?.addEventListener('click',()=>{f.done=true;log('Frist erledigt: '+f.t);render()});b.querySelector('.list').appendChild(n)});
+  b.querySelector('#fAdd').addEventListener('click',()=>{const d=b.querySelector('#fD').value,t=b.querySelector('#fT').value.trim();if(!d||!t){toast('Datum und Bezeichnung sind nötig');return}a.fristen.push({d,t,typ:b.querySelector('#fTyp').value});log('Frist erfasst '+d+' '+t);render()});
+  m.appendChild(b);
+  m.querySelector('#ics').addEventListener('click',()=>toast('Fristen als Kalendereinträge exportiert (Demo)'));
 }
 
 // --- Zulassung: tabellarische Prüfung
@@ -582,20 +847,14 @@ function pruefung(m){
     cf.querySelectorAll('[data-ap]').forEach(r=>r.addEventListener('click',()=>{const p=PRUEF.find(x=>x.id===r.dataset.ap);showSource({lbl:'Arbeitspapier',t:p.ap,meta:p.titel+' · '+p.norm,doclbl:'Auszug '+p.cells.fund[0],pass:`<mark>${esc(p.zitat)}</mark>`,k:'k3'})}));
     m.appendChild(cf);
   }
-  const z=el('<div class="block"><div class="bh"><h3>Zeitaufschrieb</h3><span class="chip quiet">Tagessatz 1 500 Fr. · Art. 39 RAV</span></div><div class="list"></div></div>');
-  [['Vorbereitung',38],['File Review',142],['Firm Review',61],['Comment Forms und Stellungnahmen',54],['Klassifikation',9],['Bericht',47]].forEach(x=>z.querySelector('.list').appendChild(el(`<div class="item"><div class="d num">${x[1]} h</div><div class="t">${x[0]}</div><div class="r"><span class="muted mono">${Math.round(x[1]/351*100)} %</span></div></div>`)));
-  m.appendChild(z);
+  m.appendChild(el('<p class="muted" style="font-size:12.5px">Zeitaufschrieb und Gebührenverfügung: Register Leistungen & Gebühren.</p>'));
 }
 
 // --- Verfahren (Enforcement): Dokument im Zentrum
 function enforcement(m){
   const f=S.f;
   const c0=checks();
-  head(m,['Werkbank','Verfahren',FALL.id],FALL.titel,'Der Sachverhalt wird einmal erfasst und speist Erwägungen, Dispositiv und später die Vernehmlassung. Rechts steht, was der Verfügung noch fehlt.',3);
-  m.appendChild(el(`<div class="casebar"><div class="ph"><span class="done">Vorabklärung</span><span class="done">Eröffnung 02.04.</span><span class="done">Stellungnahme 20.05.</span><span class="now">Verfügung · Entwurf</span><span>Rechtsmittel 30 Tage</span></div><div class="days"><div class="l"><span>Zwölfmonatsziel</span><b>Tag ${FALL.tag} · noch ${365-FALL.tag} Tage</b></div><div class="bar"><i style="width:${Math.round(FALL.tag/365*100)}%"></i></div></div></div>`));
-  const seg=el(`<div class="seg"><button class="${f.tab==='sachverhalt'?'active':''} ${c0[0].ok&&f.kiAdded?'done':''}" data-t="sachverhalt"><span class="n">1</span>Sachverhalt</button><button class="${f.tab==='vorbringen'?'active':''} ${c0[1].ok?'done':''}" data-t="vorbringen"><span class="n">2</span>Vorbringen</button><button class="${f.tab==='verfuegung'?'active':''} ${c0.every(x=>x.ok)?'done':''}" data-t="verfuegung"><span class="n">3</span>Verfügung</button></div>`);
-  seg.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{f.tab=b.dataset.t;render()}));
-  m.appendChild(seg);
+  setKlasse(3);
   ({sachverhalt,vorbringen,verfuegung})[f.tab](m);
 
   function sachverhalt(m){
@@ -633,10 +892,12 @@ function enforcement(m){
     const massn=f.massnahme==='verweis'?'A._______ wird ein schriftlicher Verweis erteilt.':f.massnahme==='entzug12'?'Die A._______ am (...) 2015 erteilte Zulassung als Revisionsexperte (RAB-Nr. 102 338) wird für die Dauer von zwölf Monaten entzogen. Die Eintragung im Revisorenregister wird gelöscht.':f.massnahme==='entzug24'?'Die A._______ erteilte Zulassung als Revisionsexperte (RAB-Nr. 102 338) wird für die Dauer von 24 Monaten entzogen. Die Eintragung im Revisorenregister wird gelöscht.':null;
     const c=checks();
     const OUT=[['rub','Rubrum',c[0].ok?'ok':'ok'],['sv','Sachverhalt',c[0].ok?'ok':c[0].warn?'warn':'crit'],['e1','E. 1 Zuständigkeit','ok'],['e2','E. 2 Rechtsgrundlagen',c[1].ok?'ok':'warn'],['e3','E. 3 Würdigung',c[1].ok?'ok':'warn'],['e4','E. 4 Massnahme',c[2].ok&&c[3].ok?'ok':c[2].ok?'warn':'crit'],['e5','E. 5 Kosten','ok'],['disp','Dispositiv',massn?'ok':'crit']];
-    const lay=el(`<div class="doclayout"><div class="outline">${OUT.map(o=>`<button class="${f.section===o[0]?'active':''}" data-s="${o[0]}"><span class="st ${o[2]}"></span>${o[1]}</button>`).join('')}<div class="sec"><button class="btn sm" id="fr">Fassung FR</button></div><div class="sec" style="display:flex;flex-direction:column;gap:8px"><label style="display:flex;gap:8px;font-size:12.5px;padding:0 4px"><input type="checkbox" id="zweit" ${f.zweit?'checked':''}> Zweitperson hat gelesen</label><button class="btn dark" id="fwd" ${c.every(x=>x.ok)?'':'disabled'}>Zur Unterschrift</button></div></div><div class="docsheet" id="sheet"></div></div>`);
+    const lay=el(`<div class="doclayout"><div class="outline">${OUT.map(o=>`<button class="${f.section===o[0]?'active':''}" data-s="${o[0]}"><span class="st ${o[2]}"></span>${o[1]}</button>`).join('')}<div class="sec" style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" id="fr">Fassung FR</button><button class="btn sm" id="toWord">In Word öffnen</button><button class="btn sm" id="toPdf">PDF</button></div><div class="sec" style="display:flex;flex-direction:column;gap:8px"><label style="display:flex;gap:8px;font-size:12.5px;padding:0 4px"><input type="checkbox" id="zweit" ${f.zweit?'checked':''}> Zweitperson hat gelesen</label><button class="btn dark" id="fwd" ${c.every(x=>x.ok)?'':'disabled'}>Zur Unterschrift</button></div></div><div class="docsheet" id="sheet"></div></div>`);
     lay.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{f.section=b.dataset.s;render();document.getElementById('s-'+b.dataset.s)?.scrollIntoView({behavior:'smooth',block:'center'})}));
     lay.querySelector('#zweit').addEventListener('change',e=>{f.zweit=e.target.checked;log('Zweitperson '+(f.zweit?'bestätigt':'zurückgezogen'));render()});
     lay.querySelector('#fwd').addEventListener('click',()=>{log('Entwurf zur Unterschrift weitergeleitet');toast('Weitergeleitet (Demo)');aiMsg('Entwurf an die Geschäftsleitung weitergeleitet, mit Protokoll und Quellenliste. Der Assistent verfügt nicht; die Unterschrift bleibt bei den zuständigen Personen (Art. 36a RAG).',[],{tag:'erledigt',tagc:'ok'})});
+    lay.querySelector('#toWord').addEventListener('click',()=>{const a=akte(),d=a.docs.find(x=>x.id==='d30');if(!d)return;d.text=lay.querySelector('#sheet').innerText.replace(/\n{3,}/g,'\n\n');S.reg='dokumente';openWord(a,d)});
+    lay.querySelector('#toPdf').addEventListener('click',()=>{const a=akte(),d=a.docs.find(x=>x.id==='d30');if(!d)return;d.text=lay.querySelector('#sheet').innerText.replace(/\n{3,}/g,'\n\n');makePdf(a,d)});
     lay.querySelector('#fr').addEventListener('click',()=>{log('Fassung FR entworfen');aiMsg('Französische Fassung entworfen. Terminologie nach Fedlex: «expert-réviseur», «retrait de l’agrément», «avertissement écrit».',[{t:'LSR (RS 221.302), art. 17',k:'k0'}],{tag:'Übersetzung'})});
     const ph=t=>`<span class="ph">${t}</span>`;
     const sec=(id,inner)=>`<div class="sec ${f.section===id?'focus':''}" id="s-${id}">${inner}</div>`;
@@ -648,8 +909,8 @@ function enforcement(m){
       ${sec('e2',`<div class="e"><span>2.</span><p>Natürliche Personen werden als Revisionsexperten zugelassen, wenn sie über einen unbescholtenen Leumund verfügen (Art. 4 Abs. 1 RAG). Die Zulassungsvoraussetzungen müssen dauerhaft erfüllt sein; die RAB kann die Zulassung befristet oder unbefristet entziehen (Art. 17 Abs. 1 RAG). Von einem erfahrenen Revisor kann erwartet werden, dass er säumige Kunden nachvollziehbar und regelmässig mahnt und andernfalls das Mandat niederlegt.<span class="ref k0" data-u="B-3664/2025">1</span> ${f.vorbringen.filter(v=>v.antwort&&v.status==='Rechtsfrage').map(v=>esc(v.antwort)).join(' ')||''}</p></div>`)}
       ${sec('e3',`<div class="e"><span>3.</span><p>${f.vorbringen.filter(v=>v.antwort&&v.status!=='Rechtsfrage').length?f.vorbringen.filter(v=>v.antwort&&v.status!=='Rechtsfrage').map(v=>`Zum Vorbringen ${v.id}: ${esc(v.antwort)}`).join(' '):ph('Würdigung der Vorbringen der Partei')}</p></div>`)}
       ${sec('e4',`<div class="e"><span>4.</span><p>${f.massnahme?`Die Pflichtverletzungen betreffen den Kernbereich der Revision und wiegen ${f.massnahme==='verweis'?'mittelschwer':'schwer'}. ${f.massnahme==='verweis'?'Da A._______ den ordnungsgemässen Zustand vor der Intervention wiederhergestellt und Massnahmen getroffen hat und kein früherer Verstoss aktenkundig ist, erweist sich ein Verweis als verhältnismässig; bei erneuter Verletzung ist mit dem Entzug der Zulassung zu rechnen.':(f.androhungBegr?'Trotz Wiederherstellung des Zustands bietet A._______ zurzeit keine Gewähr, weil '+ph('Begründung E. 4.2')+'. Ein Verweis genügt deshalb nicht.':ph('E. 4.2: Begründung, weshalb trotz Wiederherstellung kein Verweis genügt'))}<span class="ref k0" data-u="B-3664/2025">1</span><span class="ref k0" data-u="B-2332/2018">2</span>`:ph('Schwere, Androhungsfrage und Verhältnismässigkeit')}</p></div>`)}
-      ${sec('e5',`<div class="e"><span>5.</span><p>Die Kosten des Verfahrens betragen 4 200 Franken (16.8 Stunden à 250 Franken; Art. 21 RAG, Art. 40 RAV).</p></div>`)}
-      ${sec('disp',`<div class="disp"><b>Demnach verfügt die RAB:</b><ol><li>${massn?esc(massn):ph('Massnahme')}</li><li>Die Verfahrenskosten von Fr. 4 200.– werden A._______ auferlegt.</li><li>Diese Verfügung wird A._______ eröffnet.</li></ol></div><div class="sig"><span>Eidgenössische Revisionsaufsichtsbehörde</span><span>${ph('Unterschriften Geschäftsleitung')}</span></div><div class="fn">Rechtsmittelbelehrung: Beschwerde innert 30 Tagen an das Bundesverwaltungsgericht (Art. 28 Abs. 2 RAG; Art. 44 ff. VwVG). Gelb hinterlegte Stellen sind offene Platzhalter. Nummerierte Quellen öffnen sich im Panel rechts.</div>`)}
+      ${sec('e5',`<div class="e"><span>5.</span><p>Die Kosten des Verfahrens betragen ${chf(gebuehr(akte()))} Franken (${sumH(akte())} Stunden à 250 Franken; Art. 21 RAG, Art. 40 RAV), gemäss Zeitaufschrieb im Register Leistungen.</p></div>`)}
+      ${sec('disp',`<div class="disp"><b>Demnach verfügt die RAB:</b><ol><li>${massn?esc(massn):ph('Massnahme')}</li><li>Die Verfahrenskosten von Fr. ${chf(gebuehr(akte()))} werden A._______ auferlegt.</li><li>Diese Verfügung wird A._______ eröffnet.</li></ol></div><div class="sig"><span>Eidgenössische Revisionsaufsichtsbehörde</span><span>${ph('Unterschriften Geschäftsleitung')}</span></div><div class="fn">Rechtsmittelbelehrung: Beschwerde innert 30 Tagen an das Bundesverwaltungsgericht (Art. 28 Abs. 2 RAG; Art. 44 ff. VwVG). Gelb hinterlegte Stellen sind offene Platzhalter. Nummerierte Quellen öffnen sich im Panel rechts.</div>`)}
       ${(()=>{const akten=[...new Set(chrono.map(e=>e.src).filter(s=>s&&!/Art\./.test(s)))];const normen=[...new Set(['Art. 4 Abs. 1, 17 Abs. 1, 21, 28 RAG','Art. 40 RAV','Art. 699 Abs. 2, 728b, 729b, 730a, 730c OR',...chrono.map(e=>e.src).filter(s=>s&&/Art\./.test(s))])];const urt=f.massnahme?['BVGer B-3664/2025 vom 13. Mai 2026, E. 7, 8.2–8.3, 9.3.3','BVGer B-2332/2018 vom 11. März 2020, E. 2.3.2'].concat(f.muster?[`Eigenes Muster ${f.muster}`]:[]):[];return `<div class="qv"><b>Quellenverzeichnis</b> (wird der Verfügung für Zweitperson und Akteneinsicht beigefügt)<ol>${akten.map(s=>`<li class="k3">${esc(s)}</li>`).join('')}${normen.map(s=>`<li>${esc(s)}</li>`).join('')}${urt.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><div style="margin-top:6px">${akten.length} Aktenstücke (Klasse 3) · ${normen.length} Normen · ${urt.length} Urteile und Muster · Protokoll mit ${S.log.length} Einträgen</div></div>`})()}`;
     lay.querySelectorAll('[data-u]').forEach(r=>r.addEventListener('click',()=>{const u=URTEILE.find(x=>x.id===r.dataset.u);showSource({lbl:'Urteil',t:u.cite,meta:u.e,pass:u.pass,k:'k0'})}));
     lay.querySelectorAll('.ref.k3').forEach(r=>r.addEventListener('click',()=>showSource({lbl:'Akte',t:r.textContent,meta:FALL.id,k:'k3',pass:'<span class="muted">Aktenstück wird aus dem Aktensystem geladen (Demo).</span>'})));
@@ -684,6 +945,9 @@ function wissen(m){
   }
   renderRes();
   m.querySelector('#newM').addEventListener('click',musterWizard);
+  const fq=el('<div class="block"><div class="bh"><h3>FAQ und Rundschreiben</h3><span class="chip ok">Klasse 0</span><span class="chip quiet">Aktualität gegen neue Urteile geprüft</span></div><div class="list"></div></div>');
+  [['FAQ «Vergleichbare ausländische Ausbildungen»','Gilt als Verwaltungsverordnung (BVGer B-433/2022, E. 6.4)','Prüfen: UK nach Ende des FZA-Übergangsregimes','warn'],['Rundschreiben 1/2010 Berichterstattung','Letzte Änderung 2021','aktuell','ok'],['Grundsätze zum Enforcement, 2. Aufl.','Neue Urteile zur Androhungsfrage 2026','Ergänzung vorschlagen','warn']].forEach(x=>fq.querySelector('.list').appendChild(el(`<div class="item"><div class="d"></div><div class="t">${x[0]}</div><div class="r"><span class="chip ${x[3]}">${x[2]}</span></div><div class="m">${x[1]}</div></div>`)));
+  m.appendChild(fq);
   if(w.sel){const x=all.find(y=>y.id===w.sel);if(x)showSource({lbl:x.quelle,t:x.cite,meta:(x.e||'')+' · '+x.typ,pass:x.pass,k:x.quelle==='Urteil'?'k0':'k3'});w.sel=null}
 }
 function musterWizard(){
@@ -693,34 +957,147 @@ function musterWizard(){
   o.querySelector('#wClose').addEventListener('click',()=>o.remove());o.addEventListener('click',e=>{if(e.target===o)o.remove()});
   o.querySelector('#wGo').addEventListener('click',()=>{const typ=o.querySelector('#wTyp').value,ma=o.querySelector('#wM').value;const mu=MUSTER.filter(x=>x.typ===typ),ur=URTEILE.filter(x=>x.typ===typ);
     o.querySelector('#wOut').innerHTML=`<div class="block"><div class="bh"><h3>Gerüst: ${typ} · ${ma}</h3><span class="chip ai">erzeugt</span></div><dl class="kv"><dt>Grundlage</dt><dd>${mu.length} eigene Muster (${mu.map(x=>x.id).join(', ')||'keine'}), ${ur.length} Urteile (${ur.map(x=>x.id).join(', ')||'keine'})</dd><dt>Normen</dt><dd>${[...new Set(mu.flatMap(x=>x.bausteine))].join(' · ')||'Art. 17 RAG'}</dd><dt>Struktur</dt><dd>Rubrum · Sachverhalt · E. 1 Zuständigkeit · E. 2 Rechtsgrundlagen · E. 3 Würdigung und Vorbringen · E. 4 Schwere, Androhung, Verhältnismässigkeit · E. 5 Kosten · Dispositiv</dd><dt>Prüfhinweis</dt><dd>${ma.startsWith('Entzug')?'Androhungsfrage nach Art. 17 Abs. 1 Satz 2 RAG in E. 4.2 zwingend behandeln (BVGer B-3664/2025, E. 9.3.3).':'Bei Verweis: Wiederholungsfall und Entzug ankündigen.'}</dd></dl><div class="row" style="margin-top:10px"><button class="btn dark sm" id="wOpen">Im Verfügungs-Editor öffnen</button></div></div>`;
-    o.querySelector('#wOpen').addEventListener('click',()=>{S.f.massnahme=ma.startsWith('Verweis')?'verweis':ma.includes('24')?'entzug24':'entzug12';S.f.muster=mu[0]?.id||null;log('Musterverfügung erzeugt: '+typ+' / '+ma);o.remove();go('enforcement','verfuegung')})});
+    o.querySelector('#wOpen').addEventListener('click',()=>{S.f.massnahme=ma.startsWith('Verweis')?'verweis':ma.includes('24')?'entzug24':'entzug12';S.f.muster=mu[0]?.id||null;log('Musterverfügung erzeugt: '+typ+' / '+ma);o.remove();openAkte('E-2026-07','verfuegung')})});
   $('#overlayRoot').appendChild(o);
 }
 
-// --- Rechtsdienst
-function recht(m){
-  head(m,['Werkbank','Rechtsdienst'],'Rechtsdienst','Anonymisierung für Publikation und Praxisbericht, Zugangsgesuche nach BGÖ, Aktualität von FAQ und Rundschreiben.',3);
-  const an=el(`<div class="block"><div class="bh"><h3>Anonymisierung · E-2026-07 für den Praxisbericht</h3><span class="chip crit">Eingabe Klasse 3</span><span class="chip ok">Ausgabe Klasse 0</span><button class="btn sm" id="redBtn">${S.r.show?'Ersetzungen ausblenden':'Ersetzungen zeigen'}</button></div><div class="redact ${S.r.show?'show':''}" id="redDoc" style="font-family:var(--serif);font-size:16px;line-height:1.6;max-width:70ch"></div><p class="muted" style="font-size:12px;margin-top:10px">7 Ersetzungen vorgeschlagen (Personen, Firmen, Ort, Datum, Betrag). Identifizierende Umstände wie Branche und Ortsgrösse sind manuell zu beurteilen.</p><div class="row" style="margin-top:10px"><button class="btn dark sm" id="redOk">Freigeben</button></div></div>`);
+// --- Dokumente: Word-Rundlauf (öffnen → ausgecheckt → speichern → zurückgeladen und versioniert), PDF, Vorlagen, Upload
+function regDokumente(m,a){
+  head(m,[],'Dokumente','Jedes Dokument liegt in der Akte, mit Version, Klasse und Verlauf. «In Word öffnen» checkt es aus; beim Speichern in Word wird es automatisch zurückgeladen und als neue Version gesichert.',ART[a.typ][2],
+    `<select id="vorlage" class="btn" aria-label="Neues Dokument aus Vorlage"><option value="">Neu aus Vorlage …</option>${VORLAGEN[a.typ].map(v=>`<option>${v}</option>`).join('')}</select><button class="btn" id="upl">Hochladen</button>`);
+  const box=el('<div class="docs"><div class="dh"><span></span><span>Dokument</span><span>Version</span><span>Geändert</span><span>Von</span><span>Status</span><span></span></div></div>');
+  if(!a.docs.length)box.appendChild(el('<p class="muted" style="padding:16px;font-size:13px">Noch keine Dokumente in dieser Akte.</p>'));
+  [...a.docs].sort((x,y)=>(x.nr||'').localeCompare(y.nr||'',undefined,{numeric:true})).forEach(d=>{
+    const row=el(`<div class="doc-row ${d.out?'out':''}" id="doc-${d.id}"><span class="ficon ${d.ext}">${d.ext.toUpperCase()}</span><div class="nm"><span>${esc(d.name)}</span><small>${esc(d.nr)} · <span class="chip ${d.k>=3?'crit':d.k===2?'warn':'quiet'}" style="font-size:10px;padding:0 6px">Klasse ${d.k}</span>${d.pdf?' · PDF vorhanden':''}</small></div><span class="mono">v${d.v}</span><span class="mono">${fmtD(d.ge)}</span><span style="font-size:12.5px">${esc(d.von)}</span><span>${d.out?'<span class="chip ai">in Word · L. Frei</span>':'<span class="chip quiet">frei</span>'}</span><div class="acts">${d.ext==='docx'?(d.out?`<button class="btn sm" data-act="focus">Zu Word</button>`:`<button class="btn dark sm" data-act="word">In Word öffnen</button><button class="btn sm" data-act="pdf">PDF</button>`):d.ext==='zip'?'<button class="btn sm" data-act="read">Lesen (Bund)</button>':`<button class="btn sm" data-act="view">Ansehen</button>`}<button class="btn sm" data-act="vers" title="Versionsverlauf">v${d.v} ▾</button></div></div>`);
+    row.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const act=b.dataset.act;
+      if(act==='word')openWord(a,d);
+      else if(act==='focus')document.getElementById('wordpane')?.scrollIntoView({behavior:'smooth',block:'center'});
+      else if(act==='pdf')makePdf(a,d);
+      else if(act==='vers'){S.a.vers=S.a.vers===d.id?null:d.id;render()}
+      else if(act==='read'){setReg('review')}
+      else showSource({lbl:d.nr,t:d.name,meta:`${d.ext} · v${d.v} · ${fmtD(d.ge)} · ${d.von}`,doclbl:'Inhalt',pass:esc(d.text).replace(/\n/g,'<br>'),k:d.k>=2?'k3':'k0',note:d.k>=3?'Klasse 3: Geheimnisse Dritter. Nur auf Bundesinfrastruktur lesbar.':''});
+    }));
+    row.addEventListener('click',()=>showSource({lbl:d.nr,t:d.name,meta:`${d.ext} · v${d.v} · ${fmtD(d.ge)} · ${d.von}`,doclbl:'Inhalt',pass:esc(d.text).replace(/\n/g,'<br>'),k:d.k>=2?'k3':'k0'}));
+    box.appendChild(row);
+    if(S.a.vers===d.id){const h=d.hist||[[`v${d.v}`,d.ge,d.von,'Eingang / Ablage']];box.appendChild(el(`<div class="versions">${[...h].reverse().map(v=>`<div><span class="mono">${v[0]}</span><span class="mono">${fmtD(v[1])}</span><span>${esc(v[3])}</span><span class="muted">${esc(v[2])}</span></div>`).join('')}<div style="border:0;padding-top:8px"><span></span><span></span><span class="muted" style="font-size:11.5px">Jede Speicherung aus Word erzeugt eine Version; frühere Fassungen bleiben lesbar und vergleichbar.</span><span></span></div></div>`))}
+  });
+  m.appendChild(box);
+  if(S.a.word){const d=a.docs.find(x=>x.id===S.a.word);if(d)m.appendChild(wordPane(a,d))}
+  const drop=el('<div class="drop"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4m0 0 4 4m-4-4-4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><div><b>Dateien hierher ziehen</b> oder klicken. Der Assistent schlägt Aktennummer, Klasse und erkannte Fristen vor; abgelegt wird erst nach deiner Bestätigung.</div></div>');
+  drop.addEventListener('click',()=>upload(a));m.querySelector('#upl').addEventListener('click',()=>upload(a));
+  m.appendChild(drop);
+  m.querySelector('#vorlage').addEventListener('change',e=>{const v=e.target.value;if(!v)return;e.target.value='';fromTemplate(a,v)});
+  if(S.a.open){const n=document.getElementById('doc-'+S.a.open);n?.scrollIntoView({block:'center'});S.a.open=null}
+}
+function openWord(a,d){d.out=true;S.a.word=d.id;log(`${d.nr} in Word geöffnet (ausgecheckt, v${d.v})`);render();setTimeout(()=>document.getElementById('wordpane')?.scrollIntoView({behavior:'smooth',block:'center'}),50)}
+function wordPane(a,d){
+  const w=el(`<div class="wordpane" id="wordpane"><div class="wtop"><span class="w">W</span><span>${esc(d.name)}.docx</span><span class="st">${S.a.busy?'Wird gespeichert und zurückgeladen …':`ausgecheckt aus ${a.id} · wird beim Speichern automatisch zurückgeladen`}</span></div><div class="ribbon"><span>Datei</span><span>Start</span><span>Einfügen</span><span>Überprüfen</span><span style="margin-left:auto;color:var(--accent)">RAB Werkbank · Add-in verbunden</span></div><textarea id="wtxt" aria-label="Dokumenttext">${esc(d.text)}</textarea><div class="wfoot"><span class="sync ${S.a.busy?'busy':''}"><i></i>${S.a.busy?'Synchronisiert …':'Verbunden mit Akte '+a.id}</span><span>v${d.v} · ${fmtD(d.ge)} · ${esc(d.von)}</span><span style="margin-left:auto"></span><button class="btn dark sm" id="wSave" ${S.a.busy?'disabled':''}>Speichern (⌘S)</button><button class="btn sm" id="wClose" ${S.a.busy?'disabled':''}>Schliessen ohne Speichern</button></div></div>`);
+  w.querySelector('#wSave').addEventListener('click',()=>saveWord(a,d,w.querySelector('#wtxt').value));
+  w.querySelector('#wtxt').addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveWord(a,d,e.target.value)}});
+  w.querySelector('#wClose').addEventListener('click',()=>{d.out=false;S.a.word=null;log(`${d.nr} geschlossen ohne Änderung (eingecheckt)`);render()});
+  return w;
+}
+function saveWord(a,d,text){
+  S.a.busy=true;render();
+  setTimeout(()=>{const changed=text!==d.text;d.text=text;if(changed){d.v+=1;d.ge=HEUTE;d.von='L. Frei';d.hist=d.hist||[['v'+(d.v-1),d.ge,d.von,'frühere Fassung']];d.hist.push(['v'+d.v,HEUTE,'L. Frei','Gespeichert aus Word, automatisch zurückgeladen'])}
+    d.out=false;S.a.word=null;S.a.busy=false;log(`${d.nr} aus Word zurückgeladen, ${changed?'Version v'+d.v+' gesichert':'unverändert, eingecheckt'}`);render();toast(changed?`Gesichert als v${d.v}`:'Keine Änderungen');
+    if(changed)aiMsg(`${esc(d.name)} ist als v${d.v} gesichert. Ich habe die Fassung gegen die Chronologie und das Quellenverzeichnis gelesen: ${/Androhung|androh/i.test(text)?'die Androhungsfrage ist jetzt angesprochen.':'kein Widerspruch zu belegten Daten gefunden. Die Androhungsfrage (E. 4.2) ist im Text noch nicht behandelt.'} Namen und Zahlen habe ich nicht verändert.`,[{t:d.nr+' · v'+d.v,p:'Akte '+a.id,k:'k3'}],{tag:'Zurückgeladen'});
+  },1400);
+}
+function makePdf(a,d){
+  const o=el(`<div class="overlay" role="dialog" aria-modal="true"><div class="modal" style="max-width:820px"><div class="row"><h2 style="flex:1">PDF erzeugen</h2><span class="chip quiet">${esc(d.nr)} · v${d.v}</span></div><p class="muted">Aus der aktuellen Word-Version entsteht ein PDF/A mit Aktenzeichen, Versionsvermerk und Seitenzahlen. Es wird als eigenes Dokument in der Akte abgelegt; die Word-Fassung bleibt bearbeitbar.</p><div class="docsheet" style="padding:36px 44px;font-size:14px"><div class="lh"><div><b>Eidgenössische Revisionsaufsichtsbehörde RAB</b>${a.id} · ${esc(d.nr)} · v${d.v}</div><div style="text-align:right"><b>PDF/A</b>${fmtD(HEUTE)} · Seite 1</div></div>${esc(d.text).split('\n').filter(Boolean).slice(0,8).map((l,i)=>i===0?`<h1 style="font-size:20px">${l}</h1>`:`<p>${l}</p>`).join('')}<div class="fn">Erzeugt aus ${esc(d.name)}.docx, Version ${d.v}, durch L. Frei. Prototyp, fiktiver Fall.</div></div><div class="row"><label style="display:flex;gap:8px;font-size:13px;flex:1"><input type="checkbox" id="pdfSig"> Mit Unterschriftsfeldern Geschäftsleitung</label><button class="btn dark" id="pdfGo">PDF ablegen</button><button class="btn" id="pdfX">Abbrechen</button></div></div></div>`);
+  o.querySelector('#pdfX').addEventListener('click',()=>o.remove());o.addEventListener('click',e=>{if(e.target===o)o.remove()});
+  o.querySelector('#pdfGo').addEventListener('click',()=>{const sig=o.querySelector('#pdfSig').checked;const nr=(a.typ==='E'?'Akte ':a.typ==='P'?'ÜP ':a.typ==='G'?'G ':'')+(a.docs.length+(a.typ==='E'?30:1));a.docs.push({id:'pdf'+Date.now(),nr,name:d.name.replace(' · Entwurf','')+(sig?' · Unterschriftsfassung':'')+' (PDF)',ext:'pdf',v:1,ge:HEUTE,von:'System aus v'+d.v,k:d.k,text:d.text});d.pdf=true;log(`PDF erzeugt aus ${d.nr} v${d.v}${sig?' mit Unterschriftsfeldern':''}`);o.remove();render();toast('PDF in der Akte abgelegt');aiMsg(`PDF/A aus ${esc(d.name)} (v${d.v}) in der Akte abgelegt${sig?', mit Unterschriftsfeldern':''}. ${a.typ==='E'?'Zur Unterschrift gehört das Quellenverzeichnis und das Protokoll; beides liegt bei.':''}`,[],{tag:'PDF',tagc:'ok'})});
+  $('#overlayRoot').appendChild(o);
+}
+function fromTemplate(a,v){
+  if(/Muster/.test(v)){musterWizard();return}
+  const nr=(a.typ==='E'?'Akte ':a.typ==='P'?'ÜP ':a.typ==='G'?'G ':'')+(a.docs.length+ (a.typ==='E'?30:1));
+  const texts={'Nachforderung von Unterlagen':'Sehr geehrte Damen und Herren\n\nZur Beurteilung benötigen wir folgende Unterlagen bis zum [Frist 30 Tage]:\n1. [Unterlage]\n\nFreundliche Grüsse','Nachforderung':'Sehr geehrte/r [Anrede]\n\nIhr Gesuch ist unvollständig. Wir bitten Sie, bis zum [Frist 30 Tage] nachzureichen:\n– [Beilage]\n\nBleibt die Frist unbenutzt, wird das Gesuch aufgrund der Akten beurteilt (Art. 3 RAV).','Aktennotiz':'Aktennotiz\n\nDatum: '+fmtD(HEUTE)+'\nGegenstand: [Gegenstand]\nTeilnehmende: [Personen]\n\n[Inhalt]','Comment Form':'Comment Form · File Review\n\nFeststellung F[n]\nSachverhalt: [aus Register File Review]\nKriterium: [PS]\nBeurteilung: [Text]\nBeleg: [Arbeitspapier]\nFrist Stellungnahme: 30 Tage','Gebührenverfügung':'Gebührenverfügung\n\nFür die Überprüfung nach Art. 16 RAG wird gestützt auf Art. 21 RAG und Art. 39 RAV eine Gebühr von Fr. '+chf(gebuehr(a))+' erhoben (Zeitaufschrieb: '+sumH(a)+' Stunden).','Verfügung Zugangsgesuch':'VERFÜGUNG betreffend Zugang zu amtlichen Dokumenten\n\n[Rubrum]\n\nErwägungen\n1. Die RAB informiert über Verfahren nur bei überwiegendem Interesse (Art. 19 Abs. 2 RAG) …'};
+  const text=texts[v]||(v+'\n\n[Entwurf aus Vorlage]');
+  const d={id:'t'+Date.now(),nr,name:v+(/Verfügung|Nachforderung/.test(v)?' · Entwurf':''),ext:'docx',v:1,ge:HEUTE,von:'Vorlage',k:ART[a.typ][2],text,hist:[['v1',HEUTE,'L. Frei','Erzeugt aus Vorlage «'+v+'»']]};
+  a.docs.push(d);log(`Dokument aus Vorlage «${v}» angelegt (${nr})`);
+  aiMsg(`«${esc(v)}» als ${nr} angelegt. Adressat, Aktenzeichen und Frist habe ich aus der Akte übernommen; Platzhalter in eckigen Klammern bleiben offen. Du kannst es jetzt in Word öffnen.`,[],{tag:'Vorlage'});
+  openWord(a,d);
+}
+function upload(a){
+  const nr=(a.typ==='E'?'Akte ':a.typ==='P'?'ÜP ':a.typ==='G'?'G ':'')+(a.docs.length+(a.typ==='E'?30:1));
+  const d={id:'u'+Date.now(),nr,name:a.id==='E-2026-07'?'Fristerstreckungsgesuch Advokatur Aare':'Eingang '+fmtD(HEUTE),ext:'pdf',v:1,ge:HEUTE,von:'Upload L. Frei',k:ART[a.typ][2],text:a.id==='E-2026-07'?'Namens und im Auftrag von Herrn R. Vogt ersuchen wir um Erstreckung der Frist zur ergänzenden Stellungnahme bis 15. November 2026 …':'Eingegangenes Dokument.'};
+  a.docs.push(d);log(`Dokument hochgeladen ${nr}`);render();
+  aiMsg(`Hochgeladen und als ${nr} abgelegt. Vorschlag: Klasse ${d.k}, Absender ${a.id==='E-2026-07'?'Advokatur Aare (Rechtsvertretung, Akte 20)':'unbekannt'}.${a.id==='E-2026-07'?' Im Dokument steht ein Fristbegehren bis 15. November 2026; soll ich die Frist eintragen?':''}`,[{t:nr,p:d.name,k:'k3'}],a.id==='E-2026-07'?{tag:'Ablage',gate:{id:'fr'+Date.now(),items:['Dokument gelesen, Klasse 3 bestätigt'],label:'Frist 15.11.2026 eintragen',logmsg:'Frist aus Fristerstreckungsgesuch eingetragen',done:'Frist eingetragen',after:'Frist eingetragen: 15.11.2026, ergänzende Stellungnahme (Partei). Antwort auf das Gesuch als Vorlage bereit.'}}:{tag:'Ablage'});
+}
+
+// --- Leistungen & Gebühren: Zeiterfassung je Akte, Rechnung nach Art. 21 RAG
+function regLeistungen(m,a){
+  const t=tarif(a),h=sumH(a),geb=gebuehr(a);
+  head(m,[],'Leistungen & Gebühren',`Jede Stunde wird in der Akte erfasst und einer Phase zugeordnet. Daraus entsteht die Gebühr nach Art. 21 RAG: ${t.art} ${chf(t.satz)} Fr. (${t.norm}). ${a.typ==='P'?'Das Gericht verlangt einen Zeitaufschrieb, der Phasen und Leistungen zuordnet.':'Für Verfügungen wird der Betrag ins Dispositiv übernommen.'}`,1,
+    `<button class="btn" id="kiZeit">Zeit aus Protokoll vorschlagen</button><button class="btn dark" id="inv">Rechnung erzeugen</button>`);
+  const box=el('<div class="lz"><div class="lh3"><span>Datum</span><span>Wer</span><span>Tätigkeit</span><span>Phase</span><span class="num" style="text-align:right">Std.</span><span style="text-align:right">Betrag</span></div></div>');
+  const phases=[...new Set(a.leistungen.map(l=>l[3]))];
+  [...a.leistungen].sort((x,y)=>x[0].localeCompare(y[0])).forEach(l=>box.appendChild(el(`<div class="lrow ${l[5]?'ki':''}"><span class="mono">${fmtD(l[0])}</span><span style="font-size:12.5px">${esc(l[1])}</span><span>${esc(l[2])}${l[5]?' <span class="chip ai">Vorschlag</span>':''}</span><span class="chip quiet" style="justify-self:start">${esc(l[3])}</span><span class="num" style="text-align:right">${l[4]}</span><span class="num" style="text-align:right">${chf(t.per===8?l[4]/8*t.satz:l[4]*t.satz)}</span></div>`)));
+  const lf=el(`<div class="lform"><input type="date" id="lD" value="${HEUTE}" aria-label="Datum"><input id="lT" placeholder="Tätigkeit" aria-label="Tätigkeit"><select id="lP" aria-label="Phase">${[...phases,'Weitere'].map(p=>`<option>${p}</option>`).join('')}</select><input id="lH" type="number" step="0.1" min="0.1" placeholder="Std." aria-label="Stunden"><button class="btn sm" id="lAdd">Erfassen</button></div>`);
+  lf.querySelector('#lAdd').addEventListener('click',()=>{const d=lf.querySelector('#lD').value,tx=lf.querySelector('#lT').value.trim(),hh=parseFloat(lf.querySelector('#lH').value);if(!d||!tx||!hh){toast('Datum, Tätigkeit und Stunden sind nötig');return}a.leistungen.push([d,'L. Frei',tx,lf.querySelector('#lP').value,hh]);log(`Leistung erfasst ${hh} h · ${tx}`);render()});
+  box.appendChild(lf);
+  box.appendChild(el(`<div class="lfoot"><span><b>${h.toFixed(1).replace('.0','')} h</b> <span class="muted">${a.typ==='P'?'· '+(Math.round(h/8*10)/10)+' Tage à 8 h':''}</span></span><span style="margin-left:auto"><span class="muted">Gebühr</span> <b>${chf(geb)} Fr.</b></span><span class="chip quiet">${t.norm}</span>${a.typ==='E'?'<span class="chip ok">fliesst in E. 5 und Dispositiv</span>':''}</div>`));
+  m.appendChild(box);
+  const ph=el('<div class="block bare"><div class="eyebrow" style="margin-bottom:8px">Nach Phasen</div><div class="list"></div></div>');
+  phases.forEach(p=>{const ph_h=a.leistungen.filter(l=>l[3]===p).reduce((s,l)=>s+l[4],0);ph.querySelector('.list').appendChild(el(`<div class="item"><div class="d num">${ph_h.toFixed(1).replace('.0','')} h</div><div class="t">${esc(p)}</div><div class="r"><span class="muted mono">${Math.round(ph_h/h*100)} %</span></div></div>`))});
+  m.appendChild(ph);
+  m.querySelector('#kiZeit').addEventListener('click',()=>{const n=S.log.filter(l=>l.includes(a.id)||true).length;const prop=[HEUTE,'L. Frei','Arbeit in der Werkbank gemäss Protokoll ('+Math.max(1,S.log.length)+' Einträge)',phases[phases.length-1]||'Weitere',Math.max(0.3,Math.round(S.log.length*0.2*10)/10),true];a.leistungen.push(prop);log('Zeitvorschlag aus Protokoll übernommen '+prop[4]+' h');render();aiMsg(`Aus dem Protokoll dieser Sitzung schlage ich ${prop[4]} Stunden vor (grün hinterlegt). Der Vorschlag beruht auf Zeitstempeln deiner Aktionen in dieser Akte; prüfe und runde selbst.`,[],{tag:'Zeit'})});
+  m.querySelector('#inv').addEventListener('click',()=>{S.a.inv=true;render();setTimeout(()=>document.getElementById('invsheet')?.scrollIntoView({behavior:'smooth',block:'start'}),50)});
+  if(S.a.inv)m.appendChild(invoice(a));
+}
+function invoice(a){
+  const t=tarif(a),h=sumH(a),geb=gebuehr(a);const isP=a.typ==='P';
+  const rows=[...new Set(a.leistungen.map(l=>l[3]))].map(p=>{const ph=a.leistungen.filter(l=>l[3]===p).reduce((s,l)=>s+l[4],0);return `<tr><td>${esc(p)}</td><td class="r">${ph.toFixed(1)}</td><td class="r">${isP?(ph/8).toFixed(2)+' Tg':chf(t.satz)}</td><td class="r">${chf(isP?ph/8*t.satz:ph*t.satz)}</td></tr>`}).join('');
+  const w=el(`<div class="docsheet inv" id="invsheet" style="max-width:820px"><div class="lh"><div><b>Eidgenössische Revisionsaufsichtsbehörde RAB</b>Bundesgasse 18, 3011 Bern · Prototyp, fiktiver Fall</div><div style="text-align:right"><b>${isP?'Gebührenverfügung':'Gebührenrechnung'}</b>Ref. ${a.id} · ${fmtD(HEUTE)} · Entwurf</div></div><h1>${isP?'Gebühr für die Überprüfung nach Art. 16 RAG':'Verfahrenskosten'}</h1><div class="sub">${esc(a.beteiligte[0][1])} · ${esc(a.titel)}</div><p>${isP?'Die Gebühr für die Überprüfung bemisst sich nach dem Zeitaufwand (Art. 21 RAG, Art. 39 RAV). Der Tagessatz beträgt 1 500 Franken; der Zeitaufschrieb ordnet jede Leistung einer Phase zu.':'Die Verfahrenskosten werden nach Zeitaufwand erhoben (Art. 21 RAG, Art. 40 RAV), Stundensatz 250 Franken.'}</p><table><thead><tr><th>Phase</th><th class="r">Stunden</th><th class="r">${isP?'Tage':'Ansatz'}</th><th class="r">Fr.</th></tr></thead><tbody>${rows}<tr class="tot"><td>Total</td><td class="r">${h.toFixed(1)}</td><td class="r">${isP?(h/8).toFixed(2)+' Tg':''}</td><td class="r">${chf(geb)}</td></tr></tbody></table><p style="font-family:var(--font);font-size:12.5px;color:var(--muted)">Zahlbar innert 30 Tagen. ${isP?'Rechtsmittelbelehrung: Beschwerde innert 30 Tagen an das Bundesverwaltungsgericht (Art. 28 Abs. 2 RAG).':'Dieser Betrag wird in E. 5 und Ziff. 2 des Dispositivs der Verfügung übernommen.'}</p><div class="sig"><span>Eidgenössische Revisionsaufsichtsbehörde</span><span><span class="ph">Unterschrift</span></span></div><div class="qv">Grundlage: Zeitaufschrieb dieser Akte, ${a.leistungen.length} Einträge, ${[...new Set(a.leistungen.map(l=>l[1]))].join(', ')}. Vergleich: BGer 9C_99/2024 (471 h, 84 000 Fr.).</div><div class="row" style="margin-top:18px;font-family:var(--font)"><button class="btn dark sm" id="invPdf">Als PDF in die Akte</button><button class="btn sm" id="invWord">Als Word öffnen</button><button class="btn sm" id="invX">Schliessen</button></div></div>`);
+  w.querySelector('#invX').addEventListener('click',()=>{S.a.inv=null;render()});
+  const mk=(ext)=>{const nr=(a.typ==='E'?'Akte ':a.typ==='P'?'ÜP ':a.typ==='G'?'G ':'')+(a.docs.length+(a.typ==='E'?30:1));const d={id:'inv'+Date.now(),nr,name:(isP?'Gebührenverfügung':'Gebührenrechnung')+' '+a.id,ext,v:1,ge:HEUTE,von:'System aus Leistungen',k:2,text:`${isP?'Gebührenverfügung':'Gebührenrechnung'} ${a.id}\n\nTotal ${h} Stunden · Fr. ${chf(geb)} (${t.norm})`,hist:[['v1',HEUTE,'System','Erzeugt aus '+a.leistungen.length+' Leistungen']]};a.docs.push(d);log(`${d.name} erzeugt (${ext})`);S.a.inv=null;return d};
+  w.querySelector('#invPdf').addEventListener('click',()=>{mk('pdf');setReg('dokumente');toast('Rechnung als PDF abgelegt')});
+  w.querySelector('#invWord').addEventListener('click',()=>{const d=mk('docx');S.reg='dokumente';openWord(a,d)});
+  return w;
+}
+
+// --- Publikation (Anonymisierung) und Rechtslage (BGÖ), aus dem früheren Rechtsdienst in die Akte verschoben
+function regPublikation(m,a){
+  head(m,[],'Publikation','Anonymisierung der Verfügung für Praxisbericht und Website (Art. 19 RAG). Eingabe Klasse 3, Ausgabe Klasse 0.',3);
+  const an=el(`<div class="block"><div class="bh"><h3>Anonymisierung · Akte 30 für den Praxisbericht</h3><span class="chip crit">Eingabe Klasse 3</span><span class="chip ok">Ausgabe Klasse 0</span><button class="btn sm" id="redBtn">${S.r.show?'Ersetzungen ausblenden':'Ersetzungen zeigen'}</button></div><div class="redact ${S.r.show?'show':''}" id="redDoc" style="font-family:var(--serif);font-size:16px;line-height:1.6;max-width:70ch"></div><p class="muted" style="font-size:12px;margin-top:10px">7 Ersetzungen vorgeschlagen (Personen, Firmen, Ort, Datum, Betrag). Identifizierende Umstände wie Branche und Ortsgrösse sind manuell zu beurteilen.</p><div class="row" style="margin-top:10px"><button class="btn dark sm" id="redOk">Freigeben und als Dokument ablegen</button></div></div>`);
   an.querySelector('#redDoc').innerHTML=VERF.map(seg=>{let out='';for(let i=0;i<seg.length;i++){if(i%2===1){out+=`<span class="r">${esc(seg[i])}</span><span class="n">${esc(seg[i+1])}</span>`;i++}else out+=esc(seg[i])}return `<p>${out}</p>`}).join('');
   an.querySelector('#redBtn').addEventListener('click',()=>{S.r.show=!S.r.show;render()});
-  an.querySelector('#redOk').addEventListener('click',()=>{log('Anonymisierung freigegeben');aiMsg('Anonymisierte Fassung freigegeben. Fallzusammenfassung für den Praxisbericht nach Art. 19 Abs. 1 RAG entworfen.',[{t:'Art. 19 Abs. 1 und 2 RAG',k:'k0'}],{tag:'erledigt',tagc:'ok'})});
+  an.querySelector('#redOk').addEventListener('click',()=>{a.docs.push({id:'an'+Date.now(),nr:'Akte '+(a.docs.length+30),name:'Verfügung · anonymisierte Fassung (Publikation)',ext:'docx',v:1,ge:HEUTE,von:'Assistent, freigegeben L. Frei',k:0,text:VERF.map(seg=>seg.filter((_,i)=>i%3!==1).join('')).join('\n')});log('Anonymisierung freigegeben, Dokument abgelegt');render();aiMsg('Anonymisierte Fassung freigegeben und als Dokument der Klasse 0 abgelegt. Fallzusammenfassung für den Praxisbericht nach Art. 19 Abs. 1 RAG entworfen.',[{t:'Art. 19 Abs. 1 und 2 RAG',k:'k0'}],{tag:'erledigt',tagc:'ok'})});
   m.appendChild(an);
-  const bg=el(`<div class="block"><div class="bh"><h3>Zugangsgesuch G-2026-04 (BGÖ)</h3><span class="chip crit">Klasse 3</span><button class="btn dark sm" id="bgBtn">Rechtslage prüfen</button></div><dl class="kv"><dt>Gesuch</dt><dd>Geprüfte Gesellschaft verlangt Kopie des Überprüfungsberichts über ihre frühere Revisionsstelle, um Verantwortlichkeitsansprüche zu prüfen</dd><dt>Prüfung</dt><dd>Art. 19 Abs. 2 RAG als Spezialnorm; überwiegendes öffentliches oder privates Interesse</dd></dl></div>`);
-  bg.querySelector('#bgBtn').addEventListener('click',()=>{log('BGÖ-Prüfung G-2026-04');aiMsg('Gefestigte Rechtsprechung: Die RAB informiert über Verfahren nur bei überwiegendem Interesse; das private Interesse an einem Zivilprozess genügt nicht, und das BGÖ gibt keinen Zugang zu Akten, die die RAB selbst nicht offenlegen darf. Entwurf einer abweisenden Verfügung liegt bereit.',[{t:'BVGer B-6115/2019 vom 16. Dezember 2020',p:'E. 3.8, 4.4–4.5',k:'k0',pass:'Es kann nicht sein, dass das Öffentlichkeitsgesetz einem Dritten Anspruch auf Einsicht in Verfahrensakten gibt, bezüglich derer es der <mark>Aufsichtsbehörde selbst untersagt ist</mark>, Informationen offenzulegen.'},{t:'Art. 19 Abs. 2 RAG; Art. 7 BGÖ',k:'k0'}],{tag:'Prüfung',gate:{id:'bgo',items:['Konsultation der betroffenen Dritten geprüft (Art. 11 BGÖ)','Entwurf gelesen'],label:'Zur Unterschrift',logmsg:'BGÖ-Verfügung weitergeleitet',done:'Weitergeleitet (Demo)',after:'Weitergeleitet.'}})});
-  m.appendChild(bg);
-  const fq=el('<div class="block"><div class="bh"><h3>FAQ und Rundschreiben</h3><span class="chip ok">Klasse 0</span></div><div class="list"></div></div>');
-  [['FAQ «Vergleichbare ausländische Ausbildungen»','Gilt als Verwaltungsverordnung (BVGer B-433/2022, E. 6.4)','Prüfen: UK nach Ende des FZA-Übergangsregimes','warn'],['Rundschreiben 1/2010 Berichterstattung','Letzte Änderung 2021','aktuell','ok'],['Grundsätze zum Enforcement, 2. Aufl.','Neue Urteile zur Androhungsfrage 2026','Ergänzung vorschlagen','warn']].forEach(x=>fq.querySelector('.list').appendChild(el(`<div class="item"><div class="d"></div><div class="t">${x[0]}</div><div class="r"><span class="chip ${x[3]}">${x[2]}</span></div><div class="m">${x[1]}</div></div>`)));
-  m.appendChild(fq);
+}
+function regRechtslage(m,a){
+  head(m,[],'Rechtslage','Prüfung des Zugangsgesuchs: Art. 19 Abs. 2 RAG als Spezialnorm, Interessenabwägung, Konsultation Dritter.',3,'<button class="btn dark" id="bgBtn">Rechtslage prüfen</button>');
+  m.appendChild(el('<div class="block"><dl class="kv"><dt>Gesuch</dt><dd>Geprüfte Gesellschaft verlangt Kopie des Überprüfungsberichts über ihre frühere Revisionsstelle, um Verantwortlichkeitsansprüche zu prüfen (G 1)</dd><dt>Prüfung</dt><dd>Art. 19 Abs. 2 RAG als Spezialnorm; überwiegendes öffentliches oder privates Interesse; Art. 7 und 11 BGÖ</dd><dt>Frist</dt><dd>20 Tage nach Eingang (Art. 12 BGÖ), läuft 12.10.2026 ab</dd></dl></div>'));
+  m.querySelector('#bgBtn').addEventListener('click',()=>{log('BGÖ-Prüfung G-2026-04');aiMsg('Gefestigte Rechtsprechung: Die RAB informiert über Verfahren nur bei überwiegendem Interesse; das private Interesse an einem Zivilprozess genügt nicht, und das BGÖ gibt keinen Zugang zu Akten, die die RAB selbst nicht offenlegen darf. Der Entwurf G 2 im Register Dokumente folgt dieser Linie.',[{t:'BVGer B-6115/2019 vom 16. Dezember 2020',p:'E. 3.8, 4.4–4.5',k:'k0',pass:'Es kann nicht sein, dass das Öffentlichkeitsgesetz einem Dritten Anspruch auf Einsicht in Verfahrensakten gibt, bezüglich derer es der <mark>Aufsichtsbehörde selbst untersagt ist</mark>, Informationen offenzulegen.'},{t:'Art. 19 Abs. 2 RAG; Art. 7 BGÖ',k:'k0'}],{tag:'Prüfung',gate:{id:'bgo',items:['Konsultation der betroffenen Dritten geprüft (Art. 11 BGÖ)','Entwurf G 2 gelesen'],label:'Zur Unterschrift',logmsg:'BGÖ-Verfügung weitergeleitet',done:'Weitergeleitet (Demo)',after:'Weitergeleitet. PDF kann im Register Dokumente erzeugt werden.'}})});
+}
+
+// --- Aktenübergreifend: Fristen und Leistungen (wie Agenda und Zeiterfassung in einer Kanzleisoftware)
+function fristen(m){
+  head(m,['Werkbank','Fristen'],'Fristen','Alle offenen Fristen über alle Akten, sortiert nach Datum. Klick öffnet die Akte im Register Fristen.',1);
+  const all=AKTEN.flatMap(a=>a.fristen.filter(f=>!f.done).map(f=>({...f,a}))).sort((x,y)=>x.d.localeCompare(y.d));
+  const b=el('<div class="block"><div class="list"></div></div>');
+  all.forEach(f=>{const dd=days(f.d);const n=el(`<div class="item" style="cursor:pointer"><div class="d">${fmtD(f.d)}</div><div class="t">${esc(f.t)}</div><div class="r"><span class="chip ${dd<=3?'crit':dd<=14?'warn':'quiet'}">${dd<0?'überfällig':dd===0?'heute':'in '+dd+' Tagen'}</span></div><div class="m"><span class="mono">${f.a.id}</span> · ${esc(f.a.titel)} · ${esc(f.typ)} · ${esc(f.a.verantw)}</div></div>`);n.addEventListener('click',()=>openAkte(f.a.id,'fristen'));b.querySelector('.list').appendChild(n)});
+  m.appendChild(b);
+}
+function leistungen(m){
+  head(m,['Werkbank','Leistungen'],'Leistungen','Erfasste Stunden je Akte und die daraus folgende Gebühr. Rechnungen entstehen in der Akte, im Register Leistungen & Gebühren.',1);
+  const box=el('<div class="akten"><div class="ah2" style="grid-template-columns:28px 120px 1fr 130px 110px 120px 130px"><span></span><span>Nr.</span><span>Akte</span><span>Tarif</span><span style="text-align:right">Stunden</span><span style="text-align:right">Gebühr</span><span></span></div></div>');
+  AKTEN.filter(a=>a.leistungen.length).forEach(a=>{const t=tarif(a);const r=el(`<div class="akte-row" style="grid-template-columns:28px 120px 1fr 130px 110px 120px 130px"><span class="fo ${a.typ}"></span><span class="mono num">${a.id}</span><div style="min-width:0"><div class="ti">${esc(a.titel)}</div><div class="sub">${a.leistungen.length} Einträge · ${esc(a.verantw)}</div></div><span class="chip quiet" style="justify-self:start">${t.norm}</span><span class="num" style="text-align:right">${sumH(a).toFixed(1).replace('.0','')} h</span><span class="num" style="text-align:right">${chf(gebuehr(a))}</span><span style="text-align:right"><span class="chip ${a.status==='abgeschlossen'?'ok':'quiet'}">${a.status==='abgeschlossen'?'verrechnet':'offen'}</span></span></div>`);r.addEventListener('click',()=>openAkte(a.id,'leistungen'));box.appendChild(r)});
+  m.appendChild(box);
+  const tot=AKTEN.filter(a=>a.status==='offen').reduce((s,a)=>s+gebuehr(a),0);
+  m.appendChild(el(`<div class="kpis"><div class="kpi"><b>${AKTEN.filter(a=>a.status==='offen').reduce((s,a)=>s+sumH(a),0).toFixed(1).replace('.0','')} h</b><span>offen, über alle Akten</span></div><div class="kpi"><b>${chf(tot)}</b><span>Fr. Gebühren, noch nicht verfügt</span></div><div class="kpi"><b>2</b><span>Personen mit Zeitaufschrieb heute</span></div></div>`));
 }
 
 // ---------- Palette, Hilfe, Protokoll, Fragen ----------
-const CMDS=[['Heute','heute'],['Zulassung: tabellarische Prüfung','zulassung'],['Überprüfung: File Review','pruefung'],['Verfahren: Sachverhalt','enforcement','sachverhalt'],['Verfahren: Vorbringen','enforcement','vorbringen'],['Verfahren: Verfügung','enforcement','verfuegung'],['Wissen: Suche','wissen'],['Musterverfügung erstellen','wissen','wizard'],['Rechtsdienst','recht'],['Protokoll anzeigen','log'],['Wie es funktioniert','help']];
+function CMDS(){return [['Akten (Startseite)','akten'],['Fristen (alle Akten)','fristen'],['Leistungen (alle Akten)','leistungen'],['Wissen: Suche','wissen'],['Musterverfügung erstellen','wissen','wizard'],['Neue Akte anlegen','new'],...AKTEN.filter(a=>a.status==='offen').flatMap(a=>REGS[a.typ].map(r=>[`${a.id} · ${a.titel} · ${r[1]}`,'akte',a.id,r[0]])),['Protokoll anzeigen','log'],['Wie es funktioniert','help']]}
 function palette(){
   if($('#pal'))return;
-  const o=el('<div class="palette" id="pal"><div class="pw"><input id="palIn" placeholder="Suchen oder Befehl … (z.B. Verfügung, Androhung, Muster)" aria-label="Befehl"><div class="items" id="palItems"></div></div></div>');
+  const o=el('<div class="palette" id="pal"><div class="pw"><input id="palIn" placeholder="Akte, Register oder Befehl … (z.B. E-2026-07 Verfügung, Fristen, Muster)" aria-label="Befehl"><div class="items" id="palItems"></div></div></div>');
   let sel=0,list=[];const items=o.querySelector('#palItems');
-  const run=c=>{o.remove();if(c[1]==='log')showLog();else if(c[1]==='help')help();else if(c[2]==='wizard'){go('wissen');musterWizard()}else if(c[1]==='search'){S.w.q=c[3];go('wissen')}else go(c[1],c[2])};
-  const draw=()=>{const q=o.querySelector('#palIn').value.toLowerCase();list=CMDS.filter(c=>c[0].toLowerCase().includes(q));if(q.length>2)list.push([`Im Wissen suchen: «${o.querySelector('#palIn').value}»`,'search',null,o.querySelector('#palIn').value]);items.innerHTML='';list.forEach((c,i)=>{const it=el(`<div class="it ${i===sel?'act':''}">${c[0]}<span class="mono">↵</span></div>`);it.addEventListener('click',()=>run(c));items.appendChild(it)})};
+  const run=c=>{o.remove();if(c[1]==='log')showLog();else if(c[1]==='help')help();else if(c[1]==='new')newAkte();else if(c[1]==='akte')openAkte(c[2],c[3]);else if(c[2]==='wizard'){go('wissen');musterWizard()}else if(c[1]==='search'){S.w.q=c[3];go('wissen')}else go(c[1],c[2])};
+  const draw=()=>{const q=o.querySelector('#palIn').value.toLowerCase();const ws=q.split(/\s+/).filter(Boolean);list=CMDS().filter(c=>ws.every(w=>c[0].toLowerCase().includes(w))).slice(0,14);if(q.length>2)list.push([`Im Wissen suchen: «${o.querySelector('#palIn').value}»`,'search',null,o.querySelector('#palIn').value]);items.innerHTML='';list.forEach((c,i)=>{const it=el(`<div class="it ${i===sel?'act':''}">${esc(c[0])}<span class="mono">↵</span></div>`);it.addEventListener('click',()=>run(c));items.appendChild(it)})};
   draw();
   o.querySelector('#palIn').addEventListener('input',()=>{sel=0;draw()});
   o.querySelector('#palIn').addEventListener('keydown',e=>{if(e.key==='ArrowDown'){sel=Math.min(sel+1,list.length-1);draw()}if(e.key==='ArrowUp'){sel=Math.max(sel-1,0);draw()}if(e.key==='Enter'&&list[sel])run(list[sel]);if(e.key==='Escape')o.remove()});
@@ -729,12 +1106,13 @@ function palette(){
 }
 function help(){
   const o=el(`<div class="overlay" role="dialog" aria-modal="true"><div class="modal"><div class="eyebrow">Prototyp</div><h2>Wie die Werkbank funktioniert</h2>
-    <p>Klickbarer Prototyp mit fiktiven Fällen. Echt sind nur die zitierten Urteile und Normen. Drei Prinzipien bestimmen die Oberfläche.</p>
-    <div class="legend"><div><b>Tabellarische Prüfung</b>Dossiers als Zeilen, Prüffragen als Spalten. Jede Zelle hat eine Quelle, neue Fragen füllt der Assistent über alle Dossiers.</div><div><b>Dokument im Zentrum</b>Die Verfügung wächst als Blatt; nummerierte Quellen statt Chat. Rechts steht, was noch fehlt.</div><div><b>Wissen als Suche</b>Urteile und eigene Verfügungen in einer Suche mit Facetten und hervorgehobener Passage.</div><div><b>Datenklasse</b>Oben rechts: Klasse 0 bis 3 bestimmt, wo das Modell läuft. Klasse 2 und 3 nur auf Bundesinfrastruktur.</div></div>
-    <h3>Rundgang</h3><p style="font-size:13.5px">Zulassung: Zelle anklicken, dann eine neue Spalte füllen lassen («Weiterbildung der letzten 3 Jahre nachgewiesen?»). Prüfung: Arbeitspapiere lesen, Hinweise verifizieren. Verfahren: Stellungnahme extrahieren, Antworten entwerfen, Massnahme wählen, Blatt lesen, Quellen anklicken. Wissen: «Androhung» suchen, Musterverfügung erstellen. ⌘K öffnet die Palette.</p>
+    <p>Klickbarer Prototyp mit fiktiven Fällen. Echt sind nur die zitierten Urteile und Normen. Die Akte ist der Ordner, in dem alles liegt; die Werkzeuge arbeiten darin.</p>
+    <div class="legend"><div><b>Akte als Ordner</b>Verfahren, Überprüfung, Zulassung oder Rechtsdienst. Register: Übersicht, Dokumente, Fachregister, Beteiligte, Leistungen, Fristen.</div><div><b>Word-Rundlauf</b>«In Word öffnen» checkt das Dokument aus. Speichern lädt es automatisch zurück und sichert eine neue Version. PDF auf Knopfdruck.</div><div><b>Leistungen → Rechnung</b>Stunden je Phase in der Akte; daraus die Gebühr nach Art. 21 RAG (1 500 Fr./Tag Überprüfung, 250 Fr./h sonst) und die Rechnung.</div><div><b>Assistent mit Quellen</b>Vorschläge rechts, jeder mit nummerierter Quelle. Klasse 0 bis 3 bestimmt, wo das Modell läuft.</div></div>
+    <h3>Rundgang</h3><p style="font-size:13.5px">Akte E-2026-07 öffnen: Register Dokumente, die Verfügung «In Word öffnen», Text ändern, Speichern; Version steigt, PDF erzeugen. Register Sachverhalt: Stellungnahme extrahieren. Register Verfügung: Massnahme wählen. Register Leistungen: Rechnung erzeugen. Akte P-2026-11: File Review, dann Gebührenverfügung. ⌘K springt in jede Akte und jedes Register.</p>
     <div class="row"><button class="btn dark" id="closeHelp">Zur Werkbank</button></div></div></div>`);
   o.querySelector('#closeHelp').addEventListener('click',()=>o.remove());o.addEventListener('click',e=>{if(e.target===o)o.remove()});$('#overlayRoot').appendChild(o);
 }
+
 function showLog(){const o=el(`<div class="overlay" role="dialog"><div class="modal"><h2>Protokoll</h2><p class="muted">Jede Aktion des Assistenten und jede Freigabe, mit Zeit und Person. Gehört zu den Verfahrensakten.</p><div class="log">${S.log.length?S.log.map(l=>`<div>${esc(l)}</div>`).join(''):'<div>Noch keine Einträge.</div>'}</div><div class="row"><button class="btn" id="cl">Schliessen</button></div></div></div>`);o.querySelector('#cl').addEventListener('click',()=>o.remove());o.addEventListener('click',e=>{if(e.target===o)o.remove()});$('#overlayRoot').appendChild(o)}
 function ask(){
   const v=$('#ask').value.trim();if(!v)return;$('#ask').value='';aiMsg(esc(v),[],{user:true});log('Frage: '+v.slice(0,60));
@@ -752,8 +1130,7 @@ $('#ask').addEventListener('keydown',e=>{if(e.key==='Enter')ask()});
 $('#cmdBtn').addEventListener('click',palette);
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();palette()}});
 render();
-let seen=false;try{seen=localStorage.getItem('rabwb_help3')==='1'}catch(e){}
-if(!seen){help();try{localStorage.setItem('rabwb_help3','1')}catch(e){}}
+let seen=false;try{seen=localStorage.getItem('rabwb_help5')==='1'}catch(e){}
+if(!seen){help();try{localStorage.setItem('rabwb_help5','1')}catch(e){}}
 </script>
-</body>
-</html>
+</body></html>
