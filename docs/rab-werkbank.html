@@ -1,4 +1,20 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
 <title>RAB Werkbank</title>
+<!--
+  RAB Werkbank · klickbarer Prototyp mit fiktiven Fällen.
+  Eigenständige Seite: keine Serverkomponente, keine Datenbank, keine Verbindung zu Claude.
+  Öffnen: Datei im Browser öffnen (Doppelklick) oder von einem beliebigen Webserver ausliefern.
+  Einzige externe Abhängigkeit: Schriften von fonts.googleapis.com. Ohne Internet greifen Systemschriften.
+  Echte Angaben: nur die zitierten Urteile und Normen. Alle Fälle, Personen und Firmen sind erfunden.
+-->
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: schmale Rail links, Arbeitsfläche auf warmem Weiss mit Haarlinien, Quellenpanel rechts. Tabellarische Prüfung, suchzentriertes Wissen, Dokument im Zentrum. */
@@ -739,3 +755,5 @@ render();
 let seen=false;try{seen=localStorage.getItem('rabwb_help3')==='1'}catch(e){}
 if(!seen){help();try{localStorage.setItem('rabwb_help3','1')}catch(e){}}
 </script>
+</body>
+</html>
