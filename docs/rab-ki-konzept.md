@@ -400,6 +400,54 @@ Infrastruktur der Klasse 3, weil Art. 26 Abs. 2 RAG die Zweckbindung der
 | Aufsichtsbericht-Extraktor, Risikoindikatoren, Meldungs-Triage | 2 und 3 | mittel bis hoch | mittel | Phase 3 |
 | Beschwerde-Assistent | 3 | mittel | mittel | Phase 3 |
 
+### 4.9 Prozessoptimierungen über die einzelnen Werkzeuge hinaus
+
+Die Werkzeuge in 4.2 bis 4.7 beschleunigen einzelne Schritte. Mehr gewinnt
+die RAB, wenn sie die Übergänge zwischen den Schritten neu ordnet. Sieben
+Ansatzpunkte, die der Prototyp «RAB Werkbank» (docs/rab-werkbank.html)
+durchspielt:
+
+1. **Sachverhalt einmal erfassen, überall verwenden.** Heute wird der
+   Sachverhalt in Comment Forms, Überprüfungsbericht, Verfügung und
+   Vernehmlassung je neu geschrieben. Ein strukturiertes Sachverhaltsmodell
+   (Beteiligte, Mandate, datierte Ereignisse mit Beleg und Status
+   unbestritten, bestritten, anerkannt) speist alle Dokumente. Gesetzliche
+   Fristen werden abgeleitet und als solche markiert, Lücken (Ereignis ohne
+   Beleg) sofort sichtbar. Der Fall B-3664/2025 zeigt den Nutzen: Dort musste
+   die RAB in der Duplik einräumen, dass das Gericht den Sachverhalt anders
+   festgestellt hatte als die Verfügung.
+2. **Stellungnahme der Partei als Vorbringen-Matrix.** Jedes Vorbringen wird
+   einem Vorwurf zugeordnet, als Tatsachen- oder Rechtsfrage klassiert und
+   erhält eine Antwort, die wörtlich in die Erwägungen fliesst. Unbeantwortete
+   Vorbringen sind der häufigste Anlass für Gehörsrügen; die Matrix macht sie
+   unmöglich zu übersehen.
+3. **Verfügungsreife als Ampel statt als Bauchgefühl.** Sechs Prüfpunkte, die
+   das Gericht tatsächlich prüft: jedes Sachverhaltselement belegt, jedes
+   Vorbringen beantwortet, Schwere je Vorwurf bezeichnet, Androhungsfrage
+   behandelt oder Abweichung vom Raster begründet, Gleichbehandlung mit
+   eigenen Mustern und Urteilen geprüft, Zweitperson gelesen. Die Verfügung
+   geht erst bei sechs von sechs zur Unterschrift.
+4. **Musterverfügungen aus der Praxisdatenbank erzeugen.** Sachverhaltstyp
+   und Massnahme wählen; der Assistent baut das Gerüst mit Normen,
+   Erwägungsstruktur und Bausteinen aus den nächstliegenden eigenen
+   Verfügungen und Urteilen. Namen, Zahlen und Daten bleiben Platzhalter und
+   werden aus dem Sachverhaltsmodell gefüllt. Urteile, die ein Muster
+   überholen, markieren es automatisch zur Überarbeitung.
+5. **Übergabe Überprüfung zu Enforcement ohne Medienbruch.** Verifizierte
+   Feststellungen aus Comment Forms werden mit einem Klick zu Vorwürfen mit
+   Norm und Beleg. Heute werden sie abgetippt.
+6. **Zwölfmonatsuhr und Fallcockpit.** Jedes Verfahren zeigt Phase,
+   Verfahrenstag und die nächsten vier Schritte. Die Geschäftsleitung sieht
+   auf einen Blick, welche Verfahren das Ziel der Enforcement-Grundsätze
+   gefährden.
+7. **Befehlspalette statt Menüsuche.** Jeder Schritt ist über eine
+   Tastenkombination und ein Suchfeld erreichbar; die Oberfläche folgt dem
+   Fall, nicht der Organisation.
+
+Grafisch setzt der Prototyp auf eine Tintenleiste als Identität, ein
+Dokumentblatt als Vorschau der Verfügung mit sichtbaren Platzhaltern und
+Fundstellen, sowie Farben, die nur eines bedeuten: die Datenklasse.
+
 ---
 
 ## 5. Der rechtliche Rahmen, auf das Wesentliche reduziert
