@@ -271,6 +271,44 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:13px}
 .kv dt{color:var(--muted)}.kv dd{margin:0}
 
+/* Fallkopf, Schritte, angeheftete Quelle, Comment-Form-Dokument */
+.casebar{display:flex;align-items:center;gap:18px;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);flex-wrap:wrap}
+.casebar .ph{display:flex;gap:4px;flex:1;min-width:260px}
+.casebar .ph span{flex:1;padding:6px 10px;border-radius:var(--rs);background:var(--panel2);font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.casebar .ph span.done{color:var(--fg)}
+.casebar .ph span.now{background:var(--fg);color:var(--bg)}
+.casebar .days{display:flex;flex-direction:column;gap:4px;min-width:220px}
+.casebar .days .l{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.casebar .days .l b{color:var(--fg);font-weight:500}
+.casebar .days .bar{height:4px;background:var(--panel2);border-radius:2px;overflow:hidden}
+.casebar .days .bar i{display:block;height:100%;background:var(--warn)}
+.seg{display:inline-flex;gap:0;border:1px solid var(--line2);border-radius:999px;padding:3px;background:var(--panel)}
+.seg button{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--muted)}
+.seg button.active{background:var(--fg);color:var(--bg)}
+.seg button .n{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1px solid currentColor;font-size:10.5px;font-family:var(--mono)}
+.seg button.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.pinned{border:1px solid var(--line2);border-radius:var(--r);background:var(--panel);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.pinned .ph2{display:flex;align-items:flex-start;gap:8px}
+.pinned .ph2 .x{margin-left:auto;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.pinned .ph2 .x:hover{background:var(--panel2);color:var(--fg)}
+.pinned .doc{background:var(--bg);border:1px solid var(--line);border-radius:var(--rs);padding:12px 14px;font-family:var(--serif);font-size:14px;line-height:1.55}
+.pinned .doc .lbl{font-family:var(--font);font-size:11px;color:var(--muted);margin-bottom:6px}
+.cfdoc{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:28px 32px;font-family:var(--serif);font-size:15px;line-height:1.55}
+.cfdoc .lh{display:flex;justify-content:space-between;font-family:var(--font);font-size:11px;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:18px}
+.cfdoc .lh b{display:block;color:var(--fg);font-weight:500;font-size:12px}
+.cfdoc h2{font-size:20px;margin-bottom:14px}
+.cfdoc .f{display:grid;grid-template-columns:120px 1fr;gap:4px 16px;padding:12px 0;border-top:1px solid var(--line)}
+.cfdoc .f .k{font-family:var(--font);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-top:3px}
+.cfdoc .f .hd2{grid-column:1/-1;display:flex;gap:10px;align-items:center;font-family:var(--font);font-size:13px;font-weight:500}
+.qv{font-family:var(--font);font-size:12px;color:var(--muted);margin-top:22px;border-top:1px solid var(--line);padding-top:10px}
+.qv ol{margin:6px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:2px}
+.qv .k3{color:var(--crit)}
+.sugg{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.th-x{margin-left:6px;color:var(--faint);font-size:12px;vertical-align:middle}
+.th-x:hover{color:var(--crit)}
+.mcard .next{font-size:12.5px;display:flex;gap:6px;align-items:baseline}
+.mcard .next b{font-weight:500}
+
 @media (max-width:1200px){.shell{grid-template-columns:72px minmax(0,1fr)}.aside{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}.search{min-width:0}}
 @media (max-width:900px){.doclayout,.klayout,.vgrid{grid-template-columns:1fr}.outline{position:static}.fform{grid-template-columns:1fr}.docsheet{padding:28px 22px}}
 @media (max-width:720px){
@@ -298,7 +336,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   <main class="main" id="main"></main>
 
   <aside class="aside">
-    <div class="ah"><div class="tabs2"><button class="active" data-p="assist">Assistent</button><button data-p="quelle">Quelle</button></div><span class="chip quiet" id="assistKlasse" style="margin-left:auto">Klasse 0</span></div>
+    <div class="ah"><h3>Assistent</h3><span class="muted" style="font-size:12px">Vorschläge mit Quellen</span><span class="chip quiet" id="assistKlasse" style="margin-left:auto">Klasse 0</span></div>
     <div class="body" id="assistBody"></div>
     <div class="foot">
       <div class="compose"><input id="ask" placeholder="Frage mit Fundstelle beantworten …" aria-label="Frage"><button id="askBtn">Fragen</button></div>
@@ -399,15 +437,14 @@ function setKlasse(k){S.klasse=k;const p=$('#klassePill');p.className='klasse '+
 const A={msgs:[]};
 function aiMsg(html,srcs=[],o={}){A.msgs.push({html,srcs,o});renderAside()}
 function aiClear(){A.msgs=[];renderAside()}
-function showSource(src){S.source=src;S.panel='quelle';renderAside()}
+function showSource(src){S.source=src;renderAside();$('#assistBody').scrollTop=0}
 function renderAside(){
-  document.querySelectorAll('.tabs2 button').forEach(b=>b.classList.toggle('active',b.dataset.p===S.panel));
   const b=$('#assistBody');b.innerHTML='';
-  if(S.panel==='quelle'){
-    if(!S.source){b.appendChild(el('<p class="muted" style="font-size:13px">Wähle eine Zelle, eine Fundstelle oder ein Ergebnis, um die Quelle hier zu sehen.</p>'));return}
-    const s=S.source;b.appendChild(el(`<div class="srcview"><div><div class="eyebrow">${esc(s.lbl||'Quelle')}</div><h3 style="margin-top:4px">${esc(s.t)}</h3><div class="muted" style="font-size:12px">${esc(s.meta||'')}</div></div><div class="doc"><div class="lbl">${esc(s.doclbl||'Auszug')}</div><div class="pass">${s.pass||'<span class="muted">Kein Auszug vorhanden.</span>'}</div></div>${s.note?`<p class="muted" style="font-size:12px">${esc(s.note)}</p>`:''}<div class="row"><button class="btn sm" id="openDoc">Dokument öffnen</button>${s.k?`<span class="chip ${s.k==='k3'?'crit':'ok'}">${s.k==='k3'?'Klasse 3 · Akte':'Klasse 0 · öffentlich'}</span>`:''}</div></div>`));
-    b.querySelector('#openDoc').addEventListener('click',()=>toast('Dokument wird im Aktensystem geöffnet (Demo)'));
-    return;
+  if(S.source){const s=S.source;
+    const p=el(`<div class="pinned"><div class="ph2"><div><div class="eyebrow">${esc(s.lbl||'Quelle')}</div><div style="font-weight:500;margin-top:2px">${esc(s.t)}</div><div class="muted" style="font-size:12px">${esc(s.meta||'')}</div></div><button class="x" aria-label="Quelle schliessen" title="Schliessen">×</button></div><div class="doc"><div class="lbl">${esc(s.doclbl||'Auszug')}</div><div class="pass">${s.pass||'<span class="muted">Kein Auszug vorhanden.</span>'}</div></div>${s.note?`<p class="muted" style="font-size:12px">${esc(s.note)}</p>`:''}<div class="row"><button class="btn sm" id="openDoc">Dokument öffnen</button>${s.k?`<span class="chip ${s.k==='k3'?'crit':'ok'}">${s.k==='k3'?'Klasse 3 · Akte':'Klasse 0 · öffentlich'}</span>`:''}</div></div>`);
+    p.querySelector('.x').addEventListener('click',()=>{S.source=null;renderAside()});
+    p.querySelector('#openDoc').addEventListener('click',()=>toast('Dokument wird im Aktensystem geöffnet (Demo)'));
+    b.appendChild(p);
   }
   if(S.view==='enforcement')b.appendChild(ready());
   if(!A.msgs.length){b.appendChild(el('<p class="muted" style="font-size:13px">Vorschläge erscheinen hier, jeder mit nummerierten Quellen. Was keine Quelle hat, wird nicht übernommen. ⌘K öffnet Suche und Befehle.</p>'));return}
@@ -448,9 +485,12 @@ function render(){
   r.appendChild(el('<div class="sp"></div>'));
   const m=$('#main');m.innerHTML='';
   ({heute,zulassung,pruefung,enforcement,wissen,recht})[S.view](m);
+  m.querySelectorAll('.ref,.hit').forEach(n=>{if(!n.hasAttribute('tabindex'))n.setAttribute('tabindex','0')});
   renderAside();
 }
-function go(v,sub){S.view=v;S.panel='assist';if(sub&&v==='enforcement')S.f.tab=sub;aiClear();render()}
+function go(v,sub){S.view=v;S.source=null;if(sub&&v==='enforcement')S.f.tab=sub;aiClear();render()}
+// Tastatur: Zellen und Quellenmarken mit Enter oder Leertaste auslösen
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.cell,.ref,.hit')){e.preventDefault();e.target.click()}});
 function head(m,crumbs,title,text,k,actions){
   setKlasse(k);$('#crumbs').innerHTML=crumbs.map((c,i)=>i===crumbs.length-1?`<b>${c}</b>`:`<span>${c}</span><span>/</span>`).join('');
   m.appendChild(el(`<div class="hd"><div class="grow"><h1>${title}</h1>${text?`<p>${text}</p>`:''}</div>${actions?`<div class="actions">${actions}</div>`:''}</div>`));
@@ -461,7 +501,7 @@ function heute(m){
   head(m,['Werkbank','Heute'],'Guten Morgen, Lea.','',0);
   m.appendChild(el('<div class="eyebrow">Deine Akten</div>'));
   const c=el('<div class="cards"></div>');
-  [['E-2026-07','Unterlassene Revisionen · R. Vogt','Entwurf · Tag 240/365',66,'warn','enforcement'],['P-2026-11','Überprüfung Prüfpartner Mittelland AG','File Review · 6 Hinweise',40,'','pruefung'],['E-2025-19','Unabhängigkeit · Prüfgesellschaft','Verfügung in Zirkulation · Tag 338',93,'crit','enforcement'],['Erneuerungen 2027','112 Unternehmen bis 31.03.2027','Tabellarische Prüfung läuft',28,'','zulassung']].forEach(x=>{const n=el(`<div class="mcard ${x[4]}"><div class="mono muted">${x[0]}</div><div class="ti">${x[1]}</div><div class="meta">${x[2]}</div><div class="prog"><i style="width:${x[3]}%"></i></div></div>`);n.addEventListener('click',()=>go(x[5]));c.appendChild(n)});
+  [['E-2026-07','Unterlassene Revisionen · R. Vogt','Entwurf · Tag 240/365',66,'warn','enforcement','Stellungnahme in Chronologie einarbeiten'],['P-2026-11','Überprüfung Prüfpartner Mittelland AG','File Review · 6 Hinweise',40,'','pruefung','Hinweise am Original verifizieren'],['E-2025-19','Unabhängigkeit · Prüfgesellschaft','Verfügung in Zirkulation · Tag 338',93,'crit','enforcement','Unterschrift Geschäftsleitung einholen'],['Erneuerungen 2027','112 Unternehmen bis 31.03.2027','Tabellarische Prüfung läuft',28,'','zulassung','3 Nachforderungen freigeben']].forEach(x=>{const n=el(`<div class="mcard ${x[4]}"><div class="mono muted">${x[0]}</div><div class="ti">${x[1]}</div><div class="meta">${x[2]}</div><div class="next"><span class="muted">Nächster Schritt</span><b>${x[6]}</b></div><div class="prog"><i style="width:${x[3]}%"></i></div></div>`);n.addEventListener('click',()=>go(x[5]));c.appendChild(n)});
   m.appendChild(c);
   const g=el('<div class="grid2"></div>');
   const inbox=el('<div class="block"><div class="bh"><h3>Posteingang</h3><span class="chip quiet">14 Meldungen</span></div><div class="list"></div></div>');
@@ -477,7 +517,8 @@ function heute(m){
 function zulassung(m){
   head(m,['Werkbank','Zulassung'],'Tabellarische Prüfung','Jedes Dossier eine Zeile, jede Prüffrage eine Spalte. Jede Zelle nennt ihre Quelle. Neue Fragen füllt der Assistent über alle Dossiers. Entscheid und Leumund bleiben bei dir.',2,'<button class="btn" id="zBatch">Nachforderungen entwerfen (3)</button><button class="btn dark" id="zExport">Verfügungen vorbereiten</button>');
   const cols=[...ZCOLS,...S.z.extra.map(k=>[k,ZEXTRA[k]?ZEXTRA[k].q:k,'KI-Spalte'])];
-  const t=el(`<div class="tr"><div class="tb"><h3>Gesuche KW 41 · 6 Dossiers</h3><span class="chip ai">${S.z.extra.length} KI-Spalten</span><span class="chip quiet">Quelle je Zelle</span></div><div class="wrap"><table><thead><tr><th><span class="q">Dossier</span></th>${cols.map(c=>`<th><span class="q">${esc(c[1])}</span><span class="n">${esc(c[2])}</span></th>`).join('')}</tr></thead><tbody></tbody></table></div><div class="addcol"><span class="chip ai">Spalte</span><input id="newCol" placeholder="Neue Prüffrage für alle Dossiers, z.B. «Weiterbildung der letzten 3 Jahre nachgewiesen?»" aria-label="Neue Prüffrage"><button class="btn dark sm" id="addCol">Spalte füllen</button></div></div>`);
+  const t=el(`<div class="tr"><div class="tb"><h3>Gesuche KW 41 · 6 Dossiers</h3><span class="chip ai">${S.z.extra.length} KI-Spalten</span><span class="chip quiet">Quelle je Zelle</span></div><div class="wrap"><table><thead><tr><th><span class="q">Dossier</span></th>${cols.map(c=>`<th><span class="q">${esc(c[1])}${S.z.extra.includes(c[0])?`<button class="th-x" data-x="${esc(c[0])}" aria-label="Spalte entfernen" title="Spalte entfernen">×</button>`:''}</span><span class="n">${esc(c[2])}</span></th>`).join('')}</tr></thead><tbody></tbody></table></div><div class="addcol"><span class="chip ai">Spalte</span><input id="newCol" placeholder="Neue Prüffrage für alle Dossiers, z.B. «Weiterbildung der letzten 3 Jahre nachgewiesen?»" aria-label="Neue Prüffrage"><button class="btn dark sm" id="addCol">Spalte füllen</button></div></div>`);
+  t.querySelectorAll('[data-x]').forEach(x=>x.addEventListener('click',()=>{S.z.extra=S.z.extra.filter(k=>k!==x.dataset.x);log('KI-Spalte entfernt: '+x.dataset.x);render()}));
   const tb=t.querySelector('tbody');
   GESUCHE.forEach(g=>{
     const tr=el(`<tr><td><div class="cell rowh"><b>${g.name}</b><small>${g.id} · ${g.art} · ${g.weg}</small></div></td></tr>`);
@@ -519,6 +560,12 @@ function pruefung(m){
   m.appendChild(t);
   m.querySelector('#readFR').addEventListener('click',()=>{S.p.read=true;log('File-Review-Leser gestartet');render();aiMsg('Sechs Prüfgebiete gelesen. Zwei betreffen den Kernbereich (dolose Handlungen, Goodwill). Zwei weitere Kandidaten hat das Kontrollmodell verworfen, weil die zitierte Stelle den Befund nicht trug. Alles wartet auf deine Verifikation am Original.',[{t:'PS 240.17–18; PS 540.13; PS 701.23; PS 720.4–5; PS 315.26',k:'k0'},{t:'AP 2.4.1, 5.7.2, 9.1, 9.3, 4.2.3, 3.1',p:'Arbeitspapiere Mandat Nordlicht',k:'k3'}],{tag:'Leser'})});
   m.querySelector('#toCF').addEventListener('click',()=>{const v=PRUEF.filter(p=>S.p.status[p.id]==='ver');if(!v.length){toast('Noch keine verifizierten Feststellungen');return}aiMsg(`${v.length} Comment-Form-Einträge im Hausformat erzeugt: Sachverhalt, Kriterium, Beurteilung, Beleg, Klassifikationsvorschlag. Feststellungen können später als Vorwürfe ins Enforcement übernommen werden.`,v.map(p=>({t:p.ap,p:p.norm+' · '+p.cells.sev,k:'k3',pass:`<mark>${esc(p.zitat)}</mark>`})),{tag:'Comment Forms'})});
+  const ver=PRUEF.filter(p=>S.p.status[p.id]==='ver');
+  if(ver.length){
+    const cf=el(`<div class="cfdoc"><div class="lh"><div><b>Eidgenössische Revisionsaufsichtsbehörde RAB</b>Überprüfung P-2026-11 · Prüfpartner Mittelland AG · Prototyp, fiktiver Fall</div><div style="text-align:right"><b>Comment Form · File Review</b>Mandat Nordlicht Holding AG, GJ 2025 · Entwurf</div></div><h2>Feststellungen zur Stellungnahme</h2>${ver.map((p,i)=>`<div class="f"><div class="hd2"><span class="ref">F${i+1}</span>${esc(p.titel)}<span class="chip ${p.cells.sev==='schwer'?'crit':p.cells.sev==='mittelschwer'?'warn':'info'}">${p.cells.sev}</span><span class="chip ai" style="margin-left:auto">Vorschlag, verifiziert durch L. Frei</span></div><div class="k">Sachverhalt</div><div>${esc(p.zitat)}</div><div class="k">Kriterium</div><div>${esc(p.norm)}</div><div class="k">Beurteilung</div><div>Die Dokumentation genügt den Anforderungen des Kriteriums nicht; die Prüfungshandlung ist nicht nachvollziehbar («not documented, not done»).</div><div class="k">Beleg</div><div><span class="ref k3" data-ap="${p.id}">${esc(p.cells.fund[0])}</span></div><div class="k">Stellungnahme</div><div class="muted" style="font-family:var(--font);font-size:13px">Frist für das Unternehmen: 30 Tage. Antwort erscheint hier im Änderungsmodus.</div></div>`).join('')}<div class="qv">Grundlagen: Art. 16 Abs. 2 lit. b und c RAG; Art. 730c OR; Schweizer Prüfungsstandards. Jede Feststellung wurde am Original verifiziert; das Werkzeug beurteilt nicht das Ermessen des Revisors.</div></div>`);
+    cf.querySelectorAll('[data-ap]').forEach(r=>r.addEventListener('click',()=>{const p=PRUEF.find(x=>x.id===r.dataset.ap);showSource({lbl:'Arbeitspapier',t:p.ap,meta:p.titel+' · '+p.norm,doclbl:'Auszug '+p.cells.fund[0],pass:`<mark>${esc(p.zitat)}</mark>`,k:'k3'})}));
+    m.appendChild(cf);
+  }
   const z=el('<div class="block"><div class="bh"><h3>Zeitaufschrieb</h3><span class="chip quiet">Tagessatz 1 500 Fr. · Art. 39 RAV</span></div><div class="list"></div></div>');
   [['Vorbereitung',38],['File Review',142],['Firm Review',61],['Comment Forms und Stellungnahmen',54],['Klassifikation',9],['Bericht',47]].forEach(x=>z.querySelector('.list').appendChild(el(`<div class="item"><div class="d num">${x[1]} h</div><div class="t">${x[0]}</div><div class="r"><span class="muted mono">${Math.round(x[1]/351*100)} %</span></div></div>`)));
   m.appendChild(z);
@@ -527,8 +574,12 @@ function pruefung(m){
 // --- Verfahren (Enforcement): Dokument im Zentrum
 function enforcement(m){
   const f=S.f;
-  head(m,['Werkbank','Verfahren',FALL.id],FALL.titel,'Verfahrenstag 240 von 365. Der Sachverhalt wird einmal erfasst und speist Erwägungen, Dispositiv und später die Vernehmlassung. Rechts siehst du, was der Verfügung noch fehlt.',3,`<button class="btn ${f.tab==='sachverhalt'?'dark':''}" data-t="sachverhalt">Sachverhalt</button><button class="btn ${f.tab==='vorbringen'?'dark':''}" data-t="vorbringen">Vorbringen</button><button class="btn ${f.tab==='verfuegung'?'dark':''}" data-t="verfuegung">Verfügung</button>`);
-  m.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{f.tab=b.dataset.t;render()}));
+  const c0=checks();
+  head(m,['Werkbank','Verfahren',FALL.id],FALL.titel,'Der Sachverhalt wird einmal erfasst und speist Erwägungen, Dispositiv und später die Vernehmlassung. Rechts steht, was der Verfügung noch fehlt.',3);
+  m.appendChild(el(`<div class="casebar"><div class="ph"><span class="done">Vorabklärung</span><span class="done">Eröffnung 02.04.</span><span class="done">Stellungnahme 20.05.</span><span class="now">Verfügung · Entwurf</span><span>Rechtsmittel 30 Tage</span></div><div class="days"><div class="l"><span>Zwölfmonatsziel</span><b>Tag ${FALL.tag} · noch ${365-FALL.tag} Tage</b></div><div class="bar"><i style="width:${Math.round(FALL.tag/365*100)}%"></i></div></div></div>`));
+  const seg=el(`<div class="seg"><button class="${f.tab==='sachverhalt'?'active':''} ${c0[0].ok&&f.kiAdded?'done':''}" data-t="sachverhalt"><span class="n">1</span>Sachverhalt</button><button class="${f.tab==='vorbringen'?'active':''} ${c0[1].ok?'done':''}" data-t="vorbringen"><span class="n">2</span>Vorbringen</button><button class="${f.tab==='verfuegung'?'active':''} ${c0.every(x=>x.ok)?'done':''}" data-t="verfuegung"><span class="n">3</span>Verfügung</button></div>`);
+  seg.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{f.tab=b.dataset.t;render()}));
+  m.appendChild(seg);
   ({sachverhalt,vorbringen,verfuegung})[f.tab](m);
 
   function sachverhalt(m){
@@ -582,7 +633,8 @@ function enforcement(m){
       ${sec('e3',`<div class="e"><span>3.</span><p>${f.vorbringen.filter(v=>v.antwort&&v.status!=='Rechtsfrage').length?f.vorbringen.filter(v=>v.antwort&&v.status!=='Rechtsfrage').map(v=>`Zum Vorbringen ${v.id}: ${esc(v.antwort)}`).join(' '):ph('Würdigung der Vorbringen der Partei')}</p></div>`)}
       ${sec('e4',`<div class="e"><span>4.</span><p>${f.massnahme?`Die Pflichtverletzungen betreffen den Kernbereich der Revision und wiegen ${f.massnahme==='verweis'?'mittelschwer':'schwer'}. ${f.massnahme==='verweis'?'Da A._______ den ordnungsgemässen Zustand vor der Intervention wiederhergestellt und Massnahmen getroffen hat und kein früherer Verstoss aktenkundig ist, erweist sich ein Verweis als verhältnismässig; bei erneuter Verletzung ist mit dem Entzug der Zulassung zu rechnen.':(f.androhungBegr?'Trotz Wiederherstellung des Zustands bietet A._______ zurzeit keine Gewähr, weil '+ph('Begründung E. 4.2')+'. Ein Verweis genügt deshalb nicht.':ph('E. 4.2: Begründung, weshalb trotz Wiederherstellung kein Verweis genügt'))}<span class="ref k0" data-u="B-3664/2025">1</span><span class="ref k0" data-u="B-2332/2018">2</span>`:ph('Schwere, Androhungsfrage und Verhältnismässigkeit')}</p></div>`)}
       ${sec('e5',`<div class="e"><span>5.</span><p>Die Kosten des Verfahrens betragen 4 200 Franken (16.8 Stunden à 250 Franken; Art. 21 RAG, Art. 40 RAV).</p></div>`)}
-      ${sec('disp',`<div class="disp"><b>Demnach verfügt die RAB:</b><ol><li>${massn?esc(massn):ph('Massnahme')}</li><li>Die Verfahrenskosten von Fr. 4 200.– werden A._______ auferlegt.</li><li>Diese Verfügung wird A._______ eröffnet.</li></ol></div><div class="sig"><span>Eidgenössische Revisionsaufsichtsbehörde</span><span>${ph('Unterschriften Geschäftsleitung')}</span></div><div class="fn">Rechtsmittelbelehrung: Beschwerde innert 30 Tagen an das Bundesverwaltungsgericht (Art. 28 Abs. 2 RAG; Art. 44 ff. VwVG). Gelb hinterlegte Stellen sind offene Platzhalter. Nummerierte Quellen öffnen sich im Panel rechts.</div>`)}`;
+      ${sec('disp',`<div class="disp"><b>Demnach verfügt die RAB:</b><ol><li>${massn?esc(massn):ph('Massnahme')}</li><li>Die Verfahrenskosten von Fr. 4 200.– werden A._______ auferlegt.</li><li>Diese Verfügung wird A._______ eröffnet.</li></ol></div><div class="sig"><span>Eidgenössische Revisionsaufsichtsbehörde</span><span>${ph('Unterschriften Geschäftsleitung')}</span></div><div class="fn">Rechtsmittelbelehrung: Beschwerde innert 30 Tagen an das Bundesverwaltungsgericht (Art. 28 Abs. 2 RAG; Art. 44 ff. VwVG). Gelb hinterlegte Stellen sind offene Platzhalter. Nummerierte Quellen öffnen sich im Panel rechts.</div>`)}
+      ${(()=>{const akten=[...new Set(chrono.map(e=>e.src).filter(s=>s&&!/Art\./.test(s)))];const normen=[...new Set(['Art. 4 Abs. 1, 17 Abs. 1, 21, 28 RAG','Art. 40 RAV','Art. 699 Abs. 2, 728b, 729b, 730a, 730c OR',...chrono.map(e=>e.src).filter(s=>s&&/Art\./.test(s))])];const urt=f.massnahme?['BVGer B-3664/2025 vom 13. Mai 2026, E. 7, 8.2–8.3, 9.3.3','BVGer B-2332/2018 vom 11. März 2020, E. 2.3.2'].concat(f.muster?[`Eigenes Muster ${f.muster}`]:[]):[];return `<div class="qv"><b>Quellenverzeichnis</b> (wird der Verfügung für Zweitperson und Akteneinsicht beigefügt)<ol>${akten.map(s=>`<li class="k3">${esc(s)}</li>`).join('')}${normen.map(s=>`<li>${esc(s)}</li>`).join('')}${urt.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><div style="margin-top:6px">${akten.length} Aktenstücke (Klasse 3) · ${normen.length} Normen · ${urt.length} Urteile und Muster · Protokoll mit ${S.log.length} Einträgen</div></div>`})()}`;
     lay.querySelectorAll('[data-u]').forEach(r=>r.addEventListener('click',()=>{const u=URTEILE.find(x=>x.id===r.dataset.u);showSource({lbl:'Urteil',t:u.cite,meta:u.e,pass:u.pass,k:'k0'})}));
     lay.querySelectorAll('.ref.k3').forEach(r=>r.addEventListener('click',()=>showSource({lbl:'Akte',t:r.textContent,meta:FALL.id,k:'k3',pass:'<span class="muted">Aktenstück wird aus dem Aktensystem geladen (Demo).</span>'})));
     m.appendChild(lay);
@@ -596,6 +648,9 @@ function wissen(m){
   const sb=el(`<div class="ksearch"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="kq" value="${esc(w.q)}" placeholder="z.B. Entzug ohne Androhung, Gegenrecht, Nachschau, Gebühr …" aria-label="Suche"></div>`);
   sb.querySelector('input').addEventListener('input',e=>{w.q=e.target.value;renderRes()});
   m.appendChild(sb);
+  const sg=el(`<div class="sugg"><span>Häufig:</span>${['Entzug ohne Androhung','Gegenrecht','Nachschau','Gebühr','Kernbereich der Revision'].map(s=>`<button class="chip" data-q="${s}">${s}</button>`).join('')}<button class="chip ai" data-q="unterlassene revision">Ähnliche Fälle zu E-2026-07</button></div>`);
+  sg.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click',()=>{w.q=b.dataset.q;sb.querySelector('input').value=w.q;renderRes()}));
+  m.appendChild(sg);
   const all=[...URTEILE,...MUSTER];
   const lay=el('<div class="klayout"><div class="facets"></div><div class="res" id="res"></div></div>');
   const fc=lay.querySelector('.facets');
@@ -666,7 +721,7 @@ function help(){
 }
 function showLog(){const o=el(`<div class="overlay" role="dialog"><div class="modal"><h2>Protokoll</h2><p class="muted">Jede Aktion des Assistenten und jede Freigabe, mit Zeit und Person. Gehört zu den Verfahrensakten.</p><div class="log">${S.log.length?S.log.map(l=>`<div>${esc(l)}</div>`).join(''):'<div>Noch keine Einträge.</div>'}</div><div class="row"><button class="btn" id="cl">Schliessen</button></div></div></div>`);o.querySelector('#cl').addEventListener('click',()=>o.remove());o.addEventListener('click',e=>{if(e.target===o)o.remove()});$('#overlayRoot').appendChild(o)}
 function ask(){
-  const v=$('#ask').value.trim();if(!v)return;$('#ask').value='';S.panel='assist';aiMsg(esc(v),[],{user:true});log('Frage: '+v.slice(0,60));
+  const v=$('#ask').value.trim();if(!v)return;$('#ask').value='';aiMsg(esc(v),[],{user:true});log('Frage: '+v.slice(0,60));
   const q=v.toLowerCase();
   setTimeout(()=>{
     if(/androh|entzug|verweis/.test(q))aiMsg('Bei erstmaligem Verstoss und selbst wiederhergestelltem Zustand ist der Entzug vorher anzudrohen; ohne Androhung hat das Gericht den Entzug in einen Verweis umgewandelt. Bei groben oder wiederholten Verstössen im Kernbereich wurde der Entzug ohne Androhung geschützt.',[{t:'Art. 17 Abs. 1 RAG',k:'k0'},{t:'BVGer B-3664/2025 vom 13. Mai 2026',p:'E. 9.3.3',k:'k0',pass:URTEILE[1].pass},{t:'BVGer B-1640/2021 vom 19. Dezember 2022',p:'E. 9.3',k:'k0',pass:URTEILE[3].pass}],{tag:'Antwort'});
@@ -676,7 +731,6 @@ function ask(){
     else aiMsg('Dazu habe ich im Demo-Bestand keine belegte Antwort.',[],{tag:'Antwort',nocite:true});
   },500);
 }
-document.querySelectorAll('.tabs2 button').forEach(b=>b.addEventListener('click',()=>{S.panel=b.dataset.p;renderAside()}));
 $('#helpBtn').addEventListener('click',help);$('#logBtn').addEventListener('click',showLog);$('#askBtn').addEventListener('click',ask);
 $('#ask').addEventListener('keydown',e=>{if(e.key==='Enter')ask()});
 $('#cmdBtn').addEventListener('click',palette);
