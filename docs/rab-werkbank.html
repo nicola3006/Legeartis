@@ -1,0 +1,677 @@
+<title>RAB Werkbank</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: Arbeitsplatz-Shell. Links Bereiche, Mitte Fall, rechts Assistent mit Fundstellen und Freigabe. */
+:root{
+  --bg:#f2f4f6; --panel:#ffffff; --panel2:#e9edf0; --line:#cfd6dc; --fg:#17212b; --muted:#5a6773;
+  --accent:#1d5c63; --accent-fg:#ffffff; --accent-soft:#dbe9ea;
+  --k0:#2e7d4f; --k1:#3b6ea8; --k2:#b4731a; --k3:#a8323a;
+  --k0-soft:#dcefe3; --k1-soft:#dde8f5; --k2-soft:#f6e8d2; --k3-soft:#f7dcde;
+  --warn:#b4731a; --ok:#2e7d4f; --crit:#a8323a;
+  --font:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --display:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:4px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161b; --panel:#191f26; --panel2:#222a33; --line:#323c47; --fg:#e6ebf0; --muted:#98a5b1;
+    --accent:#5fb2ba; --accent-fg:#0d1a1c; --accent-soft:#1d3537;
+    --k0:#6fc392; --k1:#7fb0e6; --k2:#e0a85a; --k3:#e3737b;
+    --k0-soft:#1b3326; --k1-soft:#1b2c40; --k2-soft:#3d2d14; --k3-soft:#3f1c20;
+    --warn:#e0a85a; --ok:#6fc392; --crit:#e3737b; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161b; --panel:#191f26; --panel2:#222a33; --line:#323c47; --fg:#e6ebf0; --muted:#98a5b1;
+  --accent:#5fb2ba; --accent-fg:#0d1a1c; --accent-soft:#1d3537;
+  --k0:#6fc392; --k1:#7fb0e6; --k2:#e0a85a; --k3:#e3737b;
+  --k0-soft:#1b3326; --k1-soft:#1b2c40; --k2-soft:#3d2d14; --k3-soft:#3f1c20;
+  --warn:#e0a85a; --ok:#6fc392; --crit:#e3737b; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 var(--font);padding-inline:0}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3,h4{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.2}
+h2{font-size:20px;font-weight:600}
+h3{font-size:15px;font-weight:600}
+h4{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+p{margin:0}
+.mono{font-family:var(--mono);font-size:12.5px}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+
+/* Shell */
+.shell{display:grid;grid-template-columns:216px minmax(0,1fr) 360px;grid-template-rows:auto minmax(0,1fr);min-height:100%;}
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .mark{width:28px;height:28px;border-radius:var(--r);background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:13px}
+.brand b{font-family:var(--display);font-size:16px;font-weight:600}
+.brand span{color:var(--muted);font-size:12px}
+.proto{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--k3);border:1px solid var(--k3);padding:2px 7px;border-radius:999px}
+.topbar .spacer{flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:12px;border:1px solid var(--line);background:var(--panel2);white-space:nowrap}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.k0 .dot{background:var(--k0)}.pill.k1 .dot{background:var(--k1)}.pill.k2 .dot{background:var(--k2)}.pill.k3 .dot{background:var(--k3)}
+.pill.betrieb{border-color:var(--accent);color:var(--accent)}
+.user{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.user .av{width:26px;height:26px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:600;color:var(--fg)}
+
+.side{background:var(--panel);border-right:1px solid var(--line);padding:14px 10px;display:flex;flex-direction:column;gap:4px}
+.side h4{padding:6px 10px 4px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:var(--r);color:var(--fg)}
+.nav button .ic{width:22px;height:22px;border-radius:5px;background:var(--panel2);display:grid;place-items:center;font-family:var(--display);font-size:11px;font-weight:600;color:var(--muted);flex:none}
+.nav button .cnt{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.nav button:hover{background:var(--panel2)}
+.nav button.active{background:var(--accent-soft);color:var(--accent)}
+.nav button.active .ic{background:var(--accent);color:var(--accent-fg)}
+.nav button:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.side .foot{margin-top:auto;padding:10px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);line-height:1.45}
+
+.main{padding:18px 20px 40px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.crumbs{font-size:12px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
+.crumbs b{color:var(--fg);font-weight:500}
+.head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.head .grow{flex:1;min-width:220px}
+.head p{color:var(--muted);max-width:68ch;margin-top:4px}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:0}
+.card.flat{background:var(--panel2);border-color:transparent}
+.cardhead{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.cardhead h3{flex:1;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.tile .v{font-family:var(--display);font-size:26px;font-weight:600;line-height:1}
+.tile .l{font-size:12px;color:var(--muted)}
+.tile .d{font-size:11.5px;display:flex;align-items:center;gap:6px}
+.tile .d.warn{color:var(--warn)}.tile .d.ok{color:var(--ok)}.tile .d.crit{color:var(--crit)}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.tw{overflow-x:auto}
+tr.sel td{background:var(--accent-soft)}
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--panel2)}
+
+.tag{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:500;border:1px solid transparent;white-space:nowrap}
+.tag.k0{background:var(--k0-soft);color:var(--k0)}.tag.k1{background:var(--k1-soft);color:var(--k1)}.tag.k2{background:var(--k2-soft);color:var(--k2)}.tag.k3{background:var(--k3-soft);color:var(--k3)}
+.tag.ok{background:var(--k0-soft);color:var(--ok)}.tag.warn{background:var(--k2-soft);color:var(--warn)}.tag.crit{background:var(--k3-soft);color:var(--crit)}
+.tag.neutral{background:var(--panel2);color:var(--muted)}
+.tag.ai{background:var(--accent-soft);color:var(--accent)}
+
+.btn{border:1px solid var(--line);background:var(--panel);padding:7px 12px;border-radius:var(--r);font-weight:500;font-size:13px;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{background:var(--panel2)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.small{padding:4px 9px;font-size:12px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+.steps{display:flex;flex-direction:column;gap:6px}
+.step{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:var(--r);background:var(--panel2);font-size:13px}
+.step .st{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;margin-top:2px;display:grid;place-items:center;font-size:10px}
+.step.done .st{border-color:var(--ok);background:var(--ok);color:#fff}
+.step.run .st{border-color:var(--accent);animation:spin 1s linear infinite}
+.step.wait{opacity:.55}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.step.run .st{animation:none}}
+
+.find{border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:var(--r);padding:10px 12px;background:var(--panel);display:flex;flex-direction:column;gap:6px}
+.find.h{border-left-color:var(--crit)}.find.m{border-left-color:var(--warn)}.find.l{border-left-color:var(--k1)}.find.v{border-left-color:var(--ok)}
+.find .t{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.find .t b{font-weight:600}
+.find .src{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.find .act{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.list{display:flex;flex-direction:column;gap:8px}
+
+.timeline{position:relative;padding-left:20px;display:flex;flex-direction:column;gap:10px}
+.timeline:before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--line)}
+.ev{position:relative;font-size:13px}
+.ev:before{content:"";position:absolute;left:-18px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--panel);border:2px solid var(--accent)}
+.ev.gap:before{border-color:var(--crit);background:var(--k3-soft)}
+.ev .d{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.ev .src{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+.assist{background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+.assist .ah{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.assist .ah h3{flex:1}
+.assist .body{padding:12px 14px;display:flex;flex-direction:column;gap:12px;overflow:auto;flex:1}
+.msg{border-radius:var(--r);padding:10px 12px;font-size:13px;background:var(--panel2);display:flex;flex-direction:column;gap:6px}
+.msg.ai{border:1px solid var(--line);background:var(--panel)}
+.msg .who{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:flex;gap:8px;align-items:center}
+.msg .who .tag{text-transform:none;letter-spacing:0}
+.cite{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.cite div{font-family:var(--mono);font-size:11.5px;padding:5px 8px;background:var(--panel2);border-radius:var(--r);border-left:3px solid var(--accent);word-break:break-word}
+.cite div.k3{border-left-color:var(--k3)}
+.cite div.k0{border-left-color:var(--k0)}
+.nocite{font-family:var(--mono);font-size:11.5px;padding:5px 8px;background:var(--k3-soft);color:var(--k3);border-radius:var(--r)}
+.gate{border:1px dashed var(--line);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;gap:8px;font-size:13px}
+.gate label{display:flex;gap:8px;align-items:flex-start}
+.gate input{margin-top:3px}
+.log{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-height:160px;overflow:auto}
+.assist .foot{border-top:1px solid var(--line);padding:10px 14px}
+.compose{display:flex;gap:6px}
+.compose input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--fg);padding:7px 10px;border-radius:var(--r);font:inherit}
+
+.redact{position:relative}
+.redact .r{background:var(--fg);color:var(--fg);border-radius:2px;padding:0 2px}
+.redact.show .r{background:var(--k3-soft);color:var(--k3);text-decoration:line-through}
+.redact .n{background:var(--k0-soft);color:var(--k0);border-radius:2px;padding:0 3px;font-family:var(--mono);font-size:12px}
+.doc{font-size:13px;line-height:1.6;max-width:72ch}
+.doc h3{margin:10px 0 4px}
+.doc ol{padding-left:20px;margin:4px 0}
+
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+
+.bar{height:8px;background:var(--panel2);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.bar.warn i{background:var(--warn)}.bar.crit i{background:var(--crit)}.bar.ok i{background:var(--ok)}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs button{border:0;background:transparent;padding:8px 12px;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--muted);font-weight:500}
+.tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.flow .box{border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;font-size:12.5px;background:var(--panel)}
+.flow .box b{display:block;font-family:var(--display);font-size:13px}
+.flow .box.k3{border-color:var(--k3)}.flow .box.k0{border-color:var(--k0)}.flow .box.k2{border-color:var(--k2)}.flow .box.k1{border-color:var(--k1)}
+.flow .box small{color:var(--muted)}
+
+.overlay{position:fixed;inset:0;background:rgba(10,14,18,.55);display:grid;place-items:center;z-index:20;padding:16px}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:6px;max-width:720px;width:100%;max-height:90vh;overflow:auto;padding:22px 24px;display:flex;flex-direction:column;gap:14px}
+.modal h2{font-size:22px}
+.modal p{max-width:70ch}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.legend div{border-radius:var(--r);padding:8px 10px;font-size:12.5px}
+.legend div b{display:block;font-family:var(--display)}
+.legend .k0{background:var(--k0-soft);color:var(--k0)}.legend .k1{background:var(--k1-soft);color:var(--k1)}.legend .k2{background:var(--k2-soft);color:var(--k2)}.legend .k3{background:var(--k3-soft);color:var(--k3)}
+
+.note{font-size:12px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:var(--r);font-size:13px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+
+@media (max-width:1100px){
+  .shell{grid-template-columns:200px minmax(0,1fr)}
+  .assist{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}
+}
+@media (max-width:760px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .side{border-right:0;border-bottom:1px solid var(--line);padding:8px 12px}
+  .nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:4px}
+  .nav button{white-space:nowrap;width:auto}
+  .nav button .cnt{display:none}
+  .side h4,.side .foot{display:none}
+  .main{padding:14px 16px 30px}
+}
+</style>
+
+<div class="shell" id="shell">
+  <header class="topbar">
+    <div class="brand"><div class="mark">RW</div><div><b>RAB Werkbank</b><br><span>Aufsichtsarbeitsplatz mit KI-Assistenz</span></div></div>
+    <span class="proto">Prototyp, fiktive Fälle</span>
+    <div class="spacer"></div>
+    <span class="pill betrieb" id="betriebPill"><span class="dot" style="background:var(--accent)"></span>Betrieb C · Bundesinfrastruktur</span>
+    <span class="pill k0" id="klassePill"><span class="dot"></span>Datenklasse 0 · öffentlich</span>
+    <button class="btn small" id="helpBtn">Wie es funktioniert</button>
+    <div class="user"><div class="av">LF</div>L. Frei · Fallführung</div>
+  </header>
+
+  <aside class="side">
+    <h4>Arbeitsbereiche</h4>
+    <nav class="nav" id="nav"></nav>
+    <div class="foot">Jede Ausgabe des Assistenten trägt eine Fundstelle. Ohne Fundstelle wird sie rot markiert und nicht übernommen. Verfügt wird nur von Menschen.</div>
+  </aside>
+
+  <main class="main" id="main"></main>
+
+  <aside class="assist">
+    <div class="ah"><h3>Assistent</h3><span class="tag ai" id="assistKlasse">Klasse 0</span></div>
+    <div class="body" id="assistBody"></div>
+    <div class="foot">
+      <div class="compose"><input id="ask" placeholder="Frage an den Assistenten (Demo)…" aria-label="Frage"><button class="btn primary" id="askBtn">Fragen</button></div>
+      <div class="note" style="margin-top:8px">Protokoll <span class="mono" id="logCount">0</span> Einträge · <button class="btn small" id="logBtn">anzeigen</button></div>
+    </div>
+  </aside>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="overlayRoot"></div>
+
+<script>
+// ---------- Grunddaten (fiktiv, mit Ausnahme der Gerichtsurteile) ----------
+const KLASSEN = {
+  0:{n:'Datenklasse 0 · öffentlich', c:'k0', betrieb:'Betrieb A/B · gebundener Dienst möglich'},
+  1:{n:'Datenklasse 1 · intern ohne Fallbezug', c:'k1', betrieb:'Betrieb B · gebundener Dienst'},
+  2:{n:'Datenklasse 2 · Amtsgeheimnis, Personendaten', c:'k2', betrieb:'Betrieb C · Bundesinfrastruktur'},
+  3:{n:'Datenklasse 3 · Amtsgeheimnis, Geheimnisse Dritter', c:'k3', betrieb:'Betrieb C · Bundesinfrastruktur'}
+};
+
+// Sanktionsraster: reale Urteile (Zitierweise Opencaselaw), Inhalte verkürzt.
+const URTEILE = [
+  {id:'B-2332/2018', cite:'BVGer B-2332/2018 vom 11. März 2020', typ:'Unabhängigkeit', fall:'Einmaliger Verstoss in einem Mandat, Zustand vor Intervention wiederhergestellt', rab:'Entzug 2 Jahre', gericht:'Verweis', e:'E. 2.3.2–2.3.3', lehre:'Androhung vor Entzug, wenn Zustand wiederhergestellt werden kann'},
+  {id:'B-3664/2025', cite:'BVGer B-3664/2025 vom 13. Mai 2026', typ:'Unterlassene Revision', fall:'Zwei säumige Mandanten, 29 und 38 Monate Untätigkeit, Zustand selbst wiederhergestellt', rab:'Entzug 1 Jahr', gericht:'Verweis', e:'E. 9.3.3–9.3.4, 10', lehre:'Ohne Androhung kein Entzug bei selbst behobenem Zustand'},
+  {id:'B-7322/2025', cite:'BVGer B-7322/2025 vom 20. März 2026', typ:'Unabhängigkeit', fall:'Drei Mandate über 15 Jahre: Ehefrau im Verwaltungsrat, Willensvollstrecker des Hauptaktionärs', rab:'Entzug 2 Jahre', gericht:'bestätigt', e:'E. 5.3.4', lehre:'Dauer und Mehrzahl der Mandate tragen den Entzug'},
+  {id:'B-1640/2021', cite:'BVGer B-1640/2021 vom 19. Dezember 2022', typ:'Gründungsprüfung', fall:'Fünf Sacheinlagegründungen (Gemälde) ohne Prüfungsplanung, nicht gemeldetes Strafverfahren', rab:'Entzug 3 Jahre', gericht:'bestätigt (BGer 2C_76/2023)', e:'E. 9.3', lehre:'Kernbereich der Revision, mehrere Fälle, Meldepflicht'},
+  {id:'B-3334/2023', cite:'BVGer B-3334/2023 vom 13. Dezember 2024', typ:'Prüfungshandlungen', fall:'Betrugswarnsignale, Sachanlagen, Goodwill, IKS bei kotierter Gesellschaft, Vorbelastung', rab:'Entzug 3 Jahre + Tätigkeitsverbot', gericht:'Entzug auf 24 Monate reduziert', e:'E. 4.9, 7', lehre:'Schwere je Verfehlung klar bezeichnen; Massnahmen in der Gesamtwirkung prüfen'},
+  {id:'B-4946/2023', cite:'BVGer B-4946/2023 vom 4. Februar 2026', typ:'Berichtsmängel', fall:'Unvollständige Revisionsberichte (PS 701), Widerspruch Lagebericht (PS 720), Dokumentation bei Bank', rab:'Verweis (Art. 18 RAG)', gericht:'bestätigt', e:'E. 13.4', lehre:'Verweis ohne Androhung zulässig'},
+  {id:'B-6020/2019', cite:'BVGer B-6020/2019 vom 27. Oktober 2020', typ:'Qualitätssicherung', fall:'Angeblich fehlende Nachschau bei Unternehmen mit nur eingeschränkten Revisionen', rab:'Verweis', gericht:'aufgehoben', e:'E. 5.5, 7', lehre:'Pflicht bestand nicht; Rechtsgrundlage prüfen'},
+  {id:'B-213/2023', cite:'BVGer B-213/2023 vom 3. April 2024', typ:'Zulassung Ausland', fall:'Französisches Diplom ohne Berechtigung als commissaire aux comptes', rab:'Gesuch abgewiesen', gericht:'bestätigt', e:'E. 2.3–2.4', lehre:'Gegenrecht und Berechtigung im Herkunftsstaat kumulativ'},
+  {id:'2C_346/2023', cite:'BGer 2C_346/2023 vom 5. August 2025', typ:'Zulassung Ausland', fall:'US-Ausbildung, britische Verbandsmitgliedschaft ohne audit qualification', rab:'Gesuch abgewiesen', gericht:'bestätigt', e:'E. 3.4–3.6', lehre:'Berechtigung zur Abschlussprüfung im Herkunftsstaat erforderlich'},
+  {id:'9C_99/2024', cite:'BGer 9C_99/2024 vom 25. September 2024', typ:'Gebühr', fall:'Überprüfungsgebühr 84 000 Fr. für 471 Stunden, Tagessatz 1 500 Fr.', rab:'Gebühr nach Zeitaufwand', gericht:'bestätigt', e:'E. 6.4–6.9', lehre:'Zeitaufschrieb muss Phasen und Leistungen zuordnen'},
+];
+
+// Eigene Verfügungen der RAB (FIKTIV, als Muster erschlossen)
+const MUSTER = [
+  {id:'V-2023-014', typ:'Unterlassene Revision', schwere:'mittelschwer', massnahme:'Verweis', androhung:'nein', dauer:'–', bausteine:['Zeitachse Mahnungen/Rücktritt','Art. 728b, 730a OR','PS 210.14'], ausgang:'rechtskräftig'},
+  {id:'V-2022-031', typ:'Unabhängigkeit', schwere:'schwer', massnahme:'Entzug 2 Jahre', androhung:'ja', dauer:'24 Mt.', bausteine:['Art. 728 Abs. 2 Ziff. 3 OR','Richtlinien zur Unabhängigkeit','Mehrzahl Mandate'], ausgang:'bestätigt BVGer'},
+  {id:'V-2024-007', typ:'Berichtsmängel', schwere:'mittelschwer', massnahme:'Verweis Art. 18 RAG', androhung:'nein', dauer:'–', bausteine:['PS 701.23','PS 720.5','Art. 730c OR'], ausgang:'rechtskräftig'},
+  {id:'V-2021-019', typ:'Gründungsprüfung', schwere:'sehr schwer', massnahme:'Entzug 3 Jahre', androhung:'nein (grober Verstoss)', dauer:'36 Mt.', bausteine:['Art. 635a OR','Bewertung Sacheinlage','Prüfungsplanung'], ausgang:'bestätigt BVGer/BGer'},
+  {id:'V-2025-002', typ:'Meldepflicht', schwere:'leicht', massnahme:'Verweis', androhung:'nein', dauer:'–', bausteine:['Art. 15a Abs. 2 RAG','Strafverfahren nicht gemeldet'], ausgang:'rechtskräftig'},
+];
+
+// Zulassungsgesuche (fiktiv)
+const GESUCHE = [
+  {id:'Z-2026-0417', name:'M. Keller', art:'Revisionsexperte', eingang:'2026-09-28', status:'Vorprüfung offen', weg:'Art. 4 Abs. 2 lit. a RAG'},
+  {id:'Z-2026-0421', name:'S. Baumann', art:'Revisionsexpertin', eingang:'2026-09-30', status:'Nachforderung', weg:'Art. 4 Abs. 2 lit. c RAG'},
+  {id:'Z-2026-0433', name:'A. Okafor', art:'Revisionsexpertin', eingang:'2026-10-03', status:'Vorprüfung offen', weg:'Art. 4 Abs. 2 lit. d RAG (Ausland)'},
+  {id:'U-2026-0088', name:'Treuhand Aarebogen AG', art:'Erneuerung Unternehmen', eingang:'2026-10-06', status:'Erneuerung fällig 31.03.2027', weg:'Art. 6 RAG, Art. 3 Abs. 2 RAG'},
+];
+
+const PRAXIS = [ // Fachpraxis M. Keller (fiktiv)
+  {von:'2016-08', bis:'2018-07', ag:'Revisa Bern AG', taet:'Assistent Wirtschaftsprüfung', rw:true, aufs:'RAB-Nr. 105 412', okReg:true, mt:24},
+  {von:'2018-08', bis:'2021-12', ag:'Revisa Bern AG', taet:'Senior Wirtschaftsprüfung', rw:true, aufs:'RAB-Nr. 105 412', okReg:true, mt:41},
+  {von:'2022-01', bis:'2023-06', ag:'Lindt & Co Treuhand', taet:'Controlling, Konzernrechnung', rw:true, aufs:'keine Angabe', okReg:false, mt:18},
+  {von:'2023-07', bis:'2026-08', ag:'Revisa Bern AG', taet:'Manager Wirtschaftsprüfung', rw:true, aufs:'RAB-Nr. 108 977', okReg:true, mt:38},
+];
+
+// Überprüfung (fiktiv)
+const MANDAT = {firma:'Prüfpartner Mittelland AG', art:'staatlich beaufsichtigt', mandat:'Nordlicht Holding AG (kotiert), Konzernrechnung GJ 2025', ap:'1 842 Arbeitspapiere, 38 Mio. Buchungszeilen (JET)'};
+const HINWEISE = [
+  {id:'H1', ps:'PS 240.17–18', titel:'Befragung zu dolosen Handlungen nur mit geschlossenen Fragen, nur Teil des Managements', ap:'AP 2.4.1 «Fraud inquiry form»', konf:'hoch', sev:'h', zitat:'Formular enthält drei Ja/Nein-Fragen an CFO; VR-Ausschuss nicht befragt.'},
+  {id:'H2', ps:'PS 701.23', titel:'Revisionsbericht nennt anwendbares Rechnungslegungswerk nicht eindeutig', ap:'AP 9.1 «Bericht final»', konf:'hoch', sev:'m', zitat:'Abschnitt «Verantwortung des Verwaltungsrates» ohne Hinweis auf Swiss GAAP FER.'},
+  {id:'H3', ps:'PS 720.4–5', titel:'Lagebericht weist Ergebnis nach IFRS aus, Jahresrechnung nach OR; keine Beurteilung der Unstimmigkeit dokumentiert', ap:'AP 9.3 «Other information»', konf:'mittel', sev:'m', zitat:'Keine Notiz zu Überleitung oder Rücksprache mit Management.'},
+  {id:'H4', ps:'PS 540.13', titel:'Goodwill-Impairment: Managementannahmen übernommen, keine eigene Sensitivität', ap:'AP 5.7.2 «Impairment memo»', konf:'mittel', sev:'h', zitat:'WACC 7.1 % aus Management-Modell ohne Plausibilisierung.'},
+  {id:'H5', ps:'Art. 730c OR', titel:'Besichtigung Lager Rotterdam im Memo erwähnt, kein Protokoll in den Akten', ap:'AP 4.2.3 «Inventory»', konf:'hoch', sev:'m', zitat:'«Site visit performed» ohne Datum, Teilnehmende, Ergebnis.'},
+  {id:'H6', ps:'PS 315.26', titel:'IKS-Beschreibung Umsatzprozess vom Vorjahr unverändert übernommen', ap:'AP 3.1 «Walkthrough revenue»', konf:'tief', sev:'l', zitat:'Dokument datiert 2024, Dateiname «_2025».'},
+];
+const ZEIT = [
+  {phase:'Vorbereitung', h:38}, {phase:'File Review', h:142}, {phase:'Firm Review', h:61}, {phase:'Comment Forms und Stellungnahmen', h:54}, {phase:'Klassifikation', h:9}, {phase:'Bericht', h:47}, {phase:'Schlussbesprechung und Verfügung', h:22}
+];
+
+// Enforcement-Fall (fiktiv)
+const FALL = {id:'E-2026-07', titel:'Unterlassene Revisionen, R. Vogt (Revisionsexperte, RAB-Nr. 102 338)', quelle:'Anonymer Hinweis über Whistleblowing-Plattform, 14.02.2026', mandate:['Bergfink AG (eingeschränkte Revision)','Seeufer Immobilien AG (eingeschränkte Revision)']};
+const CHRONO = [
+  {d:'2022-12-31', t:'Geschäftsjahr 2022 Bergfink AG endet', src:'HR-Auszug, Statuten Art. 12', gap:false},
+  {d:'2023-06-30', t:'Frist ordentliche GV abgelaufen (Art. 699 Abs. 2 OR); kein Revisionsbericht', src:'abgeleitet, Art. 699 Abs. 2 OR', gap:true},
+  {d:'2024-03-12', t:'Erste nachweisbare Mahnung an Verwaltungsrat Bergfink AG', src:'Akte 7, E-Mail Vogt an VR', gap:false},
+  {d:'2024-11-05', t:'Zweite Mahnung, Androhung Rücktritt', src:'Akte 9, Brief', gap:false},
+  {d:'2025-09-18', t:'Rücktritt als Revisionsstelle, Anzeige an HR-Amt', src:'Akte 14, HR-Mutation', gap:false},
+  {d:'2026-02-14', t:'Anonymer Hinweis bei RAB', src:'Akte 1', gap:false},
+  {d:'2026-04-02', t:'Verfahrenseröffnung, Aufforderung zur Stellungnahme', src:'Akte 18', gap:false},
+  {d:'2026-05-20', t:'Stellungnahme Vogt: Mahnungen erfolgt, Massnahmen getroffen (Mandatsannahme-Checkliste, Fristenkontrolle)', src:'Akte 22', gap:false},
+];
+const VORWUERFE = [
+  {n:'V1', t:'Unterlassene Prüfung und Berichterstattung GJ 2022–2024, Bergfink AG', norm:'Art. 728b, 729b OR; PS 210', beleg:'Akten 7, 9, 14', tragend:true},
+  {n:'V2', t:'Unterlassene Prüfung GJ 2023–2024, Seeufer Immobilien AG', norm:'Art. 729b OR', beleg:'Akten 11, 15', tragend:true},
+  {n:'V3', t:'Verspätete Mahnung (rund 20 Monate nach Fristablauf)', norm:'Sorgfalt, Art. 730a OR', beleg:'Chronologie', tragend:true},
+  {n:'V4', t:'Wohnsitzwechsel nicht gemeldet', norm:'Art. 15 Abs. 3 RAG', beleg:'Registerabgleich', tragend:false},
+];
+
+// Anonymisierung (fiktive Verfügung)
+const VERF = [
+  ['Mit Verfügung vom 4. April 2026 entzog die RAB ','R. Vogt','A._______',' die Zulassung als Revisionsexperte für die Dauer von zwölf Monaten. '],
+  ['Herr ','Vogt','A._______',' war seit 2021 Revisionsstelle der ','Bergfink AG','B._______ AG',' mit Sitz in ','Thun','(...)','. '],
+  ['Für die Geschäftsjahre 2022 bis 2024 erstattete er keinen Revisionsbericht. Die erste nachweisbare Mahnung datiert vom ','12. März 2024','(...) 2024','. '],
+  ['Der Umsatz der ','Revisionsgesellschaft Vogt & Partner GmbH','C._______ GmbH',' betrug 2025 rund ','CHF 640 000','CHF (...)','.']
+];
+
+// ---------- Zustand ----------
+const S = {view:'uebersicht', klasse:0, log:[], gesuch:null, praxisRun:0, hinweise:{}, cf:[], chronoRun:false, einstufung:null, gate:{}, redactShow:false, filter:'alle', musterSel:null, ausland:false, triage:false};
+
+const NAV = [
+  {id:'uebersicht', n:'Übersicht', ic:'Ü', cnt:''},
+  {id:'zulassung', n:'Zulassung & Register', ic:'Z', cnt:'4'},
+  {id:'aufsicht', n:'Laufende Aufsicht', ic:'A', cnt:'3'},
+  {id:'pruefung', n:'Überprüfung', ic:'P', cnt:'1'},
+  {id:'enforcement', n:'Enforcement', ic:'E', cnt:'1'},
+  {id:'praxis', n:'Praxisdatenbank', ic:'D', cnt:''},
+  {id:'recht', n:'Rechtsdienst', ic:'R', cnt:'2'},
+];
+
+const $ = s=>document.querySelector(s);
+const el = (h)=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstElementChild};
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2200)}
+function log(a){S.log.unshift(`${new Date().toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} · ${a}`); $('#logCount').textContent=S.log.length}
+function setKlasse(k){S.klasse=k;const p=$('#klassePill');p.className='pill '+KLASSEN[k].c;p.innerHTML=`<span class="dot"></span>${KLASSEN[k].n}`;$('#betriebPill').innerHTML=`<span class="dot" style="background:var(--accent)"></span>${KLASSEN[k].betrieb}`;const a=$('#assistKlasse');a.textContent='Klasse '+k;a.className='tag '+KLASSEN[k].c}
+
+// ---------- Assistent ----------
+const A = {msgs:[]};
+function aiMsg(html, cites=[], opts={}){
+  A.msgs.push({html,cites,opts});
+  renderAssist();
+}
+function aiClear(){A.msgs=[];renderAssist()}
+function renderAssist(){
+  const b=$('#assistBody'); b.innerHTML='';
+  if(!A.msgs.length){b.appendChild(el(`<div class="msg"><div class="who">Hinweis</div>Wähle links einen Arbeitsbereich und starte einen Schritt. Hier erscheinen Vorschläge des Assistenten, jeder mit Fundstelle, und die Freigabe durch dich.</div>`));return}
+  for(const m of A.msgs){
+    const d=el(`<div class="msg ${m.opts.user?'':'ai'}"><div class="who">${m.opts.user?'Du':'Assistent'} ${m.opts.tag?`<span class="tag ${m.opts.tagc||'ai'}">${m.opts.tag}</span>`:''}</div><div>${m.html}</div></div>`);
+    if(m.cites.length){const c=el('<div class="cite"></div>');for(const x of m.cites){c.appendChild(el(`<div class="${x.k||''}">${esc(x.t)}</div>`))}d.appendChild(c)}
+    if(m.opts.nocite){d.appendChild(el(`<div class="nocite">Keine Fundstelle: Aussage wird nicht übernommen.</div>`))}
+    if(m.opts.gate){d.appendChild(buildGate(m.opts.gate))}
+    b.appendChild(d);
+  }
+  b.scrollTop=b.scrollHeight;
+}
+function buildGate(g){
+  const w=el(`<div class="gate"><b>Freigabe (Vier-Augen)</b></div>`);
+  g.items.forEach((it,i)=>{const id=g.id+'_'+i;const l=el(`<label><input type="checkbox" id="${id}" ${S.gate[id]?'checked':''}><span>${it}</span></label>`);l.querySelector('input').addEventListener('change',e=>{S.gate[id]=e.target.checked;renderAssist()});w.appendChild(l)});
+  const all=g.items.every((_,i)=>S.gate[g.id+'_'+i]);
+  const btn=el(`<button class="btn primary small" ${all?'':'disabled'}>${g.label}</button>`);
+  btn.addEventListener('click',()=>{log(g.logmsg);toast(g.done);aiMsg(g.after,[], {tag:'erledigt',tagc:'ok'});if(g.cb)g.cb()});
+  w.appendChild(btn);
+  if(!all)w.appendChild(el(`<span class="muted" style="font-size:12px">Alle Punkte bestätigen, dann wird freigegeben.</span>`));
+  return w;
+}
+
+// ---------- Views ----------
+function render(){
+  const nav=$('#nav');nav.innerHTML='';
+  for(const n of NAV){const b=el(`<button class="${S.view===n.id?'active':''}"><span class="ic">${n.ic}</span><span>${n.n}</span><span class="cnt">${n.cnt}</span></button>`);b.addEventListener('click',()=>{S.view=n.id;aiClear();render()});nav.appendChild(b)}
+  const m=$('#main');m.innerHTML='';
+  ({uebersicht,zulassung,aufsicht,pruefung,enforcement,praxis,recht})[S.view](m);
+}
+
+function head(m, crumbs, title, text, k){
+  setKlasse(k);
+  m.appendChild(el(`<div class="crumbs">${crumbs.map((c,i)=>i===crumbs.length-1?`<b>${c}</b>`:`<span>${c} ›</span>`).join('')}</div>`));
+  m.appendChild(el(`<div class="head"><div class="grow"><h2>${title}</h2><p>${text}</p></div></div>`));
+}
+
+// --- Übersicht
+function uebersicht(m){
+  head(m,['Werkbank','Übersicht'],'Guten Morgen. Das steht heute an.','Zusammenfassung vor Detail. Was Aufmerksamkeit braucht, ist farblich markiert. Alle Zahlen und Fälle sind fiktive Beispiele.',0);
+  m.appendChild(el(`<div class="tiles">
+    <div class="tile"><div class="v num">37</div><div class="l">Zulassungsgesuche offen</div><div class="d warn">● 4 älter als 30 Tage</div></div>
+    <div class="tile"><div class="v num">112</div><div class="l">Erneuerungen fällig bis 31.03.2027</div><div class="d ok">● Aufforderungen versandt</div></div>
+    <div class="tile"><div class="v num">6</div><div class="l">Überprüfungen laufend</div><div class="d">2 Comment Forms in Stellungnahme</div></div>
+    <div class="tile"><div class="v num">9</div><div class="l">Enforcement-Verfahren</div><div class="d crit">● 1 nahe Zwölfmonatsziel</div></div>
+    <div class="tile"><div class="v num">14</div><div class="l">Meldungen zu triagieren</div><div class="d">3 von Handelsregisterämtern</div></div>
+  </div>`));
+  const g=el('<div class="grid2"></div>');
+  // Rechtsprechungs-Monitor (echte Urteile)
+  const rm=el(`<div class="card"><div class="cardhead"><h3>Rechtsprechungs-Monitor</h3><span class="tag k0">Klasse 0</span><span class="tag ai">KI-Zusammenfassung</span></div><div class="list" id="rm"></div></div>`);
+  for(const u of URTEILE.slice(0,4)){rm.querySelector('#rm').appendChild(el(`<div class="find ${u.gericht.startsWith('bestätigt')?'v':'m'}"><div class="t"><b>${u.cite}</b><span class="tag neutral">${u.typ}</span></div><div>${esc(u.fall)}. RAB: ${esc(u.rab)}. Gericht: <b>${esc(u.gericht)}</b>.</div><div class="src">Lehre: ${esc(u.lehre)} (${u.e})</div></div>`))}
+  g.appendChild(rm);
+  // Mutations-Radar (fiktiv)
+  const mr=el(`<div class="card"><div class="cardhead"><h3>Mutations-Radar</h3><span class="tag k0">Klasse 0</span><span class="muted" style="font-size:12px">Register gegen Handelsregister</span></div><div class="tw"><table><thead><tr><th>Unternehmen</th><th>Abweichung</th><th>Norm</th><th></th></tr></thead><tbody>
+    <tr><td>Revisio Jura Sàrl</td><td>Sitz im HR: Delémont; im Register: Porrentruy</td><td class="mono">Art. 15 Abs. 3 RAG</td><td><button class="btn small">Aufforderung</button></td></tr>
+    <tr><td>Konto & Co AG</td><td>Einzige zugelassene leitende Revisorin im HR gelöscht (30.09.2026)</td><td class="mono">Art. 6 Abs. 1 RAG</td><td><button class="btn small">Prüfen</button></td></tr>
+    <tr><td>Treuhand Aarebogen AG</td><td>Neuer Verwaltungsrat ohne Zulassung; Mehrheit noch gegeben</td><td class="mono">Art. 6 Abs. 1 RAG</td><td><span class="tag ok">in Ordnung</span></td></tr>
+  </tbody></table></div></div>`);
+  mr.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{toast('Entwurf im Bereich Zulassung abgelegt');log('Mutations-Radar: Entwurf Aufforderung erstellt')}));
+  g.appendChild(mr);
+  m.appendChild(g);
+  m.appendChild(el(`<div class="card flat"><h4>Fristen heute</h4><div class="tw"><table><tbody>
+    <tr><td class="mono">E-2026-03</td><td>Stellungnahme Partei fällig</td><td class="num">heute</td><td><span class="tag warn">Frist</span></td></tr>
+    <tr><td class="mono">P-2026-11</td><td>Comment Forms Firm Review, Frist Unternehmen</td><td class="num">in 3 Tagen</td><td><span class="tag neutral">Stellungnahme</span></td></tr>
+    <tr><td class="mono">E-2025-19</td><td>Massnahme M4 Umsetzungsfrist (Art. 16 Abs. 4 RAG)</td><td class="num">in 12 Tagen</td><td><span class="tag neutral">Umsetzungskontrolle</span></td></tr>
+  </tbody></table></div></div>`));
+  aiMsg('Vier neue Urteile zu RAB-Verfügungen seit der letzten Sitzung erfasst. Zwei davon ändern das Sanktionsraster: Bei selbst wiederhergestelltem Zustand wird ein Entzug ohne Androhung zum Verweis.',[{t:'BVGer B-3664/2025 vom 13. Mai 2026, E. 9.3.3',k:'k0'},{t:'BVGer B-2332/2018 vom 11. März 2020, E. 2.3.2',k:'k0'}],{tag:'Monitor'});
+}
+
+// --- Zulassung
+function zulassung(m){
+  head(m,['Werkbank','Zulassung & Register'],'Zulassung und Register','Massengeschäft: Vollständigkeit, Fachpraxis-Rechnung, ausländische Ausbildungen, Erneuerungen. Entscheid und Leumundsbeurteilung bleiben bei dir.',S.gesuch?2:0);
+  const t=el(`<div class="card"><div class="cardhead"><h3>Eingang</h3><span class="muted" style="font-size:12px">Gesuch auswählen</span></div><div class="tw"><table><thead><tr><th>Nr.</th><th>Gesuchsteller/in</th><th>Art</th><th>Eingang</th><th>Weg</th><th>Status</th></tr></thead><tbody></tbody></table></div></div>`);
+  const tb=t.querySelector('tbody');
+  for(const g of GESUCHE){const r=el(`<tr class="click ${S.gesuch===g.id?'sel':''}"><td class="mono">${g.id}</td><td>${g.name}</td><td>${g.art}</td><td class="num">${g.eingang}</td><td class="mono">${g.weg}</td><td><span class="tag ${g.status.includes('offen')?'warn':'neutral'}">${g.status}</span></td></tr>`);r.addEventListener('click',()=>{S.gesuch=g.id;S.praxisRun=0;S.ausland=g.id==='Z-2026-0433';aiClear();render();if(S.ausland)auslandAssist();});tb.appendChild(r)}
+  m.appendChild(t);
+  if(!S.gesuch){m.appendChild(el(`<div class="note">Wähle ein Gesuch. Der Dossier-Vorprüfer liest die Unterlagen und schlägt vor, ob das Dossier vollständig ist. Das Dossier enthält Personendaten (Klasse 2) und läuft deshalb auf Bundesinfrastruktur.</div>`));return}
+  const g=GESUCHE.find(x=>x.id===S.gesuch);
+  if(g.id==='Z-2026-0417'){
+    const c=el(`<div class="grid2"></div>`);
+    const steps=[['Unterlagen erkannt: Diplom dipl. Wirtschaftsprüfer (2021), 3 Arbeitszeugnisse, 4 Praxisbestätigungen, Strafregisterauszug (nicht durch KI gelesen)'],['Ausbildung: Art. 4 Abs. 2 lit. a RAG erfüllt, keine Fachpraxis-Mindestdauer nach lit. a; Nachweis der Fachpraxis nach Abs. 4 dennoch prüfen'],['Fachpraxis extrahiert und gegen Register abgeglichen'],['Vollständigkeit: 1 Nachforderung']];
+    const sc=el(`<div class="card"><div class="cardhead"><h3>Dossier-Vorprüfer</h3><span class="tag k2">Klasse 2</span></div><div class="steps" id="steps"></div><div class="btnrow" style="margin-top:10px"><button class="btn primary" id="runPre">Vorprüfung starten</button></div></div>`);
+    const st=sc.querySelector('#steps');
+    steps.forEach((s,i)=>st.appendChild(el(`<div class="step ${S.praxisRun>i?'done':S.praxisRun===i&&S.praxisRun>0?'run':'wait'}"><span class="st">${S.praxisRun>i?'✓':''}</span><span>${s[0]}</span></div>`)));
+    sc.querySelector('#runPre').addEventListener('click',()=>{
+      if(S.praxisRun>=steps.length){return}
+      log('Dossier-Vorprüfer gestartet für Z-2026-0417');
+      let i=0;const tick=()=>{S.praxisRun=i+1;render();if(i===2){aiMsg('Fachpraxis berechnet. Gesamt 121 Monate, davon 103 Monate unter Beaufsichtigung zugelassener Personen (85 %). Zweidrittel-Regel erfüllt. Ein Zeitraum ohne Angabe der beaufsichtigenden Person; dieser zählt nur zur Gesamtdauer.',[{t:'Art. 4 Abs. 4 RAG: mindestens zwei Drittel unter Beaufsichtigung durch zugelassene Revisionsexpertin oder -experten',k:'k0'},{t:'Register: RAB-Nr. 105 412 und 108 977 zum jeweiligen Zeitpunkt zugelassen',k:'k0'}],{tag:'Rechner'})}
+        if(i===3){aiMsg('Vorschlag: Dossier <b>vollständig bis auf eine Nachforderung</b>. Die Praxisbestätigung Lindt & Co Treuhand (2022–2023) nennt keine beaufsichtigende Person und ist nicht unterzeichnet. Entwurf des Nachforderungsschreibens liegt bereit. Leumund: nicht geprüft, manuelle Beurteilung durch dich.',[{t:'Art. 3 Abs. 1 RAV: Gesuch muss alle Angaben und Unterlagen bezeichnen',k:'k0'},{t:'Rundschreiben 1/2007 RAB, Ziff. Praxisbestätigungen (interne Vorlage)',k:'k1'}],{tag:'Vorschlag',gate:{id:'nf',items:['Nachforderung inhaltlich geprüft','Leumund manuell beurteilt (Strafregister, Betreibungen)','Schreiben in der Sprache der Gesuchstellerin (DE)'],label:'Nachforderung freigeben',logmsg:'Nachforderung Z-2026-0417 freigegeben durch L. Frei',done:'Nachforderung versandt (Demo)',after:'Nachforderung versandt. Frist 30 Tage gesetzt, Wiedervorlage eingetragen.'}})}
+        i++;if(i<steps.length)setTimeout(tick,650)};tick();
+    });
+    c.appendChild(sc);
+    const pr=el(`<div class="card"><div class="cardhead"><h3>Fachpraxis-Rechner</h3><span class="tag ai">extrahiert</span></div><div class="tw"><table><thead><tr><th>Zeitraum</th><th>Arbeitgeber</th><th>Tätigkeit</th><th>Beaufsichtigung</th><th class="num">Monate</th></tr></thead><tbody id="pt"></tbody></table></div><div style="margin-top:10px" id="pbar"></div></div>`);
+    const pt=pr.querySelector('#pt');
+    if(S.praxisRun>=3){for(const p of PRAXIS){pt.appendChild(el(`<tr><td class="mono">${p.von} – ${p.bis}</td><td>${p.ag}</td><td>${p.taet}</td><td>${p.okReg?`<span class="tag ok">${p.aufs} · zugelassen</span>`:`<span class="tag warn">${p.aufs}</span>`}</td><td class="num">${p.mt}</td></tr>`))}
+      pr.querySelector('#pbar').innerHTML=`<div class="kv"><dt>Gesamt</dt><dd class="num">121 Monate</dd><dt>Unter Beaufsichtigung</dt><dd class="num">103 Monate (85 %)</dd><dt>Erforderlich</dt><dd class="num">≥ 66.7 %</dd></div><div class="bar ok" style="margin-top:8px"><i style="width:85%"></i></div>`}
+    else pt.appendChild(el(`<tr><td colspan="5" class="muted">Erscheint nach Schritt 3 der Vorprüfung.</td></tr>`));
+    c.appendChild(pr);m.appendChild(c);
+  } else if(g.id==='Z-2026-0433'){
+    m.appendChild(el(`<div class="card"><div class="cardhead"><h3>Assistent ausländische Ausbildungen</h3><span class="tag k2">Klasse 2</span></div>
+      <dl class="kv"><dt>Ausbildung</dt><dd>Bachelor Accounting (Nigeria), ACCA-Mitgliedschaft (UK) seit 2019, Prüfung Schweizer Recht bestanden 2026</dd><dt>Fachpraxis</dt><dd>7 Jahre in der Schweiz bei staatlich beaufsichtigtem Unternehmen</dd><dt>Prüfpunkt</dt><dd>Art. 4 Abs. 2 lit. d RAG: vergleichbare Ausbildung, Staatsvertrag oder Gegenrecht, Berechtigung zur Abschlussprüfung im Herkunftsstaat</dd></dl>
+      <div class="btnrow" style="margin-top:10px"><button class="btn primary" id="auslBtn">Prüfraster anwenden</button></div></div>`));
+    m.querTemp=null;
+    $('#auslBtn').addEventListener('click',()=>{log('Prüfraster Ausland angewendet auf Z-2026-0433');aiMsg('Prüfraster: Die Verbandsmitgliedschaft allein genügt nicht. Entscheidend ist, ob die Person im Vereinigten Königreich die <b>audit qualification</b> nach Companies Act 2006 besitzt und damit zur gesetzlichen Abschlussprüfung berechtigt ist. Bitte Bestätigung des Verbands anfordern. Die publizierte Vergleichbarkeitsliste der RAB gilt als Verwaltungsverordnung und bindet die Praxis.',[{t:'BGer 2C_346/2023 vom 5. August 2025, E. 3.4–3.6',k:'k0'},{t:'BVGer B-433/2022 vom 10. Mai 2023, E. 3.4.4, 3.4.10',k:'k0'},{t:'BVGer B-213/2023 vom 3. April 2024, E. 2.3.1 (Gegenrecht kumulativ)',k:'k0'}],{tag:'Raster',gate:{id:'ausl',items:['Rechtslage im Herkunftsstaat selbst verifiziert','Vergleichbarkeitsliste der RAB konsultiert','Härtefall Art. 43 Abs. 6 RAG geprüft'],label:'Nachforderung Verbandsbestätigung freigeben',logmsg:'Nachforderung Z-2026-0433 freigegeben',done:'Nachforderung versandt (Demo)',after:'Nachforderung versandt. Hinweis an Gesuchstellerin: Härtefallklausel setzt vergleichbare Ausbildung voraus.'}})});
+  } else if(g.id==='U-2026-0088'){
+    m.appendChild(el(`<div class="card"><div class="cardhead"><h3>Erneuerungs-Assistent</h3><span class="tag k2">Klasse 2</span><span class="muted" style="font-size:12px">Zulassung befristet auf fünf Jahre, Art. 3 Abs. 2 RAG</span></div>
+      <div class="tw"><table><thead><tr><th>Prüfpunkt</th><th>Quelle</th><th>Ergebnis</th></tr></thead><tbody>
+      <tr><td>Mehrheit zugelassener Organe (Art. 6 Abs. 1 RAG)</td><td>Handelsregister, Register</td><td><span class="tag ok">3 von 4 zugelassen</span></td></tr>
+      <tr><td>Sitz und Firma unverändert</td><td>Handelsregister</td><td><span class="tag ok">übereinstimmend</span></td></tr>
+      <tr><td>Berufshaftpflicht (Art. 10a RAV)</td><td>Police 2026, hochgeladen</td><td><span class="tag warn">läuft 28.02.2027 aus, vor Erneuerung verlängern</span></td></tr>
+      <tr><td>Leitende Revisorinnen gemeldet</td><td>Extranet</td><td><span class="tag ok">5 Personen, alle zugelassen</span></td></tr>
+      <tr><td>Weiterbildung (Art. 11h RAV, falls Prüfgesellschaft)</td><td>nicht anwendbar</td><td><span class="tag neutral">entfällt</span></td></tr>
+      </tbody></table></div><div class="btnrow" style="margin-top:10px"><button class="btn primary" id="ernBtn">Aufforderung vorbefüllen</button></div></div>`));
+    $('#ernBtn').addEventListener('click',()=>{log('Erneuerungsaufforderung U-2026-0088 vorbefüllt');aiMsg('Aufforderung vorbefüllt: Es fehlt nur die verlängerte Versicherungspolice. Alle übrigen Angaben sind aus Handelsregister und Register übernommen und als «unverändert» markiert, so dass das Unternehmen sie nur bestätigen muss.',[{t:'Art. 3 Abs. 2 RAG; Art. 10a RAV',k:'k0'},{t:'Anleitung RAB «Erneuerung der Zulassung von Revisionsunternehmen»: Aufforderung rund sechs Monate vor Ablauf',k:'k0'}],{tag:'Entwurf',gate:{id:'ern',items:['Registerdaten stichprobenweise geprüft','Schreiben gelesen'],label:'Aufforderung freigeben',logmsg:'Erneuerungsaufforderung U-2026-0088 freigegeben',done:'Aufforderung versandt (Demo)',after:'Aufforderung versandt, Frist 60 Tage.'}})});
+  } else {
+    m.appendChild(el(`<div class="card"><div class="cardhead"><h3>Nachforderung läuft</h3></div><p class="muted">Gesuch nach Art. 4 Abs. 2 lit. c RAG (Hochschulabschluss, zwölf Jahre Fachpraxis). Nachforderung vom 02.10.2026: zwei Praxisbestätigungen fehlen. Frist 01.11.2026.</p></div>`));
+  }
+}
+function auslandAssist(){aiMsg('Gesuch mit ausländischer Ausbildung erkannt. Dieser Fallkreis geht regelmässig bis vor Bundesgericht. Ich kann das Prüfraster aus der Rechtsprechung anwenden.',[{t:'Art. 4 Abs. 2 lit. d RAG',k:'k0'}],{tag:'Hinweis'})}
+
+// --- Aufsicht
+function aufsicht(m){
+  head(m,['Werkbank','Laufende Aufsicht'],'Laufende Aufsicht über staatlich beaufsichtigte Revisionsunternehmen','Aufsichtsberichte (Art. 30 RAV) in ein Schema überführen, Risikoindikatoren ableiten, Meldungen triagieren. Grundlage für die risikoorientierte Staffelung der Überprüfungen.',3);
+  m.appendChild(el(`<div class="card"><div class="cardhead"><h3>Risikoindikatoren aus Aufsichtsberichten 2026</h3><span class="tag k3">Klasse 3</span><span class="tag ai">extrahiert</span></div><div class="tw"><table><thead><tr><th>Unternehmen</th><th>Mandate öffentl. Interesse</th><th>Honorarabhängigkeit max.</th><th>Fluktuation</th><th>Offene Massnahmen</th><th>Letzte Überprüfung</th><th>Vorschlag</th></tr></thead><tbody>
+    <tr><td>Prüfpartner Mittelland AG</td><td class="num">11</td><td><div class="bar warn"><i style="width:82%"></i></div><span class="mono">8.2 %</span></td><td class="num">19 %</td><td class="num">2</td><td class="num">2023</td><td><span class="tag warn">2027 priorisieren</span></td></tr>
+    <tr><td>Audit Léman SA</td><td class="num">4</td><td><div class="bar crit"><i style="width:100%"></i></div><span class="mono">11.4 %</span></td><td class="num">8 %</td><td class="num">0</td><td class="num">2025</td><td><span class="tag crit">Art. 11 Abs. 1 lit. a RAG prüfen</span></td></tr>
+    <tr><td>Revisuisse Zürich AG</td><td class="num">63</td><td><div class="bar ok"><i style="width:21%"></i></div><span class="mono">2.1 %</span></td><td class="num">12 %</td><td class="num">1</td><td class="num">2026</td><td><span class="tag neutral">jährlich</span></td></tr>
+    <tr><td>Fidalpina SA</td><td class="num">2</td><td><div class="bar ok"><i style="width:35%"></i></div><span class="mono">3.5 %</span></td><td class="num">31 %</td><td class="num">3</td><td class="num">2022</td><td><span class="tag warn">Fluktuation, Umsetzung M2–M4</span></td></tr>
+  </tbody></table></div></div>`));
+  const tr=el(`<div class="card"><div class="cardhead"><h3>Meldungs-Triage</h3><span class="tag k3">Klasse 3</span><button class="btn small primary" id="triBtn">Triage ausführen</button></div><div class="list" id="tri"></div></div>`);
+  const items=[
+    {q:'Handelsregisteramt BE',t:'Verdacht: Revisionsexperte ist zugleich Willensvollstrecker des Hauptaktionärs der geprüften AG',k:'Unabhängigkeit',p:'hoch',ref:'ähnlich B-7322/2025'},
+    {q:'Whistleblowing-Plattform',t:'Revisionsstelle soll seit drei Jahren keinen Bericht erstattet haben',k:'Unterlassene Revision',p:'hoch',ref:'ähnlich B-3664/2025'},
+    {q:'Staatsanwaltschaft ZH (Art. 24 Abs. 4 RAG)',t:'Strafverfahren wegen Urkundenfälschung gegen leitenden Revisor eines sbRU',k:'Leumund',p:'hoch',ref:'Art. 4 RAV'},
+    {q:'Meldung sbRU (Art. 15a Abs. 2 RAG)',t:'Austritt der Leiterin Qualitätssicherung, Nachfolge offen',k:'Organisation',p:'mittel',ref:'Art. 12 RAG'},
+    {q:'Medienmonitoring',t:'Zeitungsbericht über Restatement einer kotierten Gesellschaft',k:'Prüfungsqualität',p:'mittel',ref:'Mandat im Register zuordnen'},
+  ];
+  const box=tr.querySelector('#tri');
+  if(S.triage){for(const it of items){box.appendChild(el(`<div class="find ${it.p==='hoch'?'h':'m'}"><div class="t"><b>${it.k}</b><span class="tag neutral">${it.q}</span><span class="tag ${it.p==='hoch'?'crit':'warn'}">Priorität ${it.p}</span></div><div>${it.t}</div><div class="src">Zuordnung: ${it.ref}</div><div class="act"><button class="btn small">Vorabklärungs-Dossier anlegen</button><button class="btn small">Ablegen</button></div></div>`))}
+    box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{toast('Erledigt (Demo)');log('Triage: '+b.textContent)}))}
+  else box.appendChild(el(`<p class="muted">14 Meldungen im Eingang. Die Triage klassiert sie, ordnet sie Registereinträgen zu und zeigt frühere Vorkommnisse. Die Entscheidung über Vorabklärungen bleibt bei dir.</p>`));
+  tr.querySelector('#triBtn').addEventListener('click',()=>{S.triage=true;log('Meldungs-Triage ausgeführt (14 Meldungen)');render();aiMsg('14 Meldungen klassiert, 5 mit Handlungsbedarf, 9 abgelegt (Doppelmeldungen, nicht zuständig). Drei Meldungen hoher Priorität betreffen den Kernbereich der Revision.',[{t:'Grundsätze zum Enforcement RAB, 2. Aufl.: Quellen von Verfahren',k:'k0'},{t:'Art. 15a Abs. 2, Art. 24 Abs. 4 RAG',k:'k0'}],{tag:'Triage'})});
+  m.appendChild(tr);
+}
+
+// --- Überprüfung
+function pruefung(m){
+  head(m,['Werkbank','Überprüfung','P-2026-11'],'Überprüfung P-2026-11 · '+MANDAT.firma,'File Review des Mandats '+MANDAT.mandat+'. Arbeitspapiere der Revisionsstelle über eine kotierte Gesellschaft: Revisionsgeheimnis Dritter. Alles läuft auf Bundesinfrastruktur.',3);
+  m.appendChild(el(`<div class="flow">
+    <div class="box"><b>Ankündigung</b><small>19.08.2026</small></div>
+    <div class="box k3"><b>File Review</b><small>laufend · ${MANDAT.ap}</small></div>
+    <div class="box"><b>Firm Review</b><small>ab 02.11.2026</small></div>
+    <div class="box"><b>Comment Forms</b><small>Stellungnahme Unternehmen</small></div>
+    <div class="box"><b>Bericht + Verfügung</b><small>Art. 16 Abs. 3, 4 RAG</small></div>
+  </div>`));
+  const tabs=el(`<div class="tabs"><button class="active" data-t="leser">File-Review-Leser</button><button data-t="cf">Comment Forms (${S.cf.length})</button><button data-t="zeit">Zeitaufschrieb</button></div>`);
+  m.appendChild(tabs);
+  const pane=el('<div></div>');m.appendChild(pane);
+  const show=(t)=>{tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.t===t));pane.innerHTML='';
+    if(t==='leser'){
+      const c=el(`<div class="card"><div class="cardhead"><h3>Hinweise aus den Arbeitspapieren</h3><span class="tag k3">Klasse 3</span><span class="tag ai">Doppelprüfung aktiv</span><button class="btn small primary" id="runFR">Arbeitspapiere lesen</button></div><p class="muted" style="margin-bottom:10px">Jeder Hinweis nennt PS-Ziffer, Arbeitspapier und Konfidenz. Ein Hinweis wird erst zur Feststellung, wenn du ihn am Original verifiziert hast.</p><div class="list" id="fr"></div></div>`);
+      const box=c.querySelector('#fr');
+      const ran=Object.keys(S.hinweise).length>0;
+      if(ran){for(const h of HINWEISE){const st=S.hinweise[h.id];box.appendChild(el(`<div class="find ${st==='ver'?'v':st==='rej'?'l':h.sev}"><div class="t"><b class="mono">${h.ps}</b><span>${h.titel}</span>${st==='ver'?'<span class="tag ok">verifiziert · Feststellung</span>':st==='rej'?'<span class="tag neutral">verworfen</span>':`<span class="tag ${h.konf==='hoch'?'warn':'neutral'}">Konfidenz ${h.konf}</span>`}</div><div class="src">${h.ap} · «${esc(h.zitat)}»</div>${st?'':`<div class="act"><button class="btn small primary" data-v="${h.id}">Am Original verifiziert</button><button class="btn small" data-r="${h.id}">Trifft nicht zu</button><button class="btn small" data-o="${h.id}">Arbeitspapier öffnen</button></div>`}</div>`))}
+        box.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>{const h=HINWEISE.find(x=>x.id===b.dataset.v);S.hinweise[h.id]='ver';S.cf.push(h);log(`Hinweis ${h.id} verifiziert durch L. Frei, Comment Form erzeugt`);render();showAfter('cf')}));
+        box.querySelectorAll('[data-r]').forEach(b=>b.addEventListener('click',()=>{S.hinweise[b.dataset.r]='rej';log(`Hinweis ${b.dataset.r} verworfen durch L. Frei`);render();showAfter('leser')}));
+        box.querrAll=null;box.querySelectorAll('[data-o]').forEach(b=>b.addEventListener('click',()=>toast('Arbeitspapier wird im Aktensystem geöffnet (Demo)')));
+      } else box.appendChild(el(`<p class="muted">Noch nicht gelesen. ${MANDAT.ap}.</p>`));
+      c.querySelector('#runFR').addEventListener('click',()=>{if(ran)return;log('File-Review-Leser gestartet, Mandat Nordlicht Holding AG');HINWEISE.forEach(h=>S.hinweise[h.id]='open');render();showAfter('leser');aiMsg('Sechs Hinweise in 1 842 Arbeitspapieren. Zwei betreffen den Kernbereich (dolose Handlungen, Goodwill-Bewertung). Das Kontrollmodell hat zwei weitere Kandidaten verworfen, weil die zitierte Stelle den Befund nicht trug. Alle Hinweise warten auf deine Verifikation am Original.',[{t:'PS 240.17–18; PS 540.13; PS 701.23; PS 720.4–5; Art. 730c OR',k:'k0'},{t:'Fundstellen in AP 2.4.1, 5.7.2, 9.1, 9.3, 4.2.3, 3.1',k:'k3'}],{tag:'Leser'})});
+      pane.appendChild(c);
+    }
+    if(t==='cf'){
+      const c=el(`<div class="card"><div class="cardhead"><h3>Comment Forms, Entwürfe</h3><span class="tag k3">Klasse 3</span></div><div class="list" id="cfl"></div></div>`);
+      const l=c.querySelector('#cfl');
+      if(!S.cf.length)l.appendChild(el('<p class="muted">Noch keine verifizierten Feststellungen. Verifiziere Hinweise im File-Review-Leser; daraus entstehen Comment-Form-Einträge im Hausformat.</p>'));
+      S.cf.forEach((h,i)=>{const sim=MUSTER.find(x=>x.typ==='Berichtsmängel');l.appendChild(el(`<div class="card flat"><div class="cardhead"><b>F${i+1}</b><span class="mono">${h.ps}</span><span class="tag ai">Klassifikation vorgeschlagen: ${h.sev==='h'?'schwer':h.sev==='m'?'mittelschwer':'leicht'}</span></div>
+        <dl class="kv"><dt>Sachverhalt</dt><dd>${h.titel}. ${esc(h.zitat)}</dd><dt>Kriterium</dt><dd>${h.ps}${h.ps.startsWith('Art')?'':' (Schweizer Prüfungsstandards)'}</dd><dt>Beurteilung</dt><dd>Die Dokumentation genügt den Anforderungen des Kriteriums nicht; Prüfungshandlung nicht nachvollziehbar («not documented, not done»).</dd><dt>Beleg</dt><dd class="mono">${h.ap}</dd><dt>Vergleich</dt><dd>Frühere Feststellungen gleicher Art: ${h.sev==='h'?'3 Fälle, davon 2 als schwer klassiert':'5 Fälle, alle mittelschwer'} (Praxisdatenbank)</dd></dl>
+        <div class="btnrow" style="margin-top:8px"><button class="btn small">Einstufung ändern</button><button class="btn small">In Comment Form übernehmen</button></div></div>`))});
+      l.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{toast(b.textContent+' (Demo)');log('Comment Form: '+b.textContent)}));
+      pane.appendChild(c);
+    }
+    if(t==='zeit'){
+      const tot=ZEIT.reduce((a,b)=>a+b.h,0);
+      const c=el(`<div class="card"><div class="cardhead"><h3>Zeitaufschrieb nach Phasen</h3><span class="tag k1">Klasse 1</span><span class="muted" style="font-size:12px">Tagessatz 1 500 Fr. (Art. 39 RAV)</span></div><div class="tw"><table><thead><tr><th>Phase</th><th class="num">Stunden</th><th style="width:40%">Anteil</th></tr></thead><tbody>${ZEIT.map(z=>`<tr><td>${z.phase}</td><td class="num">${z.h}</td><td><div class="bar"><i style="width:${Math.round(z.h/tot*100)}%"></i></div></td></tr>`).join('')}<tr><td><b>Total</b></td><td class="num"><b>${tot}</b></td><td class="mono">${(tot/8).toFixed(1)} Tage · ${Math.round(tot/8*1500).toLocaleString('de-CH')} Fr.</td></tr></tbody></table></div><p class="note" style="margin-top:10px">Der Assistent ordnet jede Stunde einer Phase und, wo möglich, einer Feststellung zu. Das Bundesgericht hat genau diese Zuordnung geprüft, als eine Gebühr bestritten wurde (BGer 9C_99/2024 vom 25. September 2024, E. 6.4–6.9).</p></div>`);
+      pane.appendChild(c);
+    }
+  };
+  let after=S._prTab||'leser';show(after);
+  function showAfter(t){S._prTab=t}
+  tabs.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{S._prTab=b.dataset.t;show(b.dataset.t)}));
+}
+
+// --- Enforcement
+function enforcement(m){
+  head(m,['Werkbank','Enforcement',FALL.id],FALL.id+' · '+FALL.titel,'Quelle: '+FALL.quelle+'. Ziel nach den Grundsätzen zum Enforcement: Abschluss innert zwölf Monaten. Verfahrenstag 240.',3);
+  m.appendChild(el(`<div class="flow"><div class="box"><b>Vorabklärung</b><small>Feb.–März 2026</small></div><div class="box"><b>Eröffnung</b><small>02.04.2026</small></div><div class="box"><b>Stellungnahme</b><small>20.05.2026</small></div><div class="box k3"><b>Verfügung</b><small>Entwurf</small></div><div class="box"><b>Beschwerde?</b><small>30 Tage, BVGer</small></div></div>`));
+  const g=el('<div class="grid2"></div>');
+  // Chronologie
+  const ch=el(`<div class="card"><div class="cardhead"><h3>Chronologie mit Fundstellen</h3><span class="tag k3">Klasse 3</span>${S.chronoRun?'':'<button class="btn small primary" id="chBtn">Aus Akten erstellen</button>'}</div><div id="chBox"></div></div>`);
+  const cb=ch.querySelector('#chBox');
+  if(S.chronoRun){const tl=el('<div class="timeline"></div>');for(const e of CHRONO){tl.appendChild(el(`<div class="ev ${e.gap?'gap':''}"><div class="d">${e.d}</div><div>${e.t}</div><div class="src">${e.src}</div></div>`))}cb.appendChild(tl);cb.appendChild(el(`<p class="note" style="margin-top:10px">Untätigkeit Bergfink AG: rund 20 Monate bis zur ersten Mahnung, rund 27 Monate bis zum Rücktritt. Jede Zeile hat eine Aktenstelle; abgeleitete Daten sind als solche markiert.</p>`))}
+  else cb.appendChild(el('<p class="muted">22 Aktenstücke. Der Assistent baut eine datierte Chronologie, jedes Ereignis mit Beleg. Fristen aus dem Gesetz werden als abgeleitet markiert.</p>'));
+  if(!S.chronoRun)ch.querySelector('#chBtn').addEventListener('click',()=>{S.chronoRun=true;log('Chronologie E-2026-07 aus 22 Aktenstücken erstellt');render();aiMsg('Chronologie erstellt, 8 Ereignisse, 22 Aktenstücke. Hinweis: Der Beschuldigte hat den ordnungsgemässen Zustand vor der Verfahrenseröffnung selbst wiederhergestellt (Rücktritt 18.09.2025, Massnahmen gemäss Stellungnahme). Das ist für die Androhungsfrage erheblich.',[{t:'Akten 7, 9, 14, 22',k:'k3'},{t:'Art. 699 Abs. 2, 728b, 730a OR',k:'k0'}],{tag:'Chronologie'})});
+  g.appendChild(ch);
+  // Vorwurfskatalog
+  const vk=el(`<div class="card"><div class="cardhead"><h3>Vorwurfskatalog</h3><span class="tag k3">Klasse 3</span></div><div class="tw"><table><thead><tr><th></th><th>Vorwurf</th><th>Norm</th><th>Beleg</th><th>Gewicht</th></tr></thead><tbody>${VORWUERFE.map(v=>`<tr><td class="mono">${v.n}</td><td>${v.t}</td><td class="mono">${v.norm}</td><td class="mono">${v.beleg}</td><td>${v.tragend?'<span class="tag crit">tragend</span>':'<span class="tag neutral">ergänzend</span>'}</td></tr>`).join('')}</tbody></table></div><p class="note" style="margin-top:10px">Tragende und ergänzende Vorwürfe getrennt, wie das Gericht es verlangt (BVGer B-3334/2023 vom 13. Dezember 2024, E. 5.1, 5.7).</p></div>`);
+  g.appendChild(vk);
+  m.appendChild(g);
+  // Einstufung & Verhältnismässigkeit
+  const es=el(`<div class="card"><div class="cardhead"><h3>Schwere-Einstufung und Verhältnismässigkeit</h3><span class="tag k3">Klasse 3</span><span class="tag k0">Raster Klasse 0</span></div>
+    <div class="btnrow"><span class="muted">Vorgesehene Massnahme:</span>
+      <button class="btn small ${S.einstufung==='verweis'?'primary':''}" data-e="verweis">Verweis</button>
+      <button class="btn small ${S.einstufung==='entzug12'?'primary':''}" data-e="entzug12">Entzug 12 Monate</button>
+      <button class="btn small ${S.einstufung==='entzug24'?'primary':''}" data-e="entzug24">Entzug 24 Monate</button>
+    </div><div id="esBox" style="margin-top:12px"></div></div>`);
+  const eb=es.querySelector('#esBox');
+  if(S.einstufung){
+    const rel=URTEILE.filter(u=>['B-3664/2025','B-2332/2018','B-7322/2025'].includes(u.id));
+    const warn=S.einstufung!=='verweis';
+    eb.appendChild(el(`<div class="find ${warn?'h':'v'}"><div class="t"><b>${warn?'Abweichung vom Sanktionsraster':'Im Raster'}</b><span class="tag ${warn?'crit':'ok'}">${warn?'Androhung fehlt':'konsistent'}</span></div><div>${warn?'Der Zustand wurde vor der Intervention selbst wiederhergestellt und es ist kein früherer Verstoss aktenkundig. Die Rechtsprechung verlangt in dieser Konstellation die vorgängige Androhung (Art. 17 Abs. 1 Satz 2 RAG); ohne Androhung hat das Gericht den Entzug wiederholt in einen Verweis umgewandelt. Ein Entzug ist vertretbar, wenn die Verfügung begründet, weshalb trotz Wiederherstellung keine Gewähr mehr besteht.':'Verweis entspricht der Praxis bei erstmaligem Verstoss mit selbst wiederhergestelltem Zustand. Wiederholung würde Entzug rechtfertigen; dies in der Verfügung ankündigen.'}</div></div>`));
+    const t=el(`<div class="tw" style="margin-top:10px"><table><thead><tr><th>Nächstliegende Urteile</th><th>Konstellation</th><th>RAB</th><th>Gericht</th></tr></thead><tbody>${rel.map(u=>`<tr><td class="mono">${u.cite}, ${u.e}</td><td>${u.fall}</td><td>${u.rab}</td><td><b>${u.gericht}</b></td></tr>`).join('')}</tbody></table></div>`);
+    eb.appendChild(t);
+    eb.appendChild(el(`<div class="tw" style="margin-top:10px"><table><thead><tr><th>Eigene Muster (fiktiv)</th><th>Schwere</th><th>Massnahme</th><th>Androhung</th><th>Ausgang</th></tr></thead><tbody>${MUSTER.filter(x=>x.typ==='Unterlassene Revision'||x.typ==='Meldepflicht').map(x=>`<tr><td class="mono">${x.id}</td><td>${x.schwere}</td><td>${x.massnahme}</td><td>${x.androhung}</td><td>${x.ausgang}</td></tr>`).join('')}</tbody></table></div>`));
+    eb.appendChild(el(`<div class="btnrow" style="margin-top:12px"><button class="btn primary" id="entwurf">Verfügungsentwurf erzeugen</button></div>`));
+    eb.querySelector('#entwurf').addEventListener('click',()=>{log('Verfügungsentwurf E-2026-07 erzeugt ('+S.einstufung+')');
+      const massn=S.einstufung==='verweis'?'A._______ wird ein schriftlicher Verweis erteilt.':S.einstufung==='entzug12'?'Die A._______ am (...) 2015 erteilte Zulassung als Revisionsexperte (RAB-Nr. 102 338) wird für die Dauer von zwölf Monaten entzogen. Die Eintragung im Revisorenregister wird gelöscht.':'Die A._______ erteilte Zulassung als Revisionsexperte wird für die Dauer von 24 Monaten entzogen. Die Eintragung im Revisorenregister wird gelöscht.';
+      aiMsg(`Entwurf erstellt aus Chronologie, Vorwurfskatalog und Argumentarium. Dispositiv Ziff. 1: <i>«${massn}»</i> Ziff. 2: Kosten 4 200 Fr. (16.8 Stunden à 250 Fr.). Verhältnismässigkeit in E. 4.3 mit Eignung, Erforderlichkeit, Zumutbarkeit und Gesamtwirkung; Androhungsfrage in E. 4.2 ausdrücklich behandelt. Jeder Satz mit Aktenstelle oder Fundstelle. ${S.einstufung!=='verweis'?'<b>Hinweis bleibt:</b> Abweichung vom Raster muss in E. 4.2 begründet sein.':''}`,[{t:'Art. 17 Abs. 1, Art. 21 RAG; Art. 40 RAV',k:'k0'},{t:'BVGer B-3664/2025 vom 13. Mai 2026, E. 8.2–8.3, 9.3.3',k:'k0'},{t:'Akten 1–22',k:'k3'}],{tag:'Entwurf',gate:{id:'verf',items:['Jede Sachverhaltsangabe am Aktenstück geprüft','Schwere je Vorwurf klar bezeichnet (B-3334/2023 E. 4.9)','Androhungsfrage begründet','Zweitperson hat Entwurf gelesen (Vier-Augen)','Verfügung wird von der Geschäftsleitung unterschrieben'],label:'Entwurf zur Unterschrift weiterleiten',logmsg:'Verfügungsentwurf E-2026-07 zur Unterschrift weitergeleitet',done:'An Geschäftsleitung weitergeleitet (Demo)',after:'Weitergeleitet. Der Assistent verfügt nicht; die Unterschrift bleibt bei den zuständigen Personen (Art. 36a RAG).'}})});
+  } else eb.appendChild(el('<p class="muted">Wähle eine Massnahme. Der Assistent zeigt die nächstliegenden Urteile und eigenen Muster und prüft die Androhungsfrage.</p>'));
+  es.querySelectorAll('[data-e]').forEach(b=>b.addEventListener('click',()=>{S.einstufung=b.dataset.e;log('Einstufung gewählt: '+b.textContent);render()}));
+  m.appendChild(es);
+  if(!A.msgs.length)aiMsg('Fall E-2026-07 geöffnet. Stellungnahme der Partei liegt vor. Empfohlene Reihenfolge: Chronologie, Vorwurfskatalog, Einstufung, Entwurf.',[{t:'Grundsätze zum Enforcement RAB, 2. Aufl.: Zwölfmonatsziel',k:'k0'}],{tag:'Fall'});
+}
+
+// --- Praxisdatenbank
+function praxis(m){
+  head(m,['Werkbank','Praxisdatenbank'],'Praxisdatenbank','Zwei Bestände: Urteile des Bundesverwaltungs- und Bundesgerichts (öffentlich, täglich aktualisiert) und eigene Verfügungen als Muster (Klasse 3, nur auf Bundesinfrastruktur). Fiktive Musterfälle sind markiert.',S.musterSel?3:0);
+  const typen=['alle',...new Set(URTEILE.map(u=>u.typ))];
+  const f=el(`<div class="btnrow">${typen.map(t=>`<button class="btn small ${S.filter===t?'primary':''}" data-f="${t}">${t}</button>`).join('')}</div>`);
+  f.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{S.filter=b.dataset.f;render()}));
+  m.appendChild(f);
+  const u=URTEILE.filter(x=>S.filter==='alle'||x.typ===S.filter);
+  m.appendChild(el(`<div class="card"><div class="cardhead"><h3>Sanktionsraster aus der Rechtsprechung</h3><span class="tag k0">Klasse 0</span><span class="muted" style="font-size:12px">${u.length} Urteile</span></div><div class="tw"><table><thead><tr><th>Urteil</th><th>Typ</th><th>Konstellation</th><th>RAB verfügt</th><th>Gericht</th><th>Lehre</th></tr></thead><tbody>${u.map(x=>`<tr><td class="mono">${x.cite}<br><span class="muted">${x.e}</span></td><td>${x.typ}</td><td>${x.fall}</td><td>${x.rab}</td><td><b>${x.gericht}</b></td><td>${x.lehre}</td></tr>`).join('')}</tbody></table></div></div>`));
+  const mu=MUSTER.filter(x=>S.filter==='alle'||x.typ===S.filter);
+  const mc=el(`<div class="card"><div class="cardhead"><h3>Eigene Verfügungen als Muster</h3><span class="tag k3">Klasse 3</span><span class="proto">fiktiv</span></div><div class="tw"><table><thead><tr><th>Nr.</th><th>Typ</th><th>Schwere</th><th>Massnahme</th><th>Androhung</th><th>Ausgang</th></tr></thead><tbody>${mu.map(x=>`<tr class="click ${S.musterSel===x.id?'sel':''}" data-m="${x.id}"><td class="mono">${x.id}</td><td>${x.typ}</td><td>${x.schwere}</td><td>${x.massnahme}</td><td>${x.androhung}</td><td>${x.ausgang}</td></tr>`).join('')}</tbody></table></div><div id="mdet"></div></div>`);
+  mc.querySelectorAll('[data-m]').forEach(r=>r.addEventListener('click',()=>{S.musterSel=r.dataset.m;render()}));
+  if(S.musterSel){const x=MUSTER.find(y=>y.id===S.musterSel);mc.querySelector('#mdet').appendChild(el(`<div class="card flat" style="margin-top:10px"><div class="cardhead"><b>${x.id}</b><span class="tag neutral">${x.typ}</span></div><dl class="kv"><dt>Begründungsbausteine</dt><dd>${x.bausteine.join(' · ')}</dd><dt>Verwendung</dt><dd>Bausteine können in einen neuen Entwurf übernommen werden; Namen, Firmen und Zahlen werden dabei nicht übertragen.</dd></dl><div class="btnrow" style="margin-top:8px"><button class="btn small">Bausteine in Entwurf übernehmen</button><button class="btn small">Verfügung öffnen</button></div></div>`));mc.querySelectorAll('.card.flat button').forEach(b=>b.addEventListener('click',()=>{toast(b.textContent+' (Demo)');log('Praxisdatenbank: '+b.textContent+' '+x.id)}))}
+  m.appendChild(mc);
+  m.appendChild(el(`<div class="card flat"><h4>Erschliessungsschema je Verfügung</h4><div class="grid3" style="margin-top:8px;font-size:12.5px"><div><b>Herkunft</b><br>Quelle des Verfahrens, Jahr, Fallteam</div><div><b>Sachverhalt</b><br>Typ, Mandate, Dauer, Vorbelastung</div><div><b>Normen</b><br>OR, RAG, PS-Ziffern, Richtlinien</div><div><b>Massnahme</b><br>Schwere, Art, Dauer, Androhung, Kosten</div><div><b>Begründung</b><br>Bausteine zu Eignung, Erforderlichkeit, Zumutbarkeit</div><div><b>Ausgang</b><br>Rechtskraft, BVGer, BGer, Korrekturen</div></div></div>`));
+}
+
+// --- Rechtsdienst
+function recht(m){
+  head(m,['Werkbank','Rechtsdienst'],'Rechtsdienst und Kommunikation','Anonymisierung für Publikation und Praxisbericht, Zugangsgesuche nach BGÖ, Pflege von FAQ und Rundschreiben.',3);
+  const an=el(`<div class="card"><div class="cardhead"><h3>Anonymisierung · Verfügung E-2026-07 für den Praxisbericht</h3><span class="tag k3">Eingabe Klasse 3</span><span class="tag k0">Ausgabe Klasse 0</span><button class="btn small" id="redBtn">${S.redactShow?'Ersetzungen ausblenden':'Ersetzungen zeigen'}</button></div><div class="doc redact ${S.redactShow?'show':''}" id="redDoc"></div><p class="note" style="margin-top:10px">Vorschlag des Assistenten: 7 Ersetzungen (Personen, Firmen, Ort, Datum, Betrag). Du prüfst jede Ersetzung; identifizierende Umstände wie Branche und Ortsgrösse sind manuell zu beurteilen.</p><div class="btnrow" style="margin-top:8px"><button class="btn primary small" id="redOk">Anonymisierung freigeben</button></div></div>`);
+  const d=an.querySelector('#redDoc');
+  d.innerHTML=VERF.map(seg=>{let out='';for(let i=0;i<seg.length;i++){if(i%2===1){out+=`<span class="r">${esc(seg[i])}</span><span class="n">${esc(seg[i+1])}</span>`;i++}else out+=esc(seg[i])}return `<p>${out}</p>`}).join('');
+  an.querySelector('#redBtn').addEventListener('click',()=>{S.redactShow=!S.redactShow;render()});
+  an.querySelector('#redOk').addEventListener('click',()=>{log('Anonymisierung E-2026-07 freigegeben');aiMsg('Anonymisierte Fassung freigegeben. Fallzusammenfassung für den Praxisbericht nach Art. 19 Abs. 1 RAG entworfen (180 Wörter).',[{t:'Art. 19 Abs. 1 und 2 RAG',k:'k0'}],{tag:'erledigt',tagc:'ok'})});
+  m.appendChild(an);
+  const bg=el(`<div class="card"><div class="cardhead"><h3>BGÖ-Assistent · Zugangsgesuch G-2026-04</h3><span class="tag k3">Klasse 3</span></div><dl class="kv"><dt>Gesuch</dt><dd>Geprüfte Gesellschaft verlangt Kopie des Überprüfungsberichts über ihre frühere Revisionsstelle, um Verantwortlichkeitsansprüche zu prüfen</dd><dt>Prüfung</dt><dd>Art. 19 Abs. 2 RAG als Spezialnorm; überwiegendes öffentliches oder privates Interesse</dd></dl><div class="btnrow" style="margin-top:10px"><button class="btn primary small" id="bgBtn">Rechtslage prüfen</button></div></div>`);
+  bg.querySelector('#bgBtn').addEventListener('click',()=>{log('BGÖ-Prüfung G-2026-04');aiMsg('Die Konstellation entspricht der gefestigten Rechtsprechung: Die RAB darf über Verfahren nur bei überwiegendem Interesse informieren; das private Interesse an der Vorbereitung eines Zivilprozesses genügt nicht, und das Öffentlichkeitsgesetz gibt keinen Zugang zu Akten, die die RAB selbst nicht offenlegen darf. Entwurf einer abweisenden Verfügung liegt bereit.',[{t:'BVGer B-6115/2019 vom 16. Dezember 2020, E. 3.8, 4.4–4.5',k:'k0'},{t:'BVGer B-709/2018 vom 16. Dezember 2020',k:'k0'},{t:'BVGer B-2667/2022 vom 12. März 2024',k:'k0'},{t:'Art. 19 Abs. 2 RAG; Art. 7 BGÖ',k:'k0'}],{tag:'Prüfung',gate:{id:'bgo',items:['Konsultation der betroffenen Dritten geprüft (Art. 11 BGÖ)','Entwurf gelesen'],label:'Entwurf zur Unterschrift',logmsg:'BGÖ-Verfügung G-2026-04 weitergeleitet',done:'Weitergeleitet (Demo)',after:'Weitergeleitet.'}})});
+  m.appendChild(bg);
+  m.appendChild(el(`<div class="card flat"><div class="cardhead"><h3>FAQ und Rundschreiben: Aktualität</h3><span class="tag k0">Klasse 0</span></div><div class="tw"><table><tbody>
+    <tr><td>FAQ «Vergleichbare ausländische Ausbildungen»</td><td>Gilt als Verwaltungsverordnung (BVGer B-433/2022, E. 6.4)</td><td><span class="tag warn">Prüfen: UK nach Austritt aus FZA-Übergangsregime</span></td></tr>
+    <tr><td>Rundschreiben 1/2010 Berichterstattung</td><td>Letzte Änderung 2021</td><td><span class="tag ok">aktuell</span></td></tr>
+    <tr><td>Grundsätze zum Enforcement, 2. Aufl.</td><td>Neue Urteile zur Androhungsfrage 2026</td><td><span class="tag warn">Ergänzung vorschlagen</span></td></tr>
+  </tbody></table></div></div>`));
+}
+
+// ---------- Hilfe-Overlay ----------
+function help(){
+  const o=el(`<div class="overlay" role="dialog" aria-modal="true"><div class="modal">
+    <h2>Wie die Werkbank funktioniert</h2>
+    <p>Dies ist ein klickbarer Prototyp mit fiktiven Fällen. Er zeigt, wie KI-Assistenz in die Arbeitsabläufe der RAB passt, ohne das Amtsgeheimnis zu verletzen. Echte Angaben sind nur die zitierten Gerichtsurteile und Gesetzesartikel.</p>
+    <h3>1. Die Datenklasse bestimmt, wo das Modell läuft</h3>
+    <div class="legend"><div class="k0"><b>Klasse 0</b>Öffentlich: Register, Gesetze, Urteile, Handelsregister</div><div class="k1"><b>Klasse 1</b>Intern ohne Fallbezug: Vorlagen, Checklisten</div><div class="k2"><b>Klasse 2</b>Amtsgeheimnis mit Personendaten: Zulassungsdossiers</div><div class="k3"><b>Klasse 3</b>Geheimnisse Dritter: Arbeitspapiere, Enforcement-Akten</div></div>
+    <p>Oben rechts siehst du jederzeit, in welcher Klasse der aktuelle Bereich arbeitet und auf welcher Infrastruktur. Klasse 2 und 3 laufen nur auf Bundesinfrastruktur (Betrieb C). Öffentliche KI-Dienste wären nur für Klasse 0 zulässig.</p>
+    <h3>2. Der Assistent schlägt vor, der Mensch entscheidet</h3>
+    <p>Jede Ausgabe im rechten Panel trägt Fundstellen: grün für Gesetz und Rechtsprechung, rot für Aktenstellen. Eine Aussage ohne Fundstelle wird markiert und nicht übernommen. Vor jeder Wirkung nach aussen (Schreiben, Comment Form, Verfügung) steht eine Freigabe mit Prüfpunkten, die du bestätigen musst.</p>
+    <h3>3. Was du ausprobieren kannst</h3>
+    <div class="legend"><div style="background:var(--panel2)"><b>Zulassung</b>Gesuch Z-2026-0417 öffnen, Vorprüfung starten</div><div style="background:var(--panel2)"><b>Überprüfung</b>Arbeitspapiere lesen, Hinweise verifizieren, Comment Forms</div><div style="background:var(--panel2)"><b>Enforcement</b>Chronologie erstellen, Massnahme wählen, Entwurf erzeugen</div><div style="background:var(--panel2)"><b>Praxisdatenbank</b>Sanktionsraster filtern, Muster öffnen</div></div>
+    <p class="muted" style="font-size:12px">Grundlage: Konzeptpapier «KI für die RAB» (docs/rab-ki-konzept.md). Keine Verbindung zu Systemen der RAB.</p>
+    <div class="btnrow"><button class="btn primary" id="closeHelp">Zur Werkbank</button></div>
+  </div></div>`);
+  o.querySelector('#closeHelp').addEventListener('click',()=>o.remove());
+  o.addEventListener('click',e=>{if(e.target===o)o.remove()});
+  $('#overlayRoot').appendChild(o);
+}
+function showLog(){
+  const o=el(`<div class="overlay" role="dialog"><div class="modal"><h2>Protokoll</h2><p class="muted">Jede Aktion des Assistenten und jede Freigabe wird mit Zeit und Person festgehalten. Das Protokoll gehört zu den Verfahrensakten.</p><div class="log">${S.log.length?S.log.map(l=>`<div>${esc(l)}</div>`).join(''):'<div>Noch keine Einträge.</div>'}</div><div class="btnrow"><button class="btn" id="cl">Schliessen</button></div></div></div>`);
+  o.querySelector('#cl').addEventListener('click',()=>o.remove());o.addEventListener('click',e=>{if(e.target===o)o.remove()});$('#overlayRoot').appendChild(o);
+}
+function ask(){
+  const v=$('#ask').value.trim();if(!v)return;$('#ask').value='';
+  aiMsg(esc(v),[],{user:true});log('Frage an Assistent: '+v.slice(0,60));
+  const q=v.toLowerCase();
+  setTimeout(()=>{
+    if(q.includes('androh')||q.includes('entzug')||q.includes('verweis'))aiMsg('Bei erstmaligem Verstoss und selbst wiederhergestelltem Zustand ist der Entzug vorher anzudrohen; ohne Androhung hat das Gericht den Entzug in einen Verweis umgewandelt. Bei groben oder wiederholten Verstössen im Kernbereich ist der Entzug ohne Androhung geschützt worden.',[{t:'Art. 17 Abs. 1 RAG',k:'k0'},{t:'BVGer B-3664/2025 vom 13. Mai 2026, E. 9.3.3',k:'k0'},{t:'BVGer B-1640/2021 vom 19. Dezember 2022, E. 9.3',k:'k0'}],{tag:'Antwort'});
+    else if(q.includes('gebühr')||q.includes('kosten'))aiMsg('Überprüfungen werden nach Zeitaufwand mit Tagessatz 1 500 Franken verrechnet, übrige Verfügungen mit 250 Franken pro Stunde. Der Zeitaufschrieb muss Phasen und Leistungen zuordnen.',[{t:'Art. 21 RAG; Art. 39, 40 RAV',k:'k0'},{t:'BGer 9C_99/2024 vom 25. September 2024, E. 6.4',k:'k0'}],{tag:'Antwort'});
+    else if(q.includes('ausland')||q.includes('uk')||q.includes('diplom'))aiMsg('Ausländische Ausbildungen setzen Vergleichbarkeit, Staatsvertrag oder Gegenrecht und die Berechtigung zur Abschlussprüfung im Herkunftsstaat voraus.',[{t:'Art. 4 Abs. 2 lit. d RAG',k:'k0'},{t:'BGer 2C_346/2023 vom 5. August 2025, E. 3.4',k:'k0'}],{tag:'Antwort'});
+    else if(q.includes('bgö')||q.includes('zugang')||q.includes('einsicht'))aiMsg('Über laufende und abgeschlossene Verfahren informiert die RAB nur bei überwiegendem öffentlichem oder privatem Interesse. Das BGÖ gibt keinen Zugang zu Akten, die die RAB selbst nicht offenlegen darf.',[{t:'Art. 19 Abs. 2 RAG',k:'k0'},{t:'BVGer B-6115/2019 vom 16. Dezember 2020, E. 3.8',k:'k0'}],{tag:'Antwort'});
+    else aiMsg('Dazu habe ich im Demo-Bestand keine belegte Antwort. Ich erfinde keine Fundstelle.',[],{tag:'Antwort',nocite:true});
+  },500);
+}
+
+// ---------- Start ----------
+$('#helpBtn').addEventListener('click',help);
+$('#logBtn').addEventListener('click',showLog);
+$('#askBtn').addEventListener('click',ask);
+$('#ask').addEventListener('keydown',e=>{if(e.key==='Enter')ask()});
+render();
+let seen=false;try{seen=localStorage.getItem('rabwb_help')==='1'}catch(e){}
+if(!seen){help();try{localStorage.setItem('rabwb_help','1')}catch(e){}}
+</script>
