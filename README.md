@@ -41,6 +41,13 @@ Vollständigkeit der Recherche.
 | Antwort wird gesendet | Antwort wird vorher durch `attest_response` und ein lokales Zitat-Gate geprüft |
 | «Die Norm bedeutet X» | «Element, Richtung, Stärke, Grund» und eine Einstufung: überzeugend, vertretbar aber offen, offen |
 
+## Plattform-Prototyp
+
+`prototype/index.html` ist ein klickbarer Entwurf von Legeartis als frei zugängliche
+Rechtsplattform (Leseansicht für Norm und Entscheid, Zitat-Auflösung, Trefferliste,
+Rechtsfrage mit Gewichtung, belegte Recherche, Mappen). Ohne Abhängigkeiten, direkt im
+Browser zu öffnen. Analyse, Leitentscheide, Gestaltung und Grenzen: `docs/PLATTFORM.md`.
+
 ## Installation
 
 ```bash
